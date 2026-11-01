@@ -127,7 +127,8 @@ func (h *Handler) mine(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, r, httpx.NotFound("REVIEW_NOT_FOUND"))
 		return
 	}
-	httpx.JSON(w, http.StatusOK, map[string]any{"id": rv.ID, "status": rv.Status, "title": rv.Title, "body": rv.Body, "rating_overall": rv.RatingOverall})
+	httpx.JSON(w, http.StatusOK, map[string]any{"id": rv.ID, "status": rv.Status, "title": rv.Title, "body": rv.Body, "rating_overall": rv.RatingOverall,
+		"rating_boat": rv.RatingBoat, "rating_service": rv.RatingService, "rating_crew": rv.RatingCrew, "created_at": rv.CreatedAt})
 }
 
 type PublicReview struct {

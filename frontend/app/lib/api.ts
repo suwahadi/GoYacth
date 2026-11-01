@@ -72,6 +72,10 @@ export async function apiRaw(path: string, opts: RequestOptions = {}): Promise<R
   if (isServer && opts.request) {
     const cookie = opts.request.headers.get("Cookie");
     if (cookie) headers.set("Cookie", cookie);
+    // The SSR server talks to the API directly; passing on Caddy's X-Forwarded-For keeps
+    // per-client rate limits keyed by the visitor instead of the frontend container.
+    const xff = opts.request.headers.get("X-Forwarded-For");
+    if (xff) headers.set("X-Forwarded-For", xff);
     const reqID = opts.request.headers.get("X-Request-ID");
     if (reqID) headers.set("X-Request-ID", reqID);
   }

@@ -448,7 +448,7 @@ func (h *Handler) publicList(w http.ResponseWriter, r *http.Request) {
 	from, to := parseRange(r)
 	q := dbq.New(h.pool)
 	rows, err := q.ListDeparturesPublic(r.Context(), dbq.ListDeparturesPublicParams{Limit: 100, BoatID: catalog.IDs(strp(qs.Get("boat_id"))),
-		RouteID: catalog.IDs(strp(qs.Get("route_id"))), FromTime: from, ToTime: to})
+		RouteID: catalog.IDs(strp(qs.Get("route_id"))), DepartureID: catalog.IDs(strp(qs.Get("departure_id"))), FromTime: from, ToTime: to})
 	if err != nil {
 		httpx.WriteError(w, r, err)
 		return

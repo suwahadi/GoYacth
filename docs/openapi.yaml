@@ -1,0 +1,2324 @@
+openapi: 3.1.0
+info:
+  title: GoYacht API
+  version: "1.0.0"
+  description: |
+    REST API of the GoYacht platform. Successful responses are `{"data": ..., "meta": ...}`; errors are
+    `{"error": {"code", "message", "fields"}}` with stable SCREAMING_SNAKE_CASE codes. Money is whole IDR
+    (integer); percentages are basis points (10000 = 100%); timestamps are ISO 8601 UTC. Every response
+    carries `X-Request-ID`. Cookie-authenticated mutations require the `X-CSRF-Token` header (value of the
+    `gy_csrf` cookie). Public endpoints accept `?locale=en|id`. The path list is verified against the router
+    by `internal/app/openapi_test.go`.
+servers:
+  - url: /
+tags:
+  - name: auth
+  - name: bookingadmin
+  - name: bookings
+  - name: catalog
+  - name: cms
+  - name: departures
+  - name: media
+  - name: packages
+  - name: payments
+  - name: pricing
+  - name: reports
+  - name: reviews
+  - name: settings
+  - name: settlements
+  - name: tickets
+  - name: users
+paths:
+  /api/v1/account/bookings:
+    get:
+      tags: [bookings]
+      operationId: get_account_bookings
+      security: [{session: []}]
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/account/bookings/{id}:
+    get:
+      tags: [bookings]
+      operationId: get_account_bookings_id_
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Booking"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/account/delete:
+    post:
+      tags: [users]
+      operationId: post_account_delete
+      security: [{session: []}]
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/account/profile:
+    get:
+      tags: [users]
+      operationId: get_account_profile
+      security: [{session: []}]
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [users]
+      operationId: put_account_profile
+      security: [{session: []}]
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/admin-invites:
+    get:
+      tags: [users]
+      operationId: get_admin_admin_invites
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [users]
+      operationId: post_admin_admin_invites
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/admin-invites/{id}:
+    delete:
+      tags: [users]
+      operationId: delete_admin_admin_invites_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/audit-logs:
+    get:
+      tags: [settings]
+      operationId: get_admin_audit_logs
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/blocks/{id}:
+    delete:
+      tags: [departures]
+      operationId: delete_admin_blocks_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/boats:
+    get:
+      tags: [catalog]
+      operationId: get_admin_boats
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_boats
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/boats/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_boats_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    get:
+      tags: [catalog]
+      operationId: get_admin_boats_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_boats_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/boats/{id}/areas:
+    post:
+      tags: [catalog]
+      operationId: post_admin_boats_id_areas
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/boats/{id}/areas/{areaID}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_boats_id_areas_areaID_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+        - {name: areaID, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_boats_id_areas_areaID_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+        - {name: areaID, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/boats/{id}/blocks:
+    post:
+      tags: [departures]
+      operationId: post_admin_boats_id_blocks
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings:
+    get:
+      tags: [bookingadmin]
+      operationId: get_admin_bookings
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_bookings
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 8, maxLength: 128}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}:
+    get:
+      tags: [bookingadmin]
+      operationId: get_admin_bookings_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/cancel:
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_bookings_id_cancel
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/clear-exception:
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_bookings_id_clear_exception
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/guests:
+    put:
+      tags: [bookingadmin]
+      operationId: put_admin_bookings_id_guests
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/identity/reveal:
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_bookings_id_identity_reveal
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/invoice.pdf:
+    get:
+      tags: [tickets]
+      operationId: get_admin_bookings_id_invoice_pdf
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {description: PDF document, content: {application/pdf: {}}}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/payments:
+    post:
+      tags: [payments]
+      operationId: post_admin_bookings_id_payments
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 8, maxLength: 128}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ManualPaymentInput"}
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Payment"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/reschedule:
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_bookings_id_reschedule
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/bookings/{id}/ticket.pdf:
+    get:
+      tags: [tickets]
+      operationId: get_admin_bookings_id_ticket_pdf
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {description: PDF document, content: {application/pdf: {}}}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/calendar:
+    get:
+      tags: [departures]
+      operationId: get_admin_calendar
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/cancellation-policies:
+    get:
+      tags: [catalog]
+      operationId: get_admin_cancellation_policies
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_cancellation_policies
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/cancellation-policies/{id}:
+    put:
+      tags: [catalog]
+      operationId: put_admin_cancellation_policies_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/categories:
+    get:
+      tags: [catalog]
+      operationId: get_admin_categories
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_categories
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/categories/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_categories_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_categories_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/classes:
+    get:
+      tags: [catalog]
+      operationId: get_admin_classes
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_classes
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/classes/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_classes_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_classes_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/departures:
+    get:
+      tags: [departures]
+      operationId: get_admin_departures
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [departures]
+      operationId: post_admin_departures
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/departures/{id}:
+    get:
+      tags: [departures]
+      operationId: get_admin_departures_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    patch:
+      tags: [departures]
+      operationId: patch_admin_departures_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/departures/{id}/cancel:
+    post:
+      tags: [departures]
+      operationId: post_admin_departures_id_cancel
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/facilities:
+    get:
+      tags: [catalog]
+      operationId: get_admin_facilities
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_facilities
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/facilities/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_facilities_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_facilities_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/faqs:
+    get:
+      tags: [cms]
+      operationId: get_admin_faqs
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [cms]
+      operationId: post_admin_faqs
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/faqs/{id}:
+    delete:
+      tags: [cms]
+      operationId: delete_admin_faqs_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [cms]
+      operationId: put_admin_faqs_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/files/{id}:
+    get:
+      tags: [media]
+      operationId: get_admin_files_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/manifests/booking/{id}:
+    get:
+      tags: [tickets]
+      operationId: get_admin_manifests_booking_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/manifests/departure/{id}:
+    get:
+      tags: [tickets]
+      operationId: get_admin_manifests_departure_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/media:
+    get:
+      tags: [media]
+      operationId: get_admin_media
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [media]
+      operationId: post_admin_media
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: {type: string, format: binary}
+                slug: {type: string}
+                alt_en: {type: string}
+                alt_id: {type: string}
+                private: {type: string, enum: ["true","false"]}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/media/{id}:
+    get:
+      tags: [media]
+      operationId: get_admin_media_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    patch:
+      tags: [media]
+      operationId: patch_admin_media_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/overview:
+    get:
+      tags: [reports]
+      operationId: get_admin_overview
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/packages:
+    get:
+      tags: [packages]
+      operationId: get_admin_packages
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [packages]
+      operationId: post_admin_packages
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/packages/{id}:
+    delete:
+      tags: [packages]
+      operationId: delete_admin_packages_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    get:
+      tags: [packages]
+      operationId: get_admin_packages_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [packages]
+      operationId: put_admin_packages_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/pages:
+    get:
+      tags: [cms]
+      operationId: get_admin_pages
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [cms]
+      operationId: post_admin_pages
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/pages/{id}:
+    delete:
+      tags: [cms]
+      operationId: delete_admin_pages_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    get:
+      tags: [cms]
+      operationId: get_admin_pages_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [cms]
+      operationId: put_admin_pages_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/partners:
+    get:
+      tags: [catalog]
+      operationId: get_admin_partners
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_partners
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/partners/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_partners_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_partners_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payment-events:
+    get:
+      tags: [payments]
+      operationId: get_admin_payment_events
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payment-method-fees:
+    get:
+      tags: [pricing]
+      operationId: get_admin_payment_method_fees
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payment-method-fees/{method}:
+    put:
+      tags: [pricing]
+      operationId: put_admin_payment_method_fees_method_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: method, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payment-policies:
+    get:
+      tags: [catalog]
+      operationId: get_admin_payment_policies
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_payment_policies
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payment-policies/{id}:
+    put:
+      tags: [catalog]
+      operationId: put_admin_payment_policies_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payments:
+    get:
+      tags: [payments]
+      operationId: get_admin_payments
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payments/{id}/refund-exception:
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_payments_id_refund_exception
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/payouts:
+    get:
+      tags: [settlements]
+      operationId: get_admin_payouts
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [settlements]
+      operationId: post_admin_payouts
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/ports:
+    get:
+      tags: [catalog]
+      operationId: get_admin_ports
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_ports
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/ports/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_ports_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_ports_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/price-overrides:
+    get:
+      tags: [pricing]
+      operationId: get_admin_price_overrides
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [pricing]
+      operationId: post_admin_price_overrides
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/price-overrides/{id}:
+    delete:
+      tags: [pricing]
+      operationId: delete_admin_price_overrides_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/promotions:
+    get:
+      tags: [pricing]
+      operationId: get_admin_promotions
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [pricing]
+      operationId: post_admin_promotions
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/promotions/{id}:
+    put:
+      tags: [pricing]
+      operationId: put_admin_promotions_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/refunds:
+    get:
+      tags: [bookingadmin]
+      operationId: get_admin_refunds
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/refunds/{id}/transition:
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_refunds_id_transition
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/regions:
+    get:
+      tags: [catalog]
+      operationId: get_admin_regions
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_regions
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/regions/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_regions_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    get:
+      tags: [catalog]
+      operationId: get_admin_regions_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_regions_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/reports/{kind}:
+    get:
+      tags: [reports]
+      operationId: get_admin_reports_kind_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: kind, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/requests:
+    get:
+      tags: [bookingadmin]
+      operationId: get_admin_requests
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/requests/{id}/resolve:
+    post:
+      tags: [bookingadmin]
+      operationId: post_admin_requests_id_resolve
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/reviews:
+    get:
+      tags: [reviews]
+      operationId: get_admin_reviews
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/reviews/{id}/moderate:
+    post:
+      tags: [reviews]
+      operationId: post_admin_reviews_id_moderate
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/routes:
+    get:
+      tags: [catalog]
+      operationId: get_admin_routes
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [catalog]
+      operationId: post_admin_routes
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/routes/{id}:
+    delete:
+      tags: [catalog]
+      operationId: delete_admin_routes_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    get:
+      tags: [catalog]
+      operationId: get_admin_routes_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [catalog]
+      operationId: put_admin_routes_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/seasons:
+    get:
+      tags: [pricing]
+      operationId: get_admin_seasons
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [pricing]
+      operationId: post_admin_seasons
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/seasons/{id}:
+    delete:
+      tags: [pricing]
+      operationId: delete_admin_seasons_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [pricing]
+      operationId: put_admin_seasons_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/sections:
+    get:
+      tags: [cms]
+      operationId: get_admin_sections
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [cms]
+      operationId: post_admin_sections
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/sections/{id}:
+    delete:
+      tags: [cms]
+      operationId: delete_admin_sections_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+    put:
+      tags: [cms]
+      operationId: put_admin_sections_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/settings:
+    get:
+      tags: [settings]
+      operationId: get_admin_settings
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/settings/{key}:
+    put:
+      tags: [settings]
+      operationId: put_admin_settings_key_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: key, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/settlements:
+    get:
+      tags: [settlements]
+      operationId: get_admin_settlements
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/tax-lines:
+    get:
+      tags: [pricing]
+      operationId: get_admin_tax_lines
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [pricing]
+      operationId: post_admin_tax_lines
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/tax-lines/{id}:
+    put:
+      tags: [pricing]
+      operationId: put_admin_tax_lines_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/users:
+    get:
+      tags: [users]
+      operationId: get_admin_users
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/users/search:
+    get:
+      tags: [users]
+      operationId: get_admin_users_search
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/users/{id}:
+    get:
+      tags: [users]
+      operationId: get_admin_users_id_
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/users/{id}/anonymize:
+    post:
+      tags: [users]
+      operationId: post_admin_users_id_anonymize
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/users/{id}/demote:
+    post:
+      tags: [users]
+      operationId: post_admin_users_id_demote
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/users/{id}/status:
+    post:
+      tags: [users]
+      operationId: post_admin_users_id_status
+      security: [{session: []}]
+      description: Requires role ADMIN.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/auth/google:
+    get:
+      tags: [auth]
+      operationId: get_auth_google
+      responses:
+        "302": {description: Redirect}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/auth/google/callback:
+    get:
+      tags: [auth]
+      operationId: get_auth_google_callback
+      responses:
+        "302": {description: Redirect}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/auth/logout:
+    post:
+      tags: [auth]
+      operationId: post_auth_logout
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/auth/me:
+    get:
+      tags: [auth]
+      operationId: get_auth_me
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/availability:
+    get:
+      tags: [bookings]
+      operationId: get_availability
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/boats:
+    get:
+      tags: [catalog]
+      operationId: get_boats
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/boats/{slug}:
+    get:
+      tags: [catalog]
+      operationId: get_boats_slug_
+      parameters:
+        - {name: slug, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings:
+    post:
+      tags: [bookings]
+      operationId: post_bookings
+      security: [{session: []}]
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 8, maxLength: 128}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/BookingCreateInput"}
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Booking"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/cancel-request:
+    post:
+      tags: [bookingadmin]
+      operationId: post_bookings_id_cancel_request
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/cancel-unpaid:
+    post:
+      tags: [bookings]
+      operationId: post_bookings_id_cancel_unpaid
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/invoice.pdf:
+    get:
+      tags: [tickets]
+      operationId: get_bookings_id_invoice_pdf
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {description: PDF document, content: {application/pdf: {}}}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/payments:
+    get:
+      tags: [payments]
+      operationId: get_bookings_id_payments
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [payments]
+      operationId: post_bookings_id_payments
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 8, maxLength: 128}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/PaymentCreateInput"}
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Payment"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/refunds:
+    get:
+      tags: [bookingadmin]
+      operationId: get_bookings_id_refunds
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/requests:
+    get:
+      tags: [bookingadmin]
+      operationId: get_bookings_id_requests
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/reschedule-request:
+    post:
+      tags: [bookingadmin]
+      operationId: post_bookings_id_reschedule_request
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/review:
+    get:
+      tags: [reviews]
+      operationId: get_bookings_id_review
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+    post:
+      tags: [reviews]
+      operationId: post_bookings_id_review
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/bookings/{id}/ticket.pdf:
+    get:
+      tags: [tickets]
+      operationId: get_bookings_id_ticket_pdf
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {description: PDF document, content: {application/pdf: {}}}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/categories:
+    get:
+      tags: [catalog]
+      operationId: get_categories
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/classes:
+    get:
+      tags: [catalog]
+      operationId: get_classes
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/departures:
+    get:
+      tags: [departures]
+      operationId: get_departures
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/facilities:
+    get:
+      tags: [catalog]
+      operationId: get_facilities
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/faqs:
+    get:
+      tags: [cms]
+      operationId: get_faqs
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/home:
+    get:
+      tags: [cms]
+      operationId: get_home
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/orders/track:
+    post:
+      tags: [bookingadmin]
+      operationId: post_orders_track
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/TrackInput"}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Tracking"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/orders/{id}:
+    get:
+      tags: [bookingadmin]
+      operationId: get_orders_id_
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Tracking"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/orders/{id}/status:
+    get:
+      tags: [bookingadmin]
+      operationId: get_orders_id_status
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/packages:
+    get:
+      tags: [packages]
+      operationId: get_packages
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/packages/{slug}:
+    get:
+      tags: [packages]
+      operationId: get_packages_slug_
+      parameters:
+        - {name: slug, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/pages/{slug}:
+    get:
+      tags: [cms]
+      operationId: get_pages_slug_
+      parameters:
+        - {name: slug, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/payment-methods:
+    get:
+      tags: [pricing]
+      operationId: get_payment_methods
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/payments/config:
+    get:
+      tags: [payments]
+      operationId: get_payments_config
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/quotes:
+    post:
+      tags: [bookings]
+      operationId: post_quotes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/QuoteInput"}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Quote"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/refunds/{id}/bank-details:
+    put:
+      tags: [bookingadmin]
+      operationId: put_refunds_id_bank_details
+      security: [{session: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/regions:
+    get:
+      tags: [catalog]
+      operationId: get_regions
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/regions/{slug}:
+    get:
+      tags: [catalog]
+      operationId: get_regions_slug_
+      parameters:
+        - {name: slug, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/reviews:
+    get:
+      tags: [reviews]
+      operationId: get_reviews
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/routes:
+    get:
+      tags: [catalog]
+      operationId: get_routes
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/routes/{slug}:
+    get:
+      tags: [catalog]
+      operationId: get_routes_slug_
+      parameters:
+        - {name: slug, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/settings/public:
+    get:
+      tags: [settings]
+      operationId: get_settings_public
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/sitemap:
+    get:
+      tags: [cms]
+      operationId: get_sitemap
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/verify/{token}:
+    get:
+      tags: [bookingadmin]
+      operationId: get_verify_token_
+      parameters:
+        - {name: token, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: "#/components/schemas/Verification"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/webhooks/midtrans:
+    post:
+      tags: [payments]
+      operationId: post_webhooks_midtrans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/MidtransNotification"}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+components:
+  securitySchemes:
+    session:
+      type: apiKey
+      in: cookie
+      name: gy_session
+  responses:
+    Ok:
+      description: Success envelope
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/Envelope"}
+    Error:
+      description: Error envelope (400, 401, 403, 404, 409, 410, 422, 429, 500)
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/Error"}
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        data: {}
+        meta:
+          type: object
+          properties:
+            page: {type: integer}
+            per_page: {type: integer}
+            total: {type: integer}
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: {type: string, example: BOOKING_SLOT_TAKEN}
+            message: {type: string}
+            fields:
+              type: object
+              additionalProperties: {type: string}
+              example: {"lead.phone": INVALID_PHONE}
+    BookingStatus:
+      type: string
+      enum: [PENDING_PAYMENT, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, EXPIRED]
+    BookingPaymentStatus:
+      type: string
+      enum: [UNPAID, DEPOSIT_PAID, PAID, PARTIALLY_REFUNDED, REFUNDED]
+    PaymentStatus:
+      type: string
+      enum: [PENDING, SUCCEEDED, FAILED, EXPIRED, CANCELLED]
+    RefundStatus:
+      type: string
+      enum: [REQUESTED, APPROVED, PROCESSING, COMPLETED, REJECTED]
+    PaymentMethod:
+      type: string
+      enum: [CREDIT_CARD, QRIS, BCA_VA, BNI_VA, BRI_VA, MANDIRI_VA, PERMATA_VA]
+    ProductInput:
+      type: object
+      required: [mode]
+      properties:
+        mode: {type: string, enum: [PRIVATE_CHARTER, DEPARTURE]}
+        boat_id: {type: string, format: uuid}
+        route_id: {type: string, format: uuid}
+        date: {type: string, format: date, description: Departure port local date}
+        start_time: {type: string, pattern: "^[0-2][0-9]:[0-5][0-9]$", description: Port local time, 15-minute steps}
+        rate_unit: {type: string, enum: [HOURLY, DAILY, FIXED]}
+        units: {type: integer}
+        departure_slot_id: {type: string, format: uuid}
+        package_id: {type: string, format: uuid}
+        package_offering_id: {type: string, format: uuid}
+    QuoteInput:
+      type: object
+      additionalProperties: false
+      required: [product, pax]
+      properties:
+        product: {$ref: "#/components/schemas/ProductInput"}
+        pax: {type: integer, minimum: 1}
+        promo_code: {type: string}
+        payment_method: {$ref: "#/components/schemas/PaymentMethod"}
+        payment_scheme: {type: string, enum: [FULL, DEPOSIT]}
+        locale: {type: string, enum: [en, id]}
+    BookingCreateInput:
+      description: Unknown fields (prices, totals, statuses) are rejected with 422 UNKNOWN_FIELD.
+      allOf:
+        - $ref: "#/components/schemas/QuoteInput"
+        - type: object
+          required: [lead, guests, consents, payment_method]
+          properties:
+            lead:
+              type: object
+              required: [full_name, phone, nationality, id_type, id_number]
+              properties:
+                full_name: {type: string}
+                phone: {type: string, description: E.164}
+                nationality: {type: string, description: ISO 3166-1 alpha-2}
+                id_type: {type: string, enum: [KTP, SIM, PASSPORT, KITAS]}
+                id_number: {type: string}
+                special_request: {type: string}
+            guests:
+              type: array
+              description: Exactly pax - 1 entries
+              items:
+                type: object
+                required: [full_name]
+                properties:
+                  full_name: {type: string}
+                  phone: {type: string}
+            consents:
+              type: object
+              properties:
+                terms: {type: boolean}
+                cancellation: {type: boolean}
+                deposit_forfeit: {type: boolean}
+                data_processing: {type: boolean}
+    PriceLine:
+      type: object
+      properties:
+        kind: {type: string}
+        label: {type: string}
+        unit_price: {type: integer}
+        quantity: {type: integer}
+        amount: {type: integer}
+        rule: {type: string, enum: [BASE, DATE, SEASON, WEEKEND, WEEKDAY]}
+    Quote:
+      type: object
+      properties:
+        mode: {type: string}
+        boat_id: {type: string, format: uuid}
+        route_id: {type: string, format: uuid}
+        starts_at: {type: string, format: date-time}
+        ends_at: {type: string, format: date-time}
+        timezone: {type: string, example: Asia/Makassar}
+        pax: {type: integer}
+        lines: {type: array, items: {$ref: "#/components/schemas/PriceLine"}}
+        discount:
+          type: [object, "null"]
+          properties: {promotion_id: {type: string}, name: {type: string}, code: {type: string}, amount: {type: integer}}
+        subtotal: {type: integer}
+        taxes:
+          type: array
+          items:
+            type: object
+            properties: {code: {type: string}, name: {type: string}, basis_points: {type: integer}, base: {type: integer}, amount: {type: integer}}
+        tax_total: {type: integer}
+        grand_total: {type: integer}
+        payment:
+          type: object
+          properties:
+            method: {type: string}
+            scheme: {type: string, enum: [FULL, DEPOSIT]}
+            deposit_available: {type: boolean}
+            deposit_amount: {type: integer}
+            principal_due_now: {type: integer}
+            fee: {type: integer}
+            total_due_now: {type: integer}
+            balance_due_at: {type: [string, "null"], format: date-time}
+            hold_minutes: {type: integer}
+        usd_estimate: {type: integer}
+        currency: {type: string, enum: [IDR]}
+    Booking:
+      type: object
+      properties:
+        id: {type: string, format: uuid, description: Public booking ID}
+        booking_number: {type: string, example: H6KF08QST20N}
+        invoice_number: {type: [string, "null"], example: INV/2026/000123}
+        status: {$ref: "#/components/schemas/BookingStatus"}
+        payment_status: {$ref: "#/components/schemas/BookingPaymentStatus"}
+        mode: {type: string}
+        boat_name: {type: string}
+        route_name: {type: string}
+        port_name: {type: string}
+        starts_at: {type: string, format: date-time}
+        ends_at: {type: string, format: date-time}
+        timezone: {type: string}
+        pax: {type: integer}
+        subtotal: {type: integer}
+        grand_total: {type: integer}
+        amount_paid: {type: integer}
+        fees_paid: {type: integer}
+        amount_refunded: {type: integer}
+        balance_due: {type: integer}
+        payment_scheme: {type: string}
+        deposit_amount: {type: integer}
+        balance_due_at: {type: [string, "null"], format: date-time}
+        hold_expires_at: {type: [string, "null"], format: date-time}
+        actions:
+          type: object
+          additionalProperties: {type: boolean}
+    PaymentCreateInput:
+      type: object
+      required: [method]
+      properties:
+        method: {$ref: "#/components/schemas/PaymentMethod"}
+    ManualPaymentInput:
+      type: object
+      required: [method, amount, paid_on]
+      properties:
+        method: {type: string, enum: [BANK_TRANSFER, CASH]}
+        amount: {type: integer, description: Must not exceed the outstanding balance}
+        paid_on: {type: string, format: date}
+        proof_media_id: {type: string, format: uuid}
+        notes: {type: string}
+    Payment:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        kind: {type: string, enum: [FULL, DEPOSIT, BALANCE]}
+        provider: {type: string, enum: [MIDTRANS, MANUAL]}
+        method: {type: string}
+        order_id: {type: string}
+        principal_amount: {type: integer}
+        fee_amount: {type: integer}
+        gross_amount: {type: integer}
+        status: {$ref: "#/components/schemas/PaymentStatus"}
+        snap_token: {type: string}
+        snap_redirect_url: {type: string}
+        va_numbers: {type: array, items: {type: object}}
+        expires_at: {type: [string, "null"], format: date-time}
+        paid_at: {type: [string, "null"], format: date-time}
+        is_exception: {type: boolean}
+    MidtransNotification:
+      type: object
+      description: Midtrans HTTP notification. The signature is verified and the Status API is queried before any state change.
+      required: [order_id, status_code, gross_amount, signature_key]
+      properties:
+        order_id: {type: string}
+        status_code: {type: string}
+        gross_amount: {type: string}
+        signature_key: {type: string}
+        transaction_status: {type: string}
+    TrackInput:
+      type: object
+      required: [booking_number, email]
+      properties:
+        booking_number: {type: string}
+        email: {type: string}
+        turnstile_token: {type: string}
+        locale: {type: string}
+    Tracking:
+      type: object
+      description: Public view without names, phone numbers, identity numbers or guests.
+      properties:
+        id: {type: string, format: uuid}
+        booking_number: {type: string}
+        status: {$ref: "#/components/schemas/BookingStatus"}
+        payment_status: {$ref: "#/components/schemas/BookingPaymentStatus"}
+        starts_at: {type: string, format: date-time}
+        timezone: {type: string}
+        boat_name: {type: string}
+        route_name: {type: string}
+    Verification:
+      type: object
+      properties:
+        valid: {type: boolean}
+        status: {type: string}
+        booking_number: {type: string}
+        starts_at: {type: string, format: date-time}
+        timezone: {type: string}
+        boat_name: {type: string}
+        pax: {type: integer}
+        lead_name: {type: string, example: "J*** S****"}

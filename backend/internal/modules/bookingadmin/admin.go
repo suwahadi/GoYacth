@@ -62,6 +62,7 @@ func (h *Handler) CustomerRoutes(r chi.Router) {
 	r.Post("/bookings/{id}/cancel-request", h.request("CANCEL"))
 	r.Post("/bookings/{id}/reschedule-request", h.request("RESCHEDULE"))
 	r.Get("/bookings/{id}/refunds", h.customerRefunds)
+	r.Get("/bookings/{id}/requests", h.customerRequests)
 	r.Put("/refunds/{id}/bank-details", h.bankDetails)
 }
 
@@ -614,4 +615,33 @@ func (h *Handler) bankDetails(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	httpx.NoContent(w)
+}
+
+type customerRequest struct {
+	ID         uuid.UUID  `json:"id"`
+	Type       string     `json:"type"`
+	Status     string     `json:"status"`
+	Message    string     `json:"message"`
+	Resolution string     `json:"resolution"`
+	CreatedAt  time.Time  `json:"created_at"`
+	ResolvedAt *time.Time `json:"resolved_at"`
+}
+
+func (h *Handler) customerRequests(w http.ResponseWriter, r *http.Request) {
+	q := dbq.New(h.pool)
+	b, err := bookings.OwnedBooking(r, q)
+	if err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	rows, err := q.ListBookingRequests(r.Context(), b.ID)
+	if err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	out := make([]customerRequest, 0, len(rows))
+	for _, x := range rows {
+		out = append(out, customerRequest{ID: x.ID, Type: x.Type, Status: x.Status, Message: x.Message, Resolution: x.Resolution, CreatedAt: x.CreatedAt, ResolvedAt: x.ResolvedAt})
+	}
+	httpx.JSON(w, http.StatusOK, out)
 }

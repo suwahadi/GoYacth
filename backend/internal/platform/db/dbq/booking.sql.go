@@ -2056,18 +2056,20 @@ SELECT d.id, d.boat_id, d.route_id, d.departs_at, d.returns_at, d.booking_closes
 WHERE d.status = 'SCHEDULED' AND d.booking_closes_at > now() AND d.departs_at > now()
   AND ($2::uuid IS NULL OR d.boat_id = $2)
   AND ($3::uuid IS NULL OR d.route_id = $3)
-  AND ($4::timestamptz IS NULL OR d.departs_at >= $4)
-  AND ($5::timestamptz IS NULL OR d.departs_at < $5)
+  AND ($4::uuid IS NULL OR d.id = $4)
+  AND ($5::timestamptz IS NULL OR d.departs_at >= $5)
+  AND ($6::timestamptz IS NULL OR d.departs_at < $6)
 ORDER BY d.departs_at
 LIMIT $1
 `
 
 type ListDeparturesPublicParams struct {
-	Limit    int32      `json:"limit"`
-	BoatID   *uuid.UUID `json:"boat_id"`
-	RouteID  *uuid.UUID `json:"route_id"`
-	FromTime *time.Time `json:"from_time"`
-	ToTime   *time.Time `json:"to_time"`
+	Limit       int32      `json:"limit"`
+	BoatID      *uuid.UUID `json:"boat_id"`
+	RouteID     *uuid.UUID `json:"route_id"`
+	DepartureID *uuid.UUID `json:"departure_id"`
+	FromTime    *time.Time `json:"from_time"`
+	ToTime      *time.Time `json:"to_time"`
 }
 
 func (q *Queries) ListDeparturesPublic(ctx context.Context, arg ListDeparturesPublicParams) ([]Departure, error) {
@@ -2075,6 +2077,7 @@ func (q *Queries) ListDeparturesPublic(ctx context.Context, arg ListDeparturesPu
 		arg.Limit,
 		arg.BoatID,
 		arg.RouteID,
+		arg.DepartureID,
 		arg.FromTime,
 		arg.ToTime,
 	)

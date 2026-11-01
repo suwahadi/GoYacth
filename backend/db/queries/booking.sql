@@ -134,6 +134,7 @@ SELECT d.* FROM departures d JOIN boats b ON b.id = d.boat_id AND b.status = 'PU
 WHERE d.status = 'SCHEDULED' AND d.booking_closes_at > now() AND d.departs_at > now()
   AND (sqlc.narg(boat_id)::uuid IS NULL OR d.boat_id = sqlc.narg(boat_id))
   AND (sqlc.narg(route_id)::uuid IS NULL OR d.route_id = sqlc.narg(route_id))
+  AND (sqlc.narg(departure_id)::uuid IS NULL OR d.id = sqlc.narg(departure_id))
   AND (sqlc.narg(from_time)::timestamptz IS NULL OR d.departs_at >= sqlc.narg(from_time))
   AND (sqlc.narg(to_time)::timestamptz IS NULL OR d.departs_at < sqlc.narg(to_time))
 ORDER BY d.departs_at
