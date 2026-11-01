@@ -1,0 +1,154 @@
+{
+  "brand": {
+    "tagline": "Private charters and shared trips across Indonesia"
+  },
+  "nav": {
+    "boats": "Boats",
+    "packages": "Packages",
+    "departures": "Departures",
+    "regions": "Destinations",
+    "faq": "FAQ",
+    "track": "Track booking",
+    "account": "My bookings",
+    "admin": "Admin",
+    "menu": "Menu",
+    "close": "Close"
+  },
+  "auth": {
+    "sign_in": "Sign in",
+    "sign_in_google": "Continue with Google",
+    "sign_out": "Sign out",
+    "signed_in_as": "Signed in as {{email}}",
+    "login_title": "Sign in to GoYacht",
+    "login_subtitle": "Use your Google account to book and manage your trips.",
+    "login_required": "Please sign in to continue."
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "id": "Bahasa Indonesia"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "continue": "Continue",
+    "back": "Back",
+    "retry": "Try again",
+    "close": "Close",
+    "view_all": "View all",
+    "view_details": "View details",
+    "search": "Search",
+    "filters": "Filters",
+    "clear_filters": "Clear filters",
+    "apply": "Apply",
+    "load_more": "Load more",
+    "previous": "Previous",
+    "next": "Next",
+    "download": "Download",
+    "copy": "Copy",
+    "copied": "Copied",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "submit": "Submit",
+    "upload": "Upload",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "states": {
+    "loading": "Loading…",
+    "empty": "Nothing here yet.",
+    "error_title": "Something went wrong",
+    "not_found_title": "Page not found",
+    "not_found_body": "The page you are looking for does not exist or has moved.",
+    "gone_title": "No longer available",
+    "gone_body": "This page has been removed.",
+    "go_home": "Back to home",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "processing": "Processing…"
+  },
+  "pagination": {
+    "page_of": "Page {{page}} of {{total}}",
+    "results": "{{count}} results"
+  },
+  "money": {
+    "approx_usd": "≈ USD {{amount}} · charged in IDR",
+    "from": "From",
+    "per_hour": "per hour",
+    "per_day": "per day",
+    "per_trip": "per trip",
+    "per_person": "per person",
+    "per_area": "per area"
+  },
+  "footer": {
+    "rights": "© {{year}} GoYacht. All rights reserved.",
+    "contact": "Contact",
+    "legal": "Legal",
+    "terms": "Terms & conditions",
+    "privacy": "Privacy policy",
+    "cancellation": "Cancellation policy"
+  },
+  "cookies": {
+    "title": "Cookies",
+    "body": "We use analytics cookies to improve the site. They load only if you accept.",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "a11y": {
+    "skip_to_content": "Skip to content",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "required": "required"
+  },
+  "status": {
+    "PENDING_PAYMENT": "Awaiting payment",
+    "CONFIRMED": "Confirmed",
+    "IN_PROGRESS": "On the water",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled",
+    "EXPIRED": "Expired",
+    "UNPAID": "Unpaid",
+    "DEPOSIT_PAID": "Deposit paid",
+    "PAID": "Paid",
+    "PARTIALLY_REFUNDED": "Partially refunded",
+    "REFUNDED": "Refunded",
+    "PENDING": "Pending",
+    "SUCCEEDED": "Succeeded",
+    "FAILED": "Failed",
+    "REQUESTED": "Requested",
+    "APPROVED": "Approved",
+    "PROCESSING": "Processing",
+    "REJECTED": "Rejected",
+    "REVOKED": "Revoked"
+  },
+  "methods": {
+    "CREDIT_CARD": "Credit / debit card",
+    "QRIS": "QRIS",
+    "BCA_VA": "BCA virtual account",
+    "BNI_VA": "BNI virtual account",
+    "BRI_VA": "BRI virtual account",
+    "MANDIRI_VA": "Mandiri bill payment",
+    "PERMATA_VA": "Permata virtual account",
+    "BANK_TRANSFER": "Bank transfer",
+    "CASH": "Cash"
+  },
+  "units": {
+    "minutes": "{{count}} min",
+    "hours": "{{count}} h",
+    "days": "{{count}} days",
+    "pax": "{{count}} guests",
+    "pax_max": "Up to {{count}} guests"
+  },
+  "phone": {
+    "country_code": "Country code"
+  }
+}

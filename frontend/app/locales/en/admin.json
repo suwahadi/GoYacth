@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "menu": "Menu",
+    "admin": "Admin",
+    "view_site": "View site",
+    "sign_out": "Sign out",
+    "overview": "Overview",
+    "calendar": "Calendar",
+    "bookings": "Bookings",
+    "departures": "Departures",
+    "boats": "Boats",
+    "fleet": "Fleet setup",
+    "locations": "Locations",
+    "packages": "Packages",
+    "pricing": "Pricing",
+    "policies": "Policies",
+    "payments": "Payments",
+    "refunds": "Refunds",
+    "partners": "Partners",
+    "customers": "Customers",
+    "content": "Content",
+    "reviews": "Reviews",
+    "media": "Media",
+    "reports": "Reports",
+    "settings": "Settings",
+    "audit": "Audit log"
+  }
+}

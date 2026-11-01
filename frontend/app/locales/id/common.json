@@ -1,0 +1,154 @@
+{
+  "brand": {
+    "tagline": "Sewa kapal privat dan open trip di seluruh Indonesia"
+  },
+  "nav": {
+    "boats": "Kapal",
+    "packages": "Paket",
+    "departures": "Jadwal",
+    "regions": "Destinasi",
+    "faq": "FAQ",
+    "track": "Lacak booking",
+    "account": "Booking saya",
+    "admin": "Admin",
+    "menu": "Menu",
+    "close": "Tutup"
+  },
+  "auth": {
+    "sign_in": "Masuk",
+    "sign_in_google": "Lanjutkan dengan Google",
+    "sign_out": "Keluar",
+    "signed_in_as": "Masuk sebagai {{email}}",
+    "login_title": "Masuk ke GoYacht",
+    "login_subtitle": "Gunakan akun Google untuk memesan dan mengelola perjalanan Anda.",
+    "login_required": "Silakan masuk untuk melanjutkan."
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Terang",
+    "dark": "Gelap",
+    "system": "Sistem"
+  },
+  "language": {
+    "label": "Bahasa",
+    "en": "English",
+    "id": "Bahasa Indonesia"
+  },
+  "actions": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "continue": "Lanjut",
+    "back": "Kembali",
+    "retry": "Coba lagi",
+    "close": "Tutup",
+    "view_all": "Lihat semua",
+    "view_details": "Lihat detail",
+    "search": "Cari",
+    "filters": "Filter",
+    "clear_filters": "Hapus filter",
+    "apply": "Terapkan",
+    "load_more": "Muat lebih banyak",
+    "previous": "Sebelumnya",
+    "next": "Berikutnya",
+    "download": "Unduh",
+    "copy": "Salin",
+    "copied": "Tersalin",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "add": "Tambah",
+    "remove": "Hapus",
+    "submit": "Kirim",
+    "upload": "Unggah",
+    "yes": "Ya",
+    "no": "Tidak"
+  },
+  "states": {
+    "loading": "Memuat…",
+    "empty": "Belum ada data.",
+    "error_title": "Terjadi kesalahan",
+    "not_found_title": "Halaman tidak ditemukan",
+    "not_found_body": "Halaman yang Anda cari tidak ada atau sudah dipindahkan.",
+    "gone_title": "Sudah tidak tersedia",
+    "gone_body": "Halaman ini sudah dihapus.",
+    "go_home": "Kembali ke beranda",
+    "saving": "Menyimpan…",
+    "saved": "Tersimpan",
+    "processing": "Memproses…"
+  },
+  "pagination": {
+    "page_of": "Halaman {{page}} dari {{total}}",
+    "results": "{{count}} hasil"
+  },
+  "money": {
+    "approx_usd": "≈ USD {{amount}} · ditagih dalam IDR",
+    "from": "Mulai",
+    "per_hour": "per jam",
+    "per_day": "per hari",
+    "per_trip": "per trip",
+    "per_person": "per orang",
+    "per_area": "per area"
+  },
+  "footer": {
+    "rights": "© {{year}} GoYacht. Hak cipta dilindungi.",
+    "contact": "Kontak",
+    "legal": "Legal",
+    "terms": "Syarat & ketentuan",
+    "privacy": "Kebijakan privasi",
+    "cancellation": "Kebijakan pembatalan"
+  },
+  "cookies": {
+    "title": "Cookie",
+    "body": "Kami memakai cookie analitik untuk meningkatkan situs. Cookie hanya dimuat jika Anda setuju.",
+    "accept": "Setuju",
+    "decline": "Tolak"
+  },
+  "a11y": {
+    "skip_to_content": "Langsung ke konten",
+    "open_menu": "Buka menu",
+    "close_menu": "Tutup menu",
+    "required": "wajib"
+  },
+  "status": {
+    "PENDING_PAYMENT": "Menunggu pembayaran",
+    "CONFIRMED": "Terkonfirmasi",
+    "IN_PROGRESS": "Sedang berlayar",
+    "COMPLETED": "Selesai",
+    "CANCELLED": "Dibatalkan",
+    "EXPIRED": "Kedaluwarsa",
+    "UNPAID": "Belum dibayar",
+    "DEPOSIT_PAID": "DP dibayar",
+    "PAID": "Lunas",
+    "PARTIALLY_REFUNDED": "Dikembalikan sebagian",
+    "REFUNDED": "Dikembalikan",
+    "PENDING": "Menunggu",
+    "SUCCEEDED": "Berhasil",
+    "FAILED": "Gagal",
+    "REQUESTED": "Diajukan",
+    "APPROVED": "Disetujui",
+    "PROCESSING": "Diproses",
+    "REJECTED": "Ditolak",
+    "REVOKED": "Dicabut"
+  },
+  "methods": {
+    "CREDIT_CARD": "Kartu kredit / debit",
+    "QRIS": "QRIS",
+    "BCA_VA": "Virtual account BCA",
+    "BNI_VA": "Virtual account BNI",
+    "BRI_VA": "Virtual account BRI",
+    "MANDIRI_VA": "Mandiri bill payment",
+    "PERMATA_VA": "Virtual account Permata",
+    "BANK_TRANSFER": "Transfer bank",
+    "CASH": "Tunai"
+  },
+  "units": {
+    "minutes": "{{count}} menit",
+    "hours": "{{count}} jam",
+    "days": "{{count}} hari",
+    "pax": "{{count}} tamu",
+    "pax_max": "Hingga {{count}} tamu"
+  },
+  "phone": {
+    "country_code": "Kode negara"
+  }
+}
