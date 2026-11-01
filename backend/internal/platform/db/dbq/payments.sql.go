@@ -143,6 +143,17 @@ func (q *Queries) CancelPendingPayments(ctx context.Context, bookingID uuid.UUID
 	return items, nil
 }
 
+const countPaymentEvents = `-- name: CountPaymentEvents :one
+SELECT count(*) FROM payment_events WHERE ($1::text IS NULL OR order_id = $1)
+`
+
+func (q *Queries) CountPaymentEvents(ctx context.Context, orderID *string) (int64, error) {
+	row := q.db.QueryRow(ctx, countPaymentEvents, orderID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const countPaymentsAdmin = `-- name: CountPaymentsAdmin :one
 SELECT count(*) FROM payments p
 WHERE ($1::text IS NULL OR p.status = $1)

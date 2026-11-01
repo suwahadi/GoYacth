@@ -8,6 +8,10 @@ FROM audit_logs a LEFT JOIN users u ON u.id = a.actor_id
 WHERE (sqlc.narg(entity_type)::text IS NULL OR a.entity_type = sqlc.narg(entity_type))
   AND (sqlc.narg(entity_id)::text IS NULL OR a.entity_id = sqlc.narg(entity_id))
   AND (sqlc.narg(actor_id)::uuid IS NULL OR a.actor_id = sqlc.narg(actor_id))
+  AND (sqlc.narg(action)::text IS NULL OR a.action LIKE sqlc.narg(action) || '%')
+  AND (sqlc.narg(actor_email)::text IS NULL OR a.actor_id IN (SELECT id FROM users WHERE lower(email) = lower(sqlc.narg(actor_email))))
+  AND (sqlc.narg(from_time)::timestamptz IS NULL OR a.created_at >= sqlc.narg(from_time))
+  AND (sqlc.narg(to_time)::timestamptz IS NULL OR a.created_at < sqlc.narg(to_time))
 ORDER BY a.created_at DESC, a.id DESC
 LIMIT $1 OFFSET $2;
 
@@ -15,7 +19,11 @@ LIMIT $1 OFFSET $2;
 SELECT count(*) FROM audit_logs a
 WHERE (sqlc.narg(entity_type)::text IS NULL OR a.entity_type = sqlc.narg(entity_type))
   AND (sqlc.narg(entity_id)::text IS NULL OR a.entity_id = sqlc.narg(entity_id))
-  AND (sqlc.narg(actor_id)::uuid IS NULL OR a.actor_id = sqlc.narg(actor_id));
+  AND (sqlc.narg(actor_id)::uuid IS NULL OR a.actor_id = sqlc.narg(actor_id))
+  AND (sqlc.narg(action)::text IS NULL OR a.action LIKE sqlc.narg(action) || '%')
+  AND (sqlc.narg(actor_email)::text IS NULL OR a.actor_id IN (SELECT id FROM users WHERE lower(email) = lower(sqlc.narg(actor_email))))
+  AND (sqlc.narg(from_time)::timestamptz IS NULL OR a.created_at >= sqlc.narg(from_time))
+  AND (sqlc.narg(to_time)::timestamptz IS NULL OR a.created_at < sqlc.narg(to_time));
 
 -- name: GetSetting :one
 SELECT * FROM settings WHERE key = $1;
@@ -114,3 +122,6 @@ SELECT count(*) FROM media WHERE status <> 'DELETED' AND bucket = 'PUBLIC';
 -- name: ScheduleMediaDeletion :exec
 UPDATE media SET delete_after = now(), updated_at = now()
 WHERE id = ANY(sqlc.arg(ids)::uuid[]) AND NOT EXISTS (SELECT 1 FROM media_usages u WHERE u.media_id = media.id);
+
+-- name: DeleteMediaTranslation :exec
+DELETE FROM media_translations WHERE media_id = $1 AND locale = $2;

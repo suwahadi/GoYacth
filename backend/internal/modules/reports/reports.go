@@ -3,6 +3,7 @@ package reports
 import (
 	"bytes"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -100,6 +101,18 @@ func (h *Handler) build(r *http.Request, kind string, from, to time.Time) (table
 		}
 		return t, nil
 	case "boats", "routes", "packages":
+		packageNames := map[uuid.UUID]string{}
+		if kind == "packages" {
+			pkgs, err := q.ListPackagesAdmin(ctx)
+			if err != nil {
+				return table{}, err
+			}
+			for _, p := range pkgs {
+				var trs map[string]struct{ Name string }
+				_ = json.Unmarshal(p.Translations, &trs)
+				packageNames[p.ID] = catalog.Pick(trs, "en").Name
+			}
+		}
 		rows, err := q.ReportBookings(ctx, dbq.ReportBookingsParams{FromTime: from, ToTime: to})
 		if err != nil {
 			return table{}, err
@@ -126,7 +139,7 @@ func (h *Handler) build(r *http.Request, kind string, from, to time.Time) (table
 				if b.PackageID == nil {
 					continue
 				}
-				key, name = b.PackageID.String(), b.PackageID.String()
+				key, name = b.PackageID.String(), packageNames[*b.PackageID]
 			}
 			a, ok := m[key]
 			if !ok {
@@ -171,8 +184,10 @@ func (h *Handler) build(r *http.Request, kind string, from, to time.Time) (table
 func (h *Handler) report(w http.ResponseWriter, r *http.Request) {
 	kind := chi.URLParam(r, "kind")
 	qs := r.URL.Query()
-	from, e1 := time.Parse("2006-01-02", qs.Get("from"))
-	to, e2 := time.Parse("2006-01-02", qs.Get("to"))
+	// Report days follow the operator's home time zone (WITA), matching the overview counts.
+	loc, _ := time.LoadLocation("Asia/Makassar")
+	from, e1 := time.ParseInLocation("2006-01-02", qs.Get("from"), loc)
+	to, e2 := time.ParseInLocation("2006-01-02", qs.Get("to"), loc)
 	if e1 != nil || e2 != nil || to.Before(from) || to.Sub(from) > 400*24*time.Hour {
 		httpx.WriteError(w, r, httpx.Validation(map[string]string{"from": "INVALID_RANGE"}))
 		return

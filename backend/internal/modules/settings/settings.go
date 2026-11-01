@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -269,13 +270,22 @@ func (h *Handler) auditLogs(w http.ResponseWriter, r *http.Request) {
 			actor = &id
 		}
 	}
+	optTime := func(k string) *time.Time {
+		if t, err := time.Parse(time.RFC3339, qs.Get(k)); err == nil {
+			return &t
+		}
+		return nil
+	}
+	from, to := optTime("from"), optTime("to")
 	q := dbq.New(h.pool)
-	rows, err := q.ListAuditLogs(r.Context(), dbq.ListAuditLogsParams{Limit: int32(page.PerPage), Offset: int32(page.Offset()), EntityType: opt("entity_type"), EntityID: opt("entity_id"), ActorID: actor})
+	rows, err := q.ListAuditLogs(r.Context(), dbq.ListAuditLogsParams{Limit: int32(page.PerPage), Offset: int32(page.Offset()), EntityType: opt("entity_type"), EntityID: opt("entity_id"), ActorID: actor,
+		Action: opt("action"), ActorEmail: opt("actor_email"), FromTime: from, ToTime: to})
 	if err != nil {
 		httpx.WriteError(w, r, err)
 		return
 	}
-	total, err := q.CountAuditLogs(r.Context(), dbq.CountAuditLogsParams{EntityType: opt("entity_type"), EntityID: opt("entity_id"), ActorID: actor})
+	total, err := q.CountAuditLogs(r.Context(), dbq.CountAuditLogsParams{EntityType: opt("entity_type"), EntityID: opt("entity_id"), ActorID: actor,
+		Action: opt("action"), ActorEmail: opt("actor_email"), FromTime: from, ToTime: to})
 	if err != nil {
 		httpx.WriteError(w, r, err)
 		return

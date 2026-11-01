@@ -125,3 +125,6 @@ SELECT
 SELECT b.id, b.public_id, b.booking_number, b.mode, b.status, b.starts_at, b.timezone, b.pax, b.snapshot
 FROM bookings b WHERE b.status = 'CONFIRMED' AND b.starts_at > now() AND b.starts_at < now() + interval '7 days'
 ORDER BY b.starts_at LIMIT 50;
+
+-- name: CountReviewsAdmin :one
+SELECT count(*) FROM reviews r WHERE (sqlc.narg(status)::text IS NULL OR r.status = sqlc.narg(status));

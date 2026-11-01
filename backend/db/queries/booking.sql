@@ -386,3 +386,9 @@ UPDATE bookings SET exception_reason = $2, updated_at = now() WHERE id = $1;
 
 -- name: ClearBookingException :exec
 UPDATE bookings SET exception_reason = NULL, updated_at = now() WHERE id = $1;
+
+-- name: CountDeparturesAdmin :one
+SELECT count(*) FROM departures d
+WHERE (sqlc.narg(boat_id)::uuid IS NULL OR d.boat_id = sqlc.narg(boat_id))
+  AND (sqlc.narg(from_time)::timestamptz IS NULL OR d.departs_at >= sqlc.narg(from_time))
+  AND (sqlc.narg(to_time)::timestamptz IS NULL OR d.departs_at < sqlc.narg(to_time));

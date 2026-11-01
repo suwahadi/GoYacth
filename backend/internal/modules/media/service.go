@@ -305,10 +305,28 @@ func (s *Service) CleanupOrphans(ctx context.Context) error {
 	return s.DeleteUnused(ctx, ids)
 }
 
+// UpdateAltText sets alt texts per locale. The default locale cannot be blank; other locales can
+// be cleared, which falls back to the default on public pages.
 func (s *Service) UpdateAltText(ctx context.Context, actor *uuid.UUID, id uuid.UUID, alts map[string]string) error {
+	f := httpx.FieldErrors{}
+	for loc, alt := range alts {
+		alt = strings.TrimSpace(alt)
+		switch {
+		case !i18n.Valid(loc):
+			f.Add("alt_texts."+loc, "INVALID_LOCALE")
+		case len(alt) > 250:
+			f.Add("alt_texts."+loc, "TOO_LONG")
+		case alt == "" && loc == i18n.Default:
+			f.Add("alt_texts."+loc, "REQUIRED")
+		}
+	}
+	if err := f.Err(); err != nil {
+		return err
+	}
 	return db.InTx(ctx, s.pool, func(tx pgx.Tx) error {
 		q := dbq.New(tx)
-		if _, err := q.GetMedia(ctx, id); err != nil {
+		m, err := q.GetMedia(ctx, id)
+		if err != nil {
 			if db.IsNoRows(err) {
 				return ErrMediaNotFound
 			}
@@ -316,7 +334,13 @@ func (s *Service) UpdateAltText(ctx context.Context, actor *uuid.UUID, id uuid.U
 		}
 		for loc, alt := range alts {
 			alt = strings.TrimSpace(alt)
-			if !i18n.Valid(loc) || alt == "" {
+			if alt == "" {
+				if m.Bucket == string(storage.Public) && loc == i18n.Default {
+					continue
+				}
+				if err := q.DeleteMediaTranslation(ctx, dbq.DeleteMediaTranslationParams{MediaID: id, Locale: loc}); err != nil {
+					return err
+				}
 				continue
 			}
 			if err := q.UpsertMediaTranslation(ctx, dbq.UpsertMediaTranslationParams{MediaID: id, Locale: loc, AltText: alt}); err != nil {

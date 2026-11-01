@@ -214,12 +214,19 @@ func (h *Handler) adminList(w http.ResponseWriter, r *http.Request) {
 	if s := r.URL.Query().Get("status"); s != "" {
 		status = &s
 	}
-	rows, err := dbq.New(h.pool).ListReviewsAdmin(r.Context(), dbq.ListReviewsAdminParams{Limit: int32(page.PerPage), Offset: int32(page.Offset()), Status: status})
+	q := dbq.New(h.pool)
+	rows, err := q.ListReviewsAdmin(r.Context(), dbq.ListReviewsAdminParams{Limit: int32(page.PerPage), Offset: int32(page.Offset()), Status: status})
 	if err != nil {
 		httpx.WriteError(w, r, err)
 		return
 	}
-	httpx.JSON(w, http.StatusOK, rows)
+	total, err := q.CountReviewsAdmin(r.Context(), status)
+	if err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	page.Total = int(total)
+	httpx.JSONMeta(w, http.StatusOK, rows, page)
 }
 
 type moderateInput struct {

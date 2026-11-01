@@ -60,7 +60,9 @@
     "MEDIA_NOT_READY": "The image is still processing.",
     "MEDIA_NOT_FOUND": "Image not found.",
     "BOAT_ARCHIVED": "This boat is no longer available.",
-    "PAGE_ARCHIVED": "This page has been removed."
+    "PAGE_ARCHIVED": "This page has been removed.",
+    "MULTIPART_INVALID": "The upload could not be read. Choose the file again.",
+    "SETTING_NOT_FOUND": "This setting does not exist."
   },
   "fields": {
     "REQUIRED": "This field is required.",

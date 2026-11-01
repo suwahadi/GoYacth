@@ -42,16 +42,32 @@ SELECT count(*) FROM audit_logs a
 WHERE ($1::text IS NULL OR a.entity_type = $1)
   AND ($2::text IS NULL OR a.entity_id = $2)
   AND ($3::uuid IS NULL OR a.actor_id = $3)
+  AND ($4::text IS NULL OR a.action LIKE $4 || '%')
+  AND ($5::text IS NULL OR a.actor_id IN (SELECT id FROM users WHERE lower(email) = lower($5)))
+  AND ($6::timestamptz IS NULL OR a.created_at >= $6)
+  AND ($7::timestamptz IS NULL OR a.created_at < $7)
 `
 
 type CountAuditLogsParams struct {
 	EntityType *string    `json:"entity_type"`
 	EntityID   *string    `json:"entity_id"`
 	ActorID    *uuid.UUID `json:"actor_id"`
+	Action     *string    `json:"action"`
+	ActorEmail *string    `json:"actor_email"`
+	FromTime   *time.Time `json:"from_time"`
+	ToTime     *time.Time `json:"to_time"`
 }
 
 func (q *Queries) CountAuditLogs(ctx context.Context, arg CountAuditLogsParams) (int64, error) {
-	row := q.db.QueryRow(ctx, countAuditLogs, arg.EntityType, arg.EntityID, arg.ActorID)
+	row := q.db.QueryRow(ctx, countAuditLogs,
+		arg.EntityType,
+		arg.EntityID,
+		arg.ActorID,
+		arg.Action,
+		arg.ActorEmail,
+		arg.FromTime,
+		arg.ToTime,
+	)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -85,6 +101,20 @@ DELETE FROM idempotency_keys WHERE id = $1
 
 func (q *Queries) DeleteIdempotencyKey(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.Exec(ctx, deleteIdempotencyKey, id)
+	return err
+}
+
+const deleteMediaTranslation = `-- name: DeleteMediaTranslation :exec
+DELETE FROM media_translations WHERE media_id = $1 AND locale = $2
+`
+
+type DeleteMediaTranslationParams struct {
+	MediaID uuid.UUID `json:"media_id"`
+	Locale  string    `json:"locale"`
+}
+
+func (q *Queries) DeleteMediaTranslation(ctx context.Context, arg DeleteMediaTranslationParams) error {
+	_, err := q.db.Exec(ctx, deleteMediaTranslation, arg.MediaID, arg.Locale)
 	return err
 }
 
@@ -360,6 +390,10 @@ FROM audit_logs a LEFT JOIN users u ON u.id = a.actor_id
 WHERE ($3::text IS NULL OR a.entity_type = $3)
   AND ($4::text IS NULL OR a.entity_id = $4)
   AND ($5::uuid IS NULL OR a.actor_id = $5)
+  AND ($6::text IS NULL OR a.action LIKE $6 || '%')
+  AND ($7::text IS NULL OR a.actor_id IN (SELECT id FROM users WHERE lower(email) = lower($7)))
+  AND ($8::timestamptz IS NULL OR a.created_at >= $8)
+  AND ($9::timestamptz IS NULL OR a.created_at < $9)
 ORDER BY a.created_at DESC, a.id DESC
 LIMIT $1 OFFSET $2
 `
@@ -370,6 +404,10 @@ type ListAuditLogsParams struct {
 	EntityType *string    `json:"entity_type"`
 	EntityID   *string    `json:"entity_id"`
 	ActorID    *uuid.UUID `json:"actor_id"`
+	Action     *string    `json:"action"`
+	ActorEmail *string    `json:"actor_email"`
+	FromTime   *time.Time `json:"from_time"`
+	ToTime     *time.Time `json:"to_time"`
 }
 
 type ListAuditLogsRow struct {
@@ -393,6 +431,10 @@ func (q *Queries) ListAuditLogs(ctx context.Context, arg ListAuditLogsParams) ([
 		arg.EntityType,
 		arg.EntityID,
 		arg.ActorID,
+		arg.Action,
+		arg.ActorEmail,
+		arg.FromTime,
+		arg.ToTime,
 	)
 	if err != nil {
 		return nil, err

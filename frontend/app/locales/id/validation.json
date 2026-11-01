@@ -60,7 +60,9 @@
     "MEDIA_NOT_READY": "Gambar masih diproses.",
     "MEDIA_NOT_FOUND": "Gambar tidak ditemukan.",
     "BOAT_ARCHIVED": "Kapal ini sudah tidak tersedia.",
-    "PAGE_ARCHIVED": "Halaman ini sudah dihapus."
+    "PAGE_ARCHIVED": "Halaman ini sudah dihapus.",
+    "MULTIPART_INVALID": "Unggahan tidak dapat dibaca. Pilih file lagi.",
+    "SETTING_NOT_FOUND": "Pengaturan ini tidak ada."
   },
   "fields": {
     "REQUIRED": "Kolom ini wajib diisi.",

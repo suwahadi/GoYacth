@@ -187,6 +187,26 @@ func (q *Queries) CountBookingsAdmin(ctx context.Context, arg CountBookingsAdmin
 	return count, err
 }
 
+const countDeparturesAdmin = `-- name: CountDeparturesAdmin :one
+SELECT count(*) FROM departures d
+WHERE ($1::uuid IS NULL OR d.boat_id = $1)
+  AND ($2::timestamptz IS NULL OR d.departs_at >= $2)
+  AND ($3::timestamptz IS NULL OR d.departs_at < $3)
+`
+
+type CountDeparturesAdminParams struct {
+	BoatID   *uuid.UUID `json:"boat_id"`
+	FromTime *time.Time `json:"from_time"`
+	ToTime   *time.Time `json:"to_time"`
+}
+
+func (q *Queries) CountDeparturesAdmin(ctx context.Context, arg CountDeparturesAdminParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countDeparturesAdmin, arg.BoatID, arg.FromTime, arg.ToTime)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const countPackageBookings = `-- name: CountPackageBookings :one
 SELECT count(*) FROM bookings WHERE package_id = $1
 `

@@ -414,10 +414,16 @@ func (h *Handler) adminList(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, r, err)
 		return
 	}
-	h.writeList(w, r, q, i18n.Default, rows)
+	total, err := q.CountDeparturesAdmin(r.Context(), dbq.CountDeparturesAdminParams{BoatID: boatID, FromTime: from, ToTime: to})
+	if err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	page.Total = int(total)
+	h.writeList(w, r, q, i18n.Default, rows, &page)
 }
 
-func (h *Handler) writeList(w http.ResponseWriter, r *http.Request, q *dbq.Queries, loc string, rows []dbq.ListDeparturesAdminRow) {
+func (h *Handler) writeList(w http.ResponseWriter, r *http.Request, q *dbq.Queries, loc string, rows []dbq.ListDeparturesAdminRow, page *httpx.Page) {
 	ids := make([]uuid.UUID, 0, len(rows))
 	boatIDs := []uuid.UUID{}
 	for _, d := range rows {
@@ -439,6 +445,10 @@ func (h *Handler) writeList(w http.ResponseWriter, r *http.Request, q *dbq.Queri
 		out = append(out, toDTO(dbq.Departure{ID: d.ID, BoatID: d.BoatID, RouteID: d.RouteID, DepartsAt: d.DepartsAt, ReturnsAt: d.ReturnsAt,
 			BookingClosesAt: d.BookingClosesAt, Status: d.Status, CancelReason: d.CancelReason}, slots, n, loc, d.BookedPax))
 	}
+	if page != nil {
+		httpx.JSONMeta(w, http.StatusOK, out, page)
+		return
+	}
 	httpx.JSON(w, http.StatusOK, out)
 }
 
@@ -459,7 +469,7 @@ func (h *Handler) publicList(w http.ResponseWriter, r *http.Request) {
 			BookingClosesAt: d.BookingClosesAt, Status: d.Status})
 	}
 	w.Header().Set("Cache-Control", "no-store")
-	h.writeList(w, r, q, loc, conv)
+	h.writeList(w, r, q, loc, conv, nil)
 }
 
 func (h *Handler) adminGet(w http.ResponseWriter, r *http.Request) {

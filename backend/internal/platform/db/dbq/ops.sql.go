@@ -13,6 +13,17 @@ import (
 	"github.com/google/uuid"
 )
 
+const countReviewsAdmin = `-- name: CountReviewsAdmin :one
+SELECT count(*) FROM reviews r WHERE ($1::text IS NULL OR r.status = $1)
+`
+
+func (q *Queries) CountReviewsAdmin(ctx context.Context, status *string) (int64, error) {
+	row := q.db.QueryRow(ctx, countReviewsAdmin, status)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getReviewByBooking = `-- name: GetReviewByBooking :one
 SELECT id, booking_id, user_id, boat_id, rating_overall, rating_boat, rating_service, rating_crew, title, body, locale, status, is_featured, moderated_by, moderated_at, created_at, updated_at FROM reviews WHERE booking_id = $1
 `

@@ -134,6 +134,7 @@ type pageAdminDTO struct {
 	PublishedAt  *time.Time      `json:"published_at"`
 	Translations json.RawMessage `json:"translations"`
 	Featured     *media.Image    `json:"featured_image"`
+	BlockImages  []media.Image   `json:"block_images,omitempty"`
 	UpdatedAt    time.Time       `json:"updated_at"`
 }
 
@@ -167,7 +168,7 @@ func (h *Handler) adminPage(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, r, err)
 		return
 	}
-	httpx.JSON(w, http.StatusOK, pageAdminDTO{ID: p.ID, Status: p.Status, PublishedAt: p.PublishedAt, Translations: p.Translations, Featured: gal.First(id, "featured"), UpdatedAt: p.UpdatedAt})
+	httpx.JSON(w, http.StatusOK, pageAdminDTO{ID: p.ID, Status: p.Status, PublishedAt: p.PublishedAt, Translations: p.Translations, Featured: gal.First(id, "featured"), BlockImages: gal.All(id, "block"), UpdatedAt: p.UpdatedAt})
 }
 
 func blockMediaIDs(trs map[string]PageTranslation) []uuid.UUID {

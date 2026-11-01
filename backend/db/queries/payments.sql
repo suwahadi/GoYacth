@@ -129,3 +129,6 @@ UPDATE booking_requests SET status = $2, resolution = $3, resolved_by = $4, reso
 -- name: ListPendingRequests :many
 SELECT r.*, b.booking_number, b.public_id AS booking_public_id FROM booking_requests r JOIN bookings b ON b.id = r.booking_id
 WHERE r.status = 'PENDING' ORDER BY r.created_at LIMIT 200;
+
+-- name: CountPaymentEvents :one
+SELECT count(*) FROM payment_events WHERE (sqlc.narg(order_id)::text IS NULL OR order_id = sqlc.narg(order_id));

@@ -13,11 +13,11 @@ Clarifications agreed with the product owner on 2026-11-01. They amend or resolv
 | Topic | Decision |
 | --- | --- |
 | Environments | Local development and a single production VPS. No staging; Midtrans sandbox is exercised locally. |
-| Object storage | MinIO on the VPS (production and development). |
+| Object storage | SeaweedFS (S3 API) on the VPS for production and development. MinIO was chosen first, but its official container images are no longer distributed; the owner approved SeaweedFS on 2026-11-01. Code uses a generic S3 interface, so the store can be swapped by configuration. |
 | Build and deploy | Images are built on the VPS (`git pull` + `docker compose build`). |
-| Database backup | Daily `pg_dump` plus MinIO bucket mirror, copied to an off-site S3-compatible target. No PITR in v1 (accepted risk: up to 24 hours of data loss). |
+| Database backup | Daily `pg_dump` plus storage bucket mirror, copied to an off-site S3-compatible target. No PITR in v1 (accepted risk: up to 24 hours of data loss). |
 | TLS and DNS | DNS points directly at the VPS. Caddy obtains Let's Encrypt certificates. No Cloudflare proxy; Turnstile is still used. |
-| Local development | Docker Compose with hot reload (air for Go, Vite dev server), PostgreSQL, MinIO, Mailpit. |
+| Local development | Docker Compose with hot reload (air for Go, Vite dev server), PostgreSQL, SeaweedFS, Mailpit. |
 | Monitoring | Internal `/metrics`, container health checks, JSON logs on stdout, external uptime check. |
 | Domain | Configured via environment (`APP_URL`); not yet decided. |
 

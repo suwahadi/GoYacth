@@ -161,12 +161,19 @@ func (h *Handler) adminEvents(w http.ResponseWriter, r *http.Request) {
 	if v := r.URL.Query().Get("order_id"); v != "" {
 		order = &v
 	}
-	rows, err := dbq.New(h.svc.pool).ListPaymentEvents(r.Context(), dbq.ListPaymentEventsParams{Limit: int32(page.PerPage), Offset: int32(page.Offset()), OrderID: order})
+	q := dbq.New(h.svc.pool)
+	rows, err := q.ListPaymentEvents(r.Context(), dbq.ListPaymentEventsParams{Limit: int32(page.PerPage), Offset: int32(page.Offset()), OrderID: order})
 	if err != nil {
 		httpx.WriteError(w, r, err)
 		return
 	}
-	httpx.JSON(w, http.StatusOK, rows)
+	total, err := q.CountPaymentEvents(r.Context(), order)
+	if err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	page.Total = int(total)
+	httpx.JSONMeta(w, http.StatusOK, rows, page)
 }
 
 func (h *Handler) manual(w http.ResponseWriter, r *http.Request) {
