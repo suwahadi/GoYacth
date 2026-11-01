@@ -1,0 +1,47 @@
+{
+  "ticket": {
+    "title": "E-Ticket",
+    "booking_number": "Booking number",
+    "status": "Status",
+    "boat": "Boat",
+    "route": "Route",
+    "port": "Departure port",
+    "departure": "Departure",
+    "return": "Return",
+    "pax": "Passengers",
+    "lead": "Lead guest",
+    "guests": "Guests",
+    "payment": "Payment summary",
+    "total": "Total",
+    "paid": "Paid",
+    "balance": "Balance due",
+    "balance_deadline": "Pay the balance before",
+    "scan": "Show this QR code at the pier for verification.",
+    "arrive": "Please arrive 30 minutes before departure with a valid ID."
+  },
+  "invoice": {
+    "title": "Invoice",
+    "number": "Invoice number",
+    "date": "Date",
+    "bill_to": "Bill to",
+    "description": "Description",
+    "amount": "Amount",
+    "discount": "Discount",
+    "subtotal": "Subtotal",
+    "fees": "Payment fees",
+    "total": "Total",
+    "paid": "Paid",
+    "refunded": "Refunded",
+    "balance": "Balance due"
+  },
+  "manifest": {
+    "title": "Passenger manifest",
+    "no": "No",
+    "name": "Name",
+    "nationality": "Nationality",
+    "id_type": "ID type",
+    "id_number": "ID number",
+    "phone": "Phone",
+    "booking": "Booking"
+  }
+}

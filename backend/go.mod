@@ -3,6 +3,7 @@ module goyacht
 go 1.27.3
 
 require (
+	github.com/boombuler/barcode v1.1.0
 	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/davidbyttow/govips/v2 v2.20.0
 	github.com/go-chi/chi/v5 v5.5.0
@@ -13,6 +14,9 @@ require (
 	github.com/prometheus/client_golang v1.25.0
 	github.com/riverqueue/river v0.51.0
 	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.51.0
+	github.com/signintech/gopdf v0.38.4
+	github.com/wneessen/go-mail v0.8.1
+	github.com/xuri/excelize/v2 v2.11.0
 	golang.org/x/image v0.47.0
 	golang.org/x/oauth2 v0.37.0
 )
@@ -33,9 +37,13 @@ require (
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
+	github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 	github.com/prometheus/client_model v0.6.3 // indirect
 	github.com/prometheus/common v0.72.0 // indirect
 	github.com/prometheus/procfs v0.22.0 // indirect
+	github.com/richardlehane/mscfb v1.0.7 // indirect
+	github.com/richardlehane/msoleps v1.0.6 // indirect
 	github.com/riverqueue/river/riverdriver v0.51.0 // indirect
 	github.com/riverqueue/river/rivershared v0.51.0 // indirect
 	github.com/riverqueue/river/rivertype v0.51.0 // indirect
@@ -45,7 +53,10 @@ require (
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
+	github.com/tiendc/go-deepcopy v1.7.2 // indirect
 	github.com/tinylib/msgp v1.6.4 // indirect
+	github.com/xuri/efp v0.0.1 // indirect
+	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect

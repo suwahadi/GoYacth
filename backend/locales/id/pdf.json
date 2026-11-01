@@ -1,0 +1,47 @@
+{
+  "ticket": {
+    "title": "E-Tiket",
+    "booking_number": "Nomor booking",
+    "status": "Status",
+    "boat": "Kapal",
+    "route": "Rute",
+    "port": "Pelabuhan keberangkatan",
+    "departure": "Berangkat",
+    "return": "Kembali",
+    "pax": "Penumpang",
+    "lead": "Pemesan",
+    "guests": "Tamu",
+    "payment": "Ringkasan pembayaran",
+    "total": "Total",
+    "paid": "Dibayar",
+    "balance": "Sisa tagihan",
+    "balance_deadline": "Lunasi sebelum",
+    "scan": "Tunjukkan kode QR ini di dermaga untuk verifikasi.",
+    "arrive": "Harap datang 30 menit sebelum keberangkatan dengan membawa identitas yang sah."
+  },
+  "invoice": {
+    "title": "Invoice",
+    "number": "Nomor invoice",
+    "date": "Tanggal",
+    "bill_to": "Ditagihkan kepada",
+    "description": "Deskripsi",
+    "amount": "Jumlah",
+    "discount": "Diskon",
+    "subtotal": "Subtotal",
+    "fees": "Biaya pembayaran",
+    "total": "Total",
+    "paid": "Dibayar",
+    "refunded": "Dikembalikan",
+    "balance": "Sisa tagihan"
+  },
+  "manifest": {
+    "title": "Manifest penumpang",
+    "no": "No",
+    "name": "Nama",
+    "nationality": "Kewarganegaraan",
+    "id_type": "Jenis identitas",
+    "id_number": "Nomor identitas",
+    "phone": "Telepon",
+    "booking": "Booking"
+  }
+}

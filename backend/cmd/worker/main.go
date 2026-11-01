@@ -43,10 +43,10 @@ func run() error {
 		return err
 	}
 	defer deps.Close()
-	if err := deps.Store.EnsureBuckets(ctx); err != nil {
+	if err := deps.S3.EnsureBuckets(ctx); err != nil {
 		return err
 	}
-	if err := deps.StartRiver(app.WorkerConfig(deps)); err != nil {
+	if err := deps.StartRiver(app.WorkerConfig(deps, app.NewServices(deps, nil, nil))); err != nil {
 		return err
 	}
 	if err := deps.River.Start(ctx); err != nil {

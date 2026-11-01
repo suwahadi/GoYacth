@@ -23,7 +23,8 @@ import (
 type Deps struct {
 	Config   *config.Config
 	Pool     *pgxpool.Pool
-	Store    *storage.S3
+	Store    storage.Store
+	S3       *storage.S3
 	Cipher   *secure.Cipher
 	Messages *i18n.Messages
 	River    *river.Client[pgx.Tx]
@@ -55,7 +56,12 @@ func NewDeps(ctx context.Context, cfg *config.Config) (*Deps, error) {
 		pool.Close()
 		return nil, fmt.Errorf("load locales: %w", err)
 	}
-	return &Deps{Config: cfg, Pool: pool, Store: store, Cipher: cipher, Messages: msgs, enqueuer: &jobs.RiverEnqueuer{}}, nil
+	return &Deps{Config: cfg, Pool: pool, Store: store, S3: store, Cipher: cipher, Messages: msgs, enqueuer: &jobs.RiverEnqueuer{}}, nil
+}
+
+// NewDepsWith assembles dependencies from already-built parts; tests use it with fakes.
+func NewDepsWith(cfg *config.Config, pool *pgxpool.Pool, store storage.Store, cipher *secure.Cipher, msgs *i18n.Messages) *Deps {
+	return &Deps{Config: cfg, Pool: pool, Store: store, Cipher: cipher, Messages: msgs, enqueuer: &jobs.RiverEnqueuer{}}
 }
 
 // StartRiver creates the River client. An insert-only client (nil workers) is used by the API;

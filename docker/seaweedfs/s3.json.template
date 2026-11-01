@@ -1,0 +1,13 @@
+{
+  "identities": [
+    {
+      "name": "app",
+      "credentials": [{ "accessKey": "${S3_ACCESS_KEY}", "secretKey": "${S3_SECRET_KEY}" }],
+      "actions": ["Admin", "Read", "List", "Tagging", "Write"]
+    },
+    {
+      "name": "anonymous",
+      "actions": ["Read:${S3_PUBLIC_BUCKET}"]
+    }
+  ]
+}

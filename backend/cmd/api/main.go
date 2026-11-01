@@ -44,7 +44,7 @@ func run() error {
 	if err := deps.StartRiver(nil); err != nil {
 		return err
 	}
-	if err := deps.Store.EnsureBuckets(ctx); err != nil {
+	if err := deps.S3.EnsureBuckets(ctx); err != nil {
 		return err
 	}
 
@@ -54,7 +54,7 @@ func run() error {
 
 	srv := &http.Server{
 		Addr:              cfg.HTTPAddr,
-		Handler:           app.NewRouter(deps, app.NewModules(deps)),
+		Handler:           app.NewRouter(deps, app.NewModules(deps, app.NewServices(deps, nil, nil))),
 		ReadHeaderTimeout: 10 * time.Second,
 		ReadTimeout:       60 * time.Second,
 		WriteTimeout:      60 * time.Second,

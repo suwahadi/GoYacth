@@ -65,9 +65,9 @@ func periodic(every time.Duration, args river.JobArgs) *river.PeriodicJob {
 }
 
 // WorkerConfig builds the River configuration with every worker and schedule (PRD section 15.2).
-func WorkerConfig(d *Deps) *river.Config {
+func WorkerConfig(d *Deps, s *Services) *river.Config {
 	workers := river.NewWorkers()
-	mediaSvc := media.NewService(d.Pool, d.Store, d.Enqueuer())
+	mediaSvc := s.Media
 	river.AddWorker(workers, &processMediaWorker{svc: mediaSvc})
 	river.AddWorker(workers, &deleteMediaWorker{svc: mediaSvc})
 	river.AddWorker(workers, &cleanupMediaWorker{svc: mediaSvc})
@@ -77,7 +77,7 @@ func WorkerConfig(d *Deps) *river.Config {
 		periodic(24*time.Hour, jobs.CleanupMedia{}),
 		periodic(6*time.Hour, jobs.CleanupHousekeeping{}),
 	}
-	periodicJobs = append(periodicJobs, registerFeatureWorkers(d, workers, mediaSvc)...)
+	periodicJobs = append(periodicJobs, registerFeatureWorkers(d, workers, s)...)
 
 	return &river.Config{
 		Queues: map[string]river.QueueConfig{

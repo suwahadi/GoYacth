@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"time"
 
@@ -58,7 +59,9 @@ func (s *S3) bucket(b Bucket) string {
 	return s.privateBucket
 }
 
-// EnsureBuckets creates both buckets and grants anonymous read on the public one only.
+// EnsureBuckets creates both buckets and grants anonymous read on the public one only. Stores
+// that manage anonymous access outside bucket policies (SeaweedFS identities) may reject the
+// policy call; that is reported but not fatal because their own config grants the read.
 func (s *S3) EnsureBuckets(ctx context.Context) error {
 	for _, name := range []string{s.publicBucket, s.privateBucket} {
 		exists, err := s.client.BucketExists(ctx, name)
@@ -72,7 +75,10 @@ func (s *S3) EnsureBuckets(ctx context.Context) error {
 		}
 	}
 	policy := fmt.Sprintf(`{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":["*"]},"Action":["s3:GetObject"],"Resource":["arn:aws:s3:::%s/*"]}]}`, s.publicBucket)
-	return s.client.SetBucketPolicy(ctx, s.publicBucket, policy)
+	if err := s.client.SetBucketPolicy(ctx, s.publicBucket, policy); err != nil {
+		slog.WarnContext(ctx, "public bucket policy not applied; ensure the store grants anonymous read", "error", err)
+	}
+	return nil
 }
 
 func (s *S3) Put(ctx context.Context, b Bucket, key string, data []byte, contentType string) error {

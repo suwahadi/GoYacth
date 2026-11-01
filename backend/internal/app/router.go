@@ -25,18 +25,17 @@ type Modules struct {
 	Webhooks []func(chi.Router)
 }
 
-func NewModules(d *Deps) *Modules {
+func NewModules(d *Deps, s *Services) *Modules {
 	cfg := d.Config
 	sessions := auth.NewSessions(d.Pool, cfg.SessionCookieName, cfg.SessionTTL, cfg.CookieSecure)
 	g := google.New(cfg.GoogleClientID, cfg.GoogleClientSecret, cfg.APIURL.JoinPath("/api/v1/auth/google/callback").String())
 	authSvc := auth.NewService(d.Pool, g, sessions, d.Enqueuer())
-	mediaSvc := media.NewService(d.Pool, d.Store, d.Enqueuer())
 	m := &Modules{
 		Auth:     auth.NewHandler(authSvc, cfg.AppURL),
 		Sessions: sessions,
-		Media:    media.NewHandler(mediaSvc, d.Pool, d.Store),
+		Media:    media.NewHandler(s.Media, d.Pool, d.Store),
 	}
-	registerFeatureModules(d, m, mediaSvc)
+	registerFeatureModules(d, m, s)
 	return m
 }
 
