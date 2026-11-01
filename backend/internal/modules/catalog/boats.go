@@ -54,10 +54,11 @@ func (h *BoatHandler) PublicRoutes(r chi.Router) {
 }
 
 type RateInput struct {
-	RateUnit string `json:"rate_unit"`
-	Price    int64  `json:"price"`
-	MinUnits int32  `json:"min_units"`
-	MaxUnits int32  `json:"max_units"`
+	ID       *uuid.UUID `json:"id,omitempty"`
+	RateUnit string     `json:"rate_unit"`
+	Price    int64      `json:"price"`
+	MinUnits int32      `json:"min_units"`
+	MaxUnits int32      `json:"max_units"`
 }
 
 type BoatRouteInput struct {
@@ -288,7 +289,8 @@ func (h *BoatHandler) loadAdmin(ctx context.Context, q *dbq.Queries, id uuid.UUI
 		return d, err
 	}
 	for _, rt := range rates {
-		d.Rates = append(d.Rates, RateInput{RateUnit: rt.RateUnit, Price: rt.Price, MinUnits: rt.MinUnits, MaxUnits: rt.MaxUnits})
+		id := rt.ID
+		d.Rates = append(d.Rates, RateInput{ID: &id, RateUnit: rt.RateUnit, Price: rt.Price, MinUnits: rt.MinUnits, MaxUnits: rt.MaxUnits})
 	}
 	regions, err := q.ListBoatRegions(ctx, ids)
 	if err != nil {
