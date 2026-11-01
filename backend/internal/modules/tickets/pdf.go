@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"image"
+	"image/draw"
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
@@ -133,7 +134,14 @@ func qrImage(content string, size int) (image.Image, error) {
 	if err != nil {
 		return nil, fmt.Errorf("encode qr: %w", err)
 	}
-	return barcode.Scale(code, size, size)
+	scaled, err := barcode.Scale(code, size, size)
+	if err != nil {
+		return nil, err
+	}
+	// gopdf only embeds 8-bit images; the QR encoder produces 16-bit grayscale.
+	rgba := image.NewRGBA(scaled.Bounds())
+	draw.Draw(rgba, rgba.Bounds(), scaled, scaled.Bounds().Min, draw.Src)
+	return rgba, nil
 }
 
 func (d *doc) bytes() ([]byte, error) { return d.pdf.GetBytesPdfReturnErr() }
