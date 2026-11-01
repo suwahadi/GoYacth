@@ -1,1 +1,143 @@
-{}
+{
+  "title": "My account",
+  "signed_in_as": "Signed in as {{email}}",
+  "tabs": {
+    "label": "Account sections",
+    "bookings": "Bookings",
+    "profile": "Profile"
+  },
+  "bookings": {
+    "title": "My bookings",
+    "number": "Booking",
+    "date": "Date",
+    "boat": "Boat",
+    "status": "Status",
+    "payment": "Payment",
+    "total": "Total",
+    "empty_title": "No bookings yet",
+    "empty_body": "Your trips appear here once you book.",
+    "browse": "Browse boats"
+  },
+  "booking": {
+    "title": "Booking details",
+    "back": "Back to my bookings",
+    "heading": "Booking {{number}}",
+    "hold_until": "Pay before {{time}} or the booking expires.",
+    "cancel_reason": "Reason: {{reason}}",
+    "schedule": "Trip",
+    "mode": "Type",
+    "modes": {
+      "PRIVATE_CHARTER": "Private charter",
+      "DEPARTURE": "Scheduled departure"
+    },
+    "port": "Departure port",
+    "slot": "Spot",
+    "slot_types": {
+      "PRIVATE_AREA": "Private area",
+      "SEAT_POOL": "Shared seats"
+    },
+    "id_masked": "ending in {{last4}}",
+    "guests_locked": "Guest details can only be changed by our team. Contact us if something is wrong.",
+    "price": "Price",
+    "paid": "Paid",
+    "fees_paid": "Payment fees paid",
+    "refunded": "Refunded",
+    "balance_due": "Balance due",
+    "balance_due_at": "Balance due by",
+    "policy": "Cancellation policy",
+    "tier": "{{days}}+ days before departure: {{refund}} refund",
+    "policy_note": "Refunds are calculated from the amount paid, excluding payment fees."
+  },
+  "actions": {
+    "title": "Manage booking",
+    "pay_now": "Pay now",
+    "pay_balance": "Pay balance",
+    "ticket": "E-ticket",
+    "invoice": "Invoice",
+    "request_cancel": "Request cancellation",
+    "request_reschedule": "Request new date",
+    "cancel_unpaid": "Cancel booking"
+  },
+  "pay": {
+    "title": "Choose payment method",
+    "amount_due": "Amount due",
+    "deposit_due": "Deposit due",
+    "fee_note": "Any payment method fee is added on the payment page.",
+    "continue": "Continue to payment"
+  },
+  "cancel_unpaid": {
+    "title": "Cancel this booking?",
+    "body": "The booking has not been paid. Cancelling releases your reservation right away.",
+    "confirm": "Cancel booking",
+    "done": "Booking cancelled."
+  },
+  "request": {
+    "cancel_title": "Request cancellation",
+    "cancel_body": "Our team reviews your request. Any refund follows the cancellation policy of your booking.",
+    "reschedule_title": "Request a new date",
+    "reschedule_body": "Our team checks availability and contacts you. Any price difference is settled separately.",
+    "reschedule_hint": "Tell us your preferred dates and times.",
+    "message": "Message",
+    "send": "Send request",
+    "sent": "Request sent. We will contact you soon."
+  },
+  "payments": {
+    "title": "Payments",
+    "empty": "No payments yet.",
+    "fee": "Includes fee",
+    "kinds": {
+      "FULL": "Full payment",
+      "DEPOSIT": "Deposit",
+      "BALANCE": "Balance"
+    }
+  },
+  "refunds": {
+    "title": "Refunds",
+    "channels": {
+      "PROVIDER": "Back to original payment method",
+      "MANUAL": "Bank transfer"
+    },
+    "completed_at": "Completed {{time}}",
+    "bank_to": "To {{bank}} · {{name}}",
+    "bank_title": "Where should we send your refund?",
+    "bank_hint": "Enter the bank account that should receive the transfer.",
+    "bank_name": "Bank name",
+    "account_name": "Account holder name",
+    "account_number": "Account number",
+    "bank_submit": "Save bank details",
+    "bank_saved": "Bank details saved."
+  },
+  "review": {
+    "title": "Review your trip",
+    "yours": "Your review",
+    "rating_overall": "Overall",
+    "rating_boat": "Boat",
+    "rating_service": "Service",
+    "rating_crew": "Crew",
+    "stars": "{{rating}} / 5",
+    "headline": "Title",
+    "headline_hint": "3 to 120 characters.",
+    "body": "Your review",
+    "body_hint": "At least 10 characters.",
+    "submit": "Submit review",
+    "thanks": "Thank you! Your review will appear after moderation."
+  },
+  "profile": {
+    "title": "Profile",
+    "full_name": "Full name",
+    "email": "Email",
+    "email_hint": "Managed by your Google account.",
+    "phone": "Phone number",
+    "nationality": "Nationality",
+    "language": "Preferred language",
+    "saved": "Profile saved."
+  },
+  "delete": {
+    "title": "Delete account",
+    "body": "Your personal data is removed. Booking and payment records are kept as required by law.",
+    "action": "Delete my account",
+    "confirm_title": "Delete your account?",
+    "confirm_body": "This cannot be undone. You will be signed out.",
+    "confirm": "Delete account"
+  }
+}

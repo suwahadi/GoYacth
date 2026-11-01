@@ -1,1 +1,140 @@
-{}
+{
+  "checkout": {
+    "title": "Checkout",
+    "invalid_title": "Detail perjalanan tidak lengkap",
+    "invalid_body": "Pilih kembali perjalanan, tanggal, dan jumlah tamu Anda.",
+    "unavailable_title": "Perjalanan ini tidak dapat dipesan",
+    "back_to_trip": "Kembali ke perjalanan",
+    "methods_failed": "Metode pembayaran tidak dapat dimuat.",
+    "submit": "Pesan dan bayar",
+    "retry_payment": "Lanjutkan pembayaran",
+    "submit_note": "Harga dihitung ulang saat Anda memesan. Pembayaran baru dikonfirmasi setelah penyedia pembayaran memberi tahu kami.",
+    "created_title": "Booking {{number}} sudah ditahan",
+    "created_body": "Selesaikan pembayaran sebelum masa tahan berakhir. Anda juga bisa membayar nanti dari halaman booking.",
+    "view_booking": "Lihat booking"
+  },
+  "lead": {
+    "title": "Data pemesan",
+    "full_name": "Nama lengkap",
+    "email": "Email",
+    "email_hint": "Dari akun Google Anda. Tidak dapat diubah di sini.",
+    "phone": "Nomor HP",
+    "nationality": "Kewarganegaraan",
+    "id_type": "Jenis identitas",
+    "id_number": "Nomor identitas",
+    "id_hint": "Sesuai yang tertera pada dokumen.",
+    "id_hint_ktp": "16 digit, sesuai yang tertera pada KTP.",
+    "special_request": "Permintaan khusus (opsional)"
+  },
+  "id_types": {
+    "KTP": "KTP",
+    "SIM": "SIM",
+    "PASSPORT": "Paspor",
+    "KITAS": "KITAS/KITAP"
+  },
+  "guests": {
+    "title": "Tamu lainnya",
+    "hint": "Isi data {{count}} tamu lainnya.",
+    "guest": "Tamu {{number}}",
+    "full_name": "Nama lengkap",
+    "phone": "Nomor HP (opsional)"
+  },
+  "payment": {
+    "title": "Pembayaran",
+    "method": "Metode pembayaran",
+    "no_methods": "Saat ini tidak ada metode pembayaran yang tersedia.",
+    "choose_method": "Pilih metode pembayaran.",
+    "no_fee": "Tanpa biaya",
+    "fee": "Biaya {{fee}}",
+    "hold": "bayar dalam {{minutes}} menit",
+    "scheme": "Berapa yang ingin Anda bayar sekarang?",
+    "full": "Bayar lunas",
+    "deposit": "Bayar DP"
+  },
+  "promo": {
+    "label": "Kode promo",
+    "apply": "Pakai",
+    "remove": "Hapus",
+    "applied": "Kode promo {{code}} dipakai"
+  },
+  "consents": {
+    "title": "Persetujuan",
+    "terms": "Saya menyetujui syarat dan ketentuan.",
+    "cancellation": "Saya telah membaca dan menerima kebijakan pembatalan.",
+    "data_processing": "Saya menyetujui pemrosesan data identitas saya untuk manifest penumpang.",
+    "deposit_forfeit": "Saya memahami bahwa DP hangus bila pelunasan tidak dibayar sebelum tenggat.",
+    "read": "Baca"
+  },
+  "summary": {
+    "title": "Perjalanan Anda",
+    "boat": "Kapal",
+    "departs": "Berangkat",
+    "returns": "Kembali",
+    "guests": "Tamu",
+    "deposit": "DP",
+    "method_fee": "Biaya metode pembayaran",
+    "due_now": "Dibayar sekarang",
+    "balance_due_at": "Pelunasan paling lambat",
+    "fee_after_method": "Biaya metode pembayaran tampil setelah Anda memilih metode.",
+    "hold": "Booking Anda ditahan selama {{minutes}} menit selama pembayaran.",
+    "updating": "Memperbarui harga…"
+  },
+  "price": {
+    "discount_code": "{{name}} ({{code}})",
+    "subtotal": "Subtotal",
+    "grand_total": "Total"
+  },
+  "status": {
+    "title": "Status pembayaran",
+    "checking": "Memeriksa pembayaran Anda…",
+    "not_found": "Booking ini tidak ditemukan.",
+    "booking_number": "Nomor booking",
+    "success_title": "Pembayaran diterima",
+    "success_body": "Booking Anda sudah terkonfirmasi. E-tiket telah kami kirim lewat email.",
+    "pending_title": "Menunggu pembayaran",
+    "pending_body": "Selesaikan pembayaran sesuai instruksi di bawah. Halaman ini diperbarui otomatis.",
+    "failed_title": "Pembayaran gagal",
+    "failed_body": "Pembayaran tidak berhasil. Anda dapat mencoba lagi dari halaman booking.",
+    "expired_title": "Waktu pembayaran habis",
+    "expired_body": "Batas waktu pembayaran telah lewat. Buat booking baru atau hubungi kami.",
+    "cancelled_title": "Booking dibatalkan",
+    "cancelled_body": "Booking ini telah dibatalkan.",
+    "auto_refresh": "Memeriksa pembaruan setiap beberapa detik…",
+    "retrying": "Koneksi bermasalah. Mencoba lagi…",
+    "timeout_title": "Masih menunggu",
+    "timeout_body": "Kami belum menerima konfirmasi. Jika Anda sudah membayar, prosesnya bisa memakan beberapa menit. Periksa lagi atau buka booking Anda nanti.",
+    "check_again": "Periksa lagi",
+    "hold_until": "Booking Anda ditahan sampai {{time}}.",
+    "instructions_title": "Cara membayar",
+    "instructions_generic": "Ikuti instruksi dari penyedia pembayaran, lalu kembali ke halaman ini.",
+    "method": "Metode",
+    "amount": "Jumlah",
+    "pay_before": "Bayar sebelum",
+    "va_bank": "Nomor virtual account {{bank}}",
+    "biller_code": "Kode biller: {{code}}",
+    "view_booking": "Lihat booking"
+  },
+  "track": {
+    "title": "Lacak booking",
+    "order_title": "Status booking",
+    "intro": "Masukkan nomor booking dan email yang dipakai saat memesan.",
+    "number_label": "Nomor booking",
+    "number_hint": "Tertera di email konfirmasi Anda.",
+    "email_label": "Email",
+    "submit": "Lacak booking",
+    "booking_number": "Booking {{number}}",
+    "status": "Status booking",
+    "payment_status": "Status pembayaran",
+    "date": "Tanggal",
+    "boat": "Kapal",
+    "route": "Rute",
+    "details_login": "Masuk dengan akun yang dipakai saat memesan untuk melihat detail lengkap."
+  },
+  "verify": {
+    "title": "Verifikasi tiket",
+    "valid": "Tiket valid",
+    "invalid": "Tidak valid",
+    "lead": "Pemesan",
+    "not_found": "Kode tiket ini tidak dikenali."
+  }
+}

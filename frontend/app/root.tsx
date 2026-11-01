@@ -5,6 +5,7 @@ import "./app.css";
 import { ApiError, apiData, readCookie } from "./lib/api";
 import { splitLocale, type Locale } from "./lib/config";
 import { I18nProvider, translate } from "./lib/i18n";
+import { useNonce } from "./lib/nonce";
 import type { Me, PublicSettings, ThemePref } from "./lib/types";
 
 export interface RootData {
@@ -50,6 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const root = useRouteLoaderData("root") as RootData | undefined;
   const locale = root?.locale ?? "en";
   const theme = root?.isAdminPath ? "light" : (root?.theme ?? "light");
+  const nonce = useNonce();
   return (
     <html lang={locale} data-theme={theme}>
       <head>
@@ -62,8 +64,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="min-h-screen antialiased">
         <I18nProvider locale={locale}>{children}</I18nProvider>
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={nonce} />
+        <Scripts nonce={nonce} />
       </body>
     </html>
   );

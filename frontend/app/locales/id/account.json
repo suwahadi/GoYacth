@@ -1,1 +1,143 @@
-{}
+{
+  "title": "Akun saya",
+  "signed_in_as": "Masuk sebagai {{email}}",
+  "tabs": {
+    "label": "Bagian akun",
+    "bookings": "Booking",
+    "profile": "Profil"
+  },
+  "bookings": {
+    "title": "Booking saya",
+    "number": "Booking",
+    "date": "Tanggal",
+    "boat": "Kapal",
+    "status": "Status",
+    "payment": "Pembayaran",
+    "total": "Total",
+    "empty_title": "Belum ada booking",
+    "empty_body": "Perjalanan Anda akan tampil di sini setelah memesan.",
+    "browse": "Lihat kapal"
+  },
+  "booking": {
+    "title": "Detail booking",
+    "back": "Kembali ke booking saya",
+    "heading": "Booking {{number}}",
+    "hold_until": "Bayar sebelum {{time}} atau booking akan kedaluwarsa.",
+    "cancel_reason": "Alasan: {{reason}}",
+    "schedule": "Perjalanan",
+    "mode": "Jenis",
+    "modes": {
+      "PRIVATE_CHARTER": "Sewa privat",
+      "DEPARTURE": "Keberangkatan terjadwal"
+    },
+    "port": "Pelabuhan keberangkatan",
+    "slot": "Tempat",
+    "slot_types": {
+      "PRIVATE_AREA": "Area privat",
+      "SEAT_POOL": "Kursi bersama"
+    },
+    "id_masked": "berakhiran {{last4}}",
+    "guests_locked": "Data tamu hanya dapat diubah oleh tim kami. Hubungi kami bila ada yang salah.",
+    "price": "Harga",
+    "paid": "Dibayar",
+    "fees_paid": "Biaya pembayaran",
+    "refunded": "Dikembalikan",
+    "balance_due": "Sisa tagihan",
+    "balance_due_at": "Pelunasan paling lambat",
+    "policy": "Kebijakan pembatalan",
+    "tier": "{{days}}+ hari sebelum keberangkatan: refund {{refund}}",
+    "policy_note": "Refund dihitung dari jumlah yang sudah dibayar, di luar biaya pembayaran."
+  },
+  "actions": {
+    "title": "Kelola booking",
+    "pay_now": "Bayar sekarang",
+    "pay_balance": "Bayar pelunasan",
+    "ticket": "E-tiket",
+    "invoice": "Invoice",
+    "request_cancel": "Ajukan pembatalan",
+    "request_reschedule": "Ajukan ganti jadwal",
+    "cancel_unpaid": "Batalkan booking"
+  },
+  "pay": {
+    "title": "Pilih metode pembayaran",
+    "amount_due": "Jumlah tagihan",
+    "deposit_due": "DP yang harus dibayar",
+    "fee_note": "Biaya metode pembayaran ditambahkan di halaman pembayaran.",
+    "continue": "Lanjutkan pembayaran"
+  },
+  "cancel_unpaid": {
+    "title": "Batalkan booking ini?",
+    "body": "Booking ini belum dibayar. Pembatalan langsung melepas reservasi Anda.",
+    "confirm": "Batalkan booking",
+    "done": "Booking dibatalkan."
+  },
+  "request": {
+    "cancel_title": "Ajukan pembatalan",
+    "cancel_body": "Tim kami akan meninjau permintaan Anda. Refund mengikuti kebijakan pembatalan booking Anda.",
+    "reschedule_title": "Ajukan jadwal baru",
+    "reschedule_body": "Tim kami akan memeriksa ketersediaan dan menghubungi Anda. Selisih harga diselesaikan terpisah.",
+    "reschedule_hint": "Tuliskan tanggal dan jam yang Anda inginkan.",
+    "message": "Pesan",
+    "send": "Kirim permintaan",
+    "sent": "Permintaan terkirim. Kami akan segera menghubungi Anda."
+  },
+  "payments": {
+    "title": "Pembayaran",
+    "empty": "Belum ada pembayaran.",
+    "fee": "Termasuk biaya",
+    "kinds": {
+      "FULL": "Pelunasan penuh",
+      "DEPOSIT": "DP",
+      "BALANCE": "Pelunasan"
+    }
+  },
+  "refunds": {
+    "title": "Refund",
+    "channels": {
+      "PROVIDER": "Ke metode pembayaran awal",
+      "MANUAL": "Transfer bank"
+    },
+    "completed_at": "Selesai {{time}}",
+    "bank_to": "Ke {{bank}} · {{name}}",
+    "bank_title": "Ke mana refund dikirim?",
+    "bank_hint": "Masukkan rekening bank tujuan transfer.",
+    "bank_name": "Nama bank",
+    "account_name": "Nama pemilik rekening",
+    "account_number": "Nomor rekening",
+    "bank_submit": "Simpan rekening",
+    "bank_saved": "Data rekening disimpan."
+  },
+  "review": {
+    "title": "Ulas perjalanan Anda",
+    "yours": "Ulasan Anda",
+    "rating_overall": "Keseluruhan",
+    "rating_boat": "Kapal",
+    "rating_service": "Layanan",
+    "rating_crew": "Kru",
+    "stars": "{{rating}} / 5",
+    "headline": "Judul",
+    "headline_hint": "3 sampai 120 karakter.",
+    "body": "Ulasan Anda",
+    "body_hint": "Minimal 10 karakter.",
+    "submit": "Kirim ulasan",
+    "thanks": "Terima kasih! Ulasan Anda tampil setelah dimoderasi."
+  },
+  "profile": {
+    "title": "Profil",
+    "full_name": "Nama lengkap",
+    "email": "Email",
+    "email_hint": "Dikelola oleh akun Google Anda.",
+    "phone": "Nomor HP",
+    "nationality": "Kewarganegaraan",
+    "language": "Bahasa pilihan",
+    "saved": "Profil disimpan."
+  },
+  "delete": {
+    "title": "Hapus akun",
+    "body": "Data pribadi Anda dihapus. Catatan booking dan pembayaran tetap disimpan sesuai ketentuan hukum.",
+    "action": "Hapus akun saya",
+    "confirm_title": "Hapus akun Anda?",
+    "confirm_body": "Tindakan ini tidak dapat dibatalkan. Anda akan keluar dari akun.",
+    "confirm": "Hapus akun"
+  }
+}

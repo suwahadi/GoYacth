@@ -1,1 +1,140 @@
-{}
+{
+  "checkout": {
+    "title": "Checkout",
+    "invalid_title": "Trip details are missing",
+    "invalid_body": "Choose your trip, date and number of guests again.",
+    "unavailable_title": "This trip cannot be booked",
+    "back_to_trip": "Back to trip",
+    "methods_failed": "Payment methods could not be loaded.",
+    "submit": "Book and pay",
+    "retry_payment": "Continue to payment",
+    "submit_note": "We recalculate the price when you book. Payment is confirmed only after the payment provider notifies us.",
+    "created_title": "Booking {{number}} is reserved",
+    "created_body": "Complete the payment before the hold expires. You can also pay later from your booking.",
+    "view_booking": "View booking"
+  },
+  "lead": {
+    "title": "Lead guest",
+    "full_name": "Full name",
+    "email": "Email",
+    "email_hint": "From your Google account. It cannot be changed here.",
+    "phone": "Phone number",
+    "nationality": "Nationality",
+    "id_type": "ID type",
+    "id_number": "ID number",
+    "id_hint": "As printed on the document.",
+    "id_hint_ktp": "16 digits, as printed on your KTP.",
+    "special_request": "Special request (optional)"
+  },
+  "id_types": {
+    "KTP": "KTP",
+    "SIM": "SIM (driving licence)",
+    "PASSPORT": "Passport",
+    "KITAS": "KITAS/KITAP"
+  },
+  "guests": {
+    "title": "Other guests",
+    "hint": "Add the details of the {{count}} other guests.",
+    "guest": "Guest {{number}}",
+    "full_name": "Full name",
+    "phone": "Phone (optional)"
+  },
+  "payment": {
+    "title": "Payment",
+    "method": "Payment method",
+    "no_methods": "No payment methods are available right now.",
+    "choose_method": "Choose a payment method.",
+    "no_fee": "No fee",
+    "fee": "Fee {{fee}}",
+    "hold": "pay within {{minutes}} min",
+    "scheme": "How much do you want to pay now?",
+    "full": "Pay in full",
+    "deposit": "Pay a deposit"
+  },
+  "promo": {
+    "label": "Promo code",
+    "apply": "Apply",
+    "remove": "Remove",
+    "applied": "Promo code {{code}} applied"
+  },
+  "consents": {
+    "title": "Agreements",
+    "terms": "I agree to the terms and conditions.",
+    "cancellation": "I have read and accept the cancellation policy.",
+    "data_processing": "I agree to the processing of my identity data for the passenger manifest.",
+    "deposit_forfeit": "I understand the deposit is forfeited if the balance is not paid by the due date.",
+    "read": "Read"
+  },
+  "summary": {
+    "title": "Your trip",
+    "boat": "Boat",
+    "departs": "Departs",
+    "returns": "Returns",
+    "guests": "Guests",
+    "deposit": "Deposit",
+    "method_fee": "Payment method fee",
+    "due_now": "Due now",
+    "balance_due_at": "Balance due by",
+    "fee_after_method": "The payment method fee is shown after you choose a method.",
+    "hold": "Your booking is held for {{minutes}} minutes while you pay.",
+    "updating": "Updating price…"
+  },
+  "price": {
+    "discount_code": "{{name}} ({{code}})",
+    "subtotal": "Subtotal",
+    "grand_total": "Total"
+  },
+  "status": {
+    "title": "Payment status",
+    "checking": "Checking your payment…",
+    "not_found": "We could not find this booking.",
+    "booking_number": "Booking number",
+    "success_title": "Payment received",
+    "success_body": "Your booking is confirmed. We have emailed your e-ticket.",
+    "pending_title": "Waiting for payment",
+    "pending_body": "Complete the payment using the instructions below. This page updates automatically.",
+    "failed_title": "Payment failed",
+    "failed_body": "The payment did not go through. You can try again from your booking.",
+    "expired_title": "Payment expired",
+    "expired_body": "The payment time has run out. Make a new booking or contact us.",
+    "cancelled_title": "Booking cancelled",
+    "cancelled_body": "This booking has been cancelled.",
+    "auto_refresh": "Checking for updates every few seconds…",
+    "retrying": "Connection problem. Retrying…",
+    "timeout_title": "Still waiting",
+    "timeout_body": "We have not received confirmation yet. If you have paid, it can take a few minutes. Check again or open your booking later.",
+    "check_again": "Check again",
+    "hold_until": "Your booking is held until {{time}}.",
+    "instructions_title": "How to pay",
+    "instructions_generic": "Follow the instructions shown by the payment provider, then return to this page.",
+    "method": "Method",
+    "amount": "Amount",
+    "pay_before": "Pay before",
+    "va_bank": "{{bank}} virtual account number",
+    "biller_code": "Biller code: {{code}}",
+    "view_booking": "View booking"
+  },
+  "track": {
+    "title": "Track your booking",
+    "order_title": "Booking status",
+    "intro": "Enter your booking number and the email used for the booking.",
+    "number_label": "Booking number",
+    "number_hint": "Shown in your confirmation email.",
+    "email_label": "Email",
+    "submit": "Track booking",
+    "booking_number": "Booking {{number}}",
+    "status": "Booking status",
+    "payment_status": "Payment status",
+    "date": "Date",
+    "boat": "Boat",
+    "route": "Route",
+    "details_login": "Sign in with the account used for the booking to see all details."
+  },
+  "verify": {
+    "title": "Ticket verification",
+    "valid": "Valid ticket",
+    "invalid": "Not valid",
+    "lead": "Lead guest",
+    "not_found": "This ticket code is not recognised."
+  }
+}
