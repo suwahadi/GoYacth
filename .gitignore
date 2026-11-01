@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+node_modules/
+frontend/build/
+frontend/.react-router/
+backend/bin/
+backend/tmp/
+coverage/
+*.log
+.DS_Store
+backups/

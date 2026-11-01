@@ -1,0 +1,16 @@
+#!/bin/sh
+# Rejects commits that carry AI co-author or attribution trailers.
+# Enable with: git config core.hooksPath .githooks
+
+msg_file="$1"
+ai_pattern='(claude|anthropic|chatgpt|openai|copilot|gemini|cursor|codex|devin|aider)'
+
+if grep -Eiq "^[[:space:]]*co-authored-by:.*${ai_pattern}" "$msg_file" \
+  || grep -Eiq "generated (with|by).*${ai_pattern}" "$msg_file" \
+  || grep -Eiq "noreply@anthropic\.com" "$msg_file"; then
+  echo "Commit rejected: AI co-author or attribution found in commit message." >&2
+  echo "Remove the trailer and commit again." >&2
+  exit 1
+fi
+
+exit 0

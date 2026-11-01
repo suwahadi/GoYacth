@@ -1,0 +1,69 @@
+{
+  "common": {
+    "greeting": "Halo {{name}},",
+    "signoff": "Terima kasih,\nTim GoYacht",
+    "view_booking": "Lihat booking",
+    "booking_number": "Nomor booking",
+    "departure": "Keberangkatan",
+    "boat": "Kapal",
+    "route": "Rute",
+    "guests": "Tamu",
+    "total": "Total",
+    "paid": "Dibayar",
+    "balance": "Sisa tagihan",
+    "balance_deadline": "Tenggat pelunasan",
+    "footer": "Anda menerima email ini karena ada aktivitas pada akun GoYacht Anda."
+  },
+  "welcome": {
+    "subject": "Selamat datang di GoYacht",
+    "body": "Akun Anda sudah siap. Jelajahi kapal kami dan pesan perjalanan Anda berikutnya."
+  },
+  "booking_created": {
+    "subject": "Booking {{number}} menunggu pembayaran",
+    "body": "Booking Anda kami tahan sampai {{deadline}}. Selesaikan pembayaran sebelum waktu itu untuk mengonfirmasinya."
+  },
+  "payment_succeeded": {
+    "subject": "Pembayaran booking {{number}} diterima",
+    "body": "Kami telah menerima pembayaran Anda sebesar {{amount}}."
+  },
+  "booking_confirmed": {
+    "subject": "Booking {{number}} terkonfirmasi",
+    "body": "Perjalanan Anda terkonfirmasi. E-tiket tersedia di akun Anda."
+  },
+  "balance_reminder": {
+    "subject": "Pelunasan booking {{number}}",
+    "body": "Mohon lunasi sisa {{amount}} sebelum {{deadline}}. Booking yang belum lunas dibatalkan otomatis dan DP hangus."
+  },
+  "booking_cancelled": {
+    "subject": "Booking {{number}} dibatalkan",
+    "body": "Booking Anda telah dibatalkan. Alasan: {{reason}}."
+  },
+  "refund": {
+    "subject": "Pembaruan refund booking {{number}}",
+    "body": "Refund Anda sebesar {{amount}} kini berstatus {{status}}."
+  },
+  "trip_reminder": {
+    "subject": "Perjalanan Anda berangkat besok",
+    "body": "Booking {{number}} berangkat pada {{departure}} dari {{port}}. Harap datang 30 menit lebih awal dengan membawa identitas."
+  },
+  "review_request": {
+    "subject": "Bagaimana perjalanan Anda?",
+    "body": "Kami ingin mendengar cerita perjalanan Anda bersama {{boat}}. Ulasan Anda membantu wisatawan lain."
+  },
+  "admin_booking_created": {
+    "subject": "Booking baru {{number}}",
+    "body": "Booking baru dibuat untuk {{boat}} pada {{departure}}."
+  },
+  "admin_payment_received": {
+    "subject": "Pembayaran diterima untuk {{number}}",
+    "body": "Pembayaran sebesar {{amount}} telah diterima."
+  },
+  "admin_request": {
+    "subject": "Permintaan customer untuk {{number}}",
+    "body": "Customer mengajukan permintaan {{type}}."
+  },
+  "admin_exception": {
+    "subject": "Exception pembayaran untuk {{number}}",
+    "body": "Pembayaran {{amount}} masuk untuk booking berstatus {{status}}. Tinjau di antrean exception."
+  }
+}

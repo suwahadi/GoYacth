@@ -1,0 +1,69 @@
+{
+  "common": {
+    "greeting": "Hi {{name}},",
+    "signoff": "Thank you,\nThe GoYacht team",
+    "view_booking": "View booking",
+    "booking_number": "Booking number",
+    "departure": "Departure",
+    "boat": "Boat",
+    "route": "Route",
+    "guests": "Guests",
+    "total": "Total",
+    "paid": "Paid",
+    "balance": "Balance due",
+    "balance_deadline": "Balance deadline",
+    "footer": "You received this email because of activity on your GoYacht account."
+  },
+  "welcome": {
+    "subject": "Welcome to GoYacht",
+    "body": "Your account is ready. Browse our boats and book your next trip on the water."
+  },
+  "booking_created": {
+    "subject": "Booking {{number}} is waiting for payment",
+    "body": "We are holding your booking until {{deadline}}. Complete the payment before then to confirm it."
+  },
+  "payment_succeeded": {
+    "subject": "Payment received for booking {{number}}",
+    "body": "We received your payment of {{amount}}."
+  },
+  "booking_confirmed": {
+    "subject": "Booking {{number}} is confirmed",
+    "body": "Your trip is confirmed. Your e-ticket is available from your account."
+  },
+  "balance_reminder": {
+    "subject": "Balance due for booking {{number}}",
+    "body": "Please pay the remaining {{amount}} before {{deadline}}. Unpaid bookings are cancelled automatically and the deposit is forfeited."
+  },
+  "booking_cancelled": {
+    "subject": "Booking {{number}} was cancelled",
+    "body": "Your booking has been cancelled. Reason: {{reason}}."
+  },
+  "refund": {
+    "subject": "Refund update for booking {{number}}",
+    "body": "Your refund of {{amount}} is now {{status}}."
+  },
+  "trip_reminder": {
+    "subject": "Your trip departs tomorrow",
+    "body": "Booking {{number}} departs on {{departure}} from {{port}}. Please arrive 30 minutes early with your ID."
+  },
+  "review_request": {
+    "subject": "How was your trip?",
+    "body": "We would love to hear about your trip on {{boat}}. Your review helps other travellers."
+  },
+  "admin_booking_created": {
+    "subject": "New booking {{number}}",
+    "body": "A new booking was created for {{boat}} on {{departure}}."
+  },
+  "admin_payment_received": {
+    "subject": "Payment received for {{number}}",
+    "body": "A payment of {{amount}} was received."
+  },
+  "admin_request": {
+    "subject": "Customer request for {{number}}",
+    "body": "The customer submitted a {{type}} request."
+  },
+  "admin_exception": {
+    "subject": "Payment exception for {{number}}",
+    "body": "A payment of {{amount}} arrived for a booking that is {{status}}. Review it in the exception queue."
+  }
+}
