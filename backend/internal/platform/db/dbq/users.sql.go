@@ -66,9 +66,9 @@ WHERE ($1::text IS NULL OR u.role = $1)
 `
 
 type CountUsersParams struct {
-	Role   *string
-	Status *string
-	Search *string
+	Role   *string `json:"role"`
+	Status *string `json:"status"`
+	Search *string `json:"search"`
 }
 
 func (q *Queries) CountUsers(ctx context.Context, arg CountUsersParams) (int64, error) {
@@ -115,29 +115,29 @@ LIMIT $1 OFFSET $2
 `
 
 type ListUsersParams struct {
-	Limit  int32
-	Offset int32
-	Role   *string
-	Status *string
-	Search *string
+	Limit  int32   `json:"limit"`
+	Offset int32   `json:"offset"`
+	Role   *string `json:"role"`
+	Status *string `json:"status"`
+	Search *string `json:"search"`
 }
 
 type ListUsersRow struct {
-	ID              uuid.UUID
-	Provider        string
-	ProviderSubject string
-	Email           string
-	FullName        string
-	AvatarUrl       string
-	Phone           string
-	Nationality     string
-	PreferredLocale string
-	Role            string
-	Status          string
-	LastLoginAt     *time.Time
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	BookingCount    int64
+	ID              uuid.UUID  `json:"id"`
+	Provider        string     `json:"provider"`
+	ProviderSubject string     `json:"provider_subject"`
+	Email           string     `json:"email"`
+	FullName        string     `json:"full_name"`
+	AvatarUrl       string     `json:"avatar_url"`
+	Phone           string     `json:"phone"`
+	Nationality     string     `json:"nationality"`
+	PreferredLocale string     `json:"preferred_locale"`
+	Role            string     `json:"role"`
+	Status          string     `json:"status"`
+	LastLoginAt     *time.Time `json:"last_login_at"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	BookingCount    int64      `json:"booking_count"`
 }
 
 func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]ListUsersRow, error) {
@@ -238,8 +238,8 @@ UPDATE users SET role = $2, updated_at = now() WHERE id = $1 RETURNING id, provi
 `
 
 type SetUserRoleParams struct {
-	ID   uuid.UUID
-	Role string
+	ID   uuid.UUID `json:"id"`
+	Role string    `json:"role"`
 }
 
 func (q *Queries) SetUserRole(ctx context.Context, arg SetUserRoleParams) (User, error) {
@@ -269,8 +269,8 @@ UPDATE users SET status = $2, updated_at = now() WHERE id = $1 RETURNING id, pro
 `
 
 type SetUserStatusParams struct {
-	ID     uuid.UUID
-	Status string
+	ID     uuid.UUID `json:"id"`
+	Status string    `json:"status"`
 }
 
 func (q *Queries) SetUserStatus(ctx context.Context, arg SetUserStatusParams) (User, error) {
@@ -301,11 +301,11 @@ WHERE id = $1 RETURNING id, provider, provider_subject, email, full_name, avatar
 `
 
 type UpdateProfileParams struct {
-	ID              uuid.UUID
-	FullName        string
-	Phone           string
-	Nationality     string
-	PreferredLocale string
+	ID              uuid.UUID `json:"id"`
+	FullName        string    `json:"full_name"`
+	Phone           string    `json:"phone"`
+	Nationality     string    `json:"nationality"`
+	PreferredLocale string    `json:"preferred_locale"`
 }
 
 func (q *Queries) UpdateProfile(ctx context.Context, arg UpdateProfileParams) (User, error) {

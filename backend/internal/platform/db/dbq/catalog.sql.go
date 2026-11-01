@@ -58,12 +58,12 @@ WHERE b.status = 'PUBLISHED'
 `
 
 type CountBoatsPublicParams struct {
-	RegionID   *uuid.UUID
-	CategoryID *uuid.UUID
-	ClassID    *uuid.UUID
-	RouteID    *uuid.UUID
-	MinPax     int32
-	Ids        []uuid.UUID
+	RegionID   *uuid.UUID  `json:"region_id"`
+	CategoryID *uuid.UUID  `json:"category_id"`
+	ClassID    *uuid.UUID  `json:"class_id"`
+	RouteID    *uuid.UUID  `json:"route_id"`
+	MinPax     int32       `json:"min_pax"`
+	Ids        []uuid.UUID `json:"ids"`
 }
 
 func (q *Queries) CountBoatsPublic(ctx context.Context, arg CountBoatsPublicParams) (int64, error) {
@@ -147,8 +147,8 @@ DELETE FROM boat_rates WHERE boat_id = $1 AND NOT (rate_unit = ANY($2::text[]))
 `
 
 type DeleteBoatRatesExceptParams struct {
-	BoatID uuid.UUID
-	Keep   []string
+	BoatID uuid.UUID `json:"boat_id"`
+	Keep   []string  `json:"keep"`
 }
 
 func (q *Queries) DeleteBoatRatesExcept(ctx context.Context, arg DeleteBoatRatesExceptParams) error {
@@ -281,9 +281,9 @@ DELETE FROM slug_redirects WHERE entity_type = $1 AND locale = $2 AND old_slug =
 `
 
 type DeleteSlugRedirectParams struct {
-	EntityType string
-	Locale     string
-	OldSlug    string
+	EntityType string `json:"entity_type"`
+	Locale     string `json:"locale"`
+	OldSlug    string `json:"old_slug"`
 }
 
 func (q *Queries) DeleteSlugRedirect(ctx context.Context, arg DeleteSlugRedirectParams) error {
@@ -297,8 +297,8 @@ SELECT boat_id FROM boat_translations WHERE locale = $1 AND slug = $2
 `
 
 type FindBoatBySlugParams struct {
-	Locale string
-	Slug   string
+	Locale string `json:"locale"`
+	Slug   string `json:"slug"`
 }
 
 // Slug lookup and redirects
@@ -314,8 +314,8 @@ SELECT region_id FROM region_translations WHERE locale = $1 AND slug = $2
 `
 
 type FindRegionBySlugParams struct {
-	Locale string
-	Slug   string
+	Locale string `json:"locale"`
+	Slug   string `json:"slug"`
 }
 
 func (q *Queries) FindRegionBySlug(ctx context.Context, arg FindRegionBySlugParams) (uuid.UUID, error) {
@@ -330,8 +330,8 @@ SELECT route_id FROM route_translations WHERE locale = $1 AND slug = $2
 `
 
 type FindRouteBySlugParams struct {
-	Locale string
-	Slug   string
+	Locale string `json:"locale"`
+	Slug   string `json:"slug"`
 }
 
 func (q *Queries) FindRouteBySlug(ctx context.Context, arg FindRouteBySlugParams) (uuid.UUID, error) {
@@ -346,9 +346,9 @@ SELECT entity_id FROM slug_redirects WHERE entity_type = $1 AND locale = $2 AND 
 `
 
 type FindSlugRedirectParams struct {
-	EntityType string
-	Locale     string
-	OldSlug    string
+	EntityType string `json:"entity_type"`
+	Locale     string `json:"locale"`
+	OldSlug    string `json:"old_slug"`
 }
 
 func (q *Queries) FindSlugRedirect(ctx context.Context, arg FindSlugRedirectParams) (uuid.UUID, error) {
@@ -426,34 +426,34 @@ FROM boats b WHERE b.id = $1
 `
 
 type GetBoatAdminRow struct {
-	ID                      uuid.UUID
-	Code                    string
-	CategoryID              uuid.UUID
-	ClassID                 uuid.UUID
-	Ownership               string
-	PartnerID               *uuid.UUID
-	CommissionType          *string
-	CommissionValue         int64
-	HomePortID              uuid.UUID
-	MaxPassengers           int32
-	LengthCm                *int32
-	BeamCm                  *int32
-	YearBuilt               *int32
-	Cabins                  int32
-	Bathrooms               int32
-	SpeedKnots              *int32
-	CrewCount               int32
-	TurnaroundBufferMinutes int32
-	OperatingStartMinute    int32
-	OperatingEndMinute      int32
-	OvernightAllowed        bool
-	PaymentPolicyID         uuid.UUID
-	CancellationPolicyID    uuid.UUID
-	SortOrder               int32
-	Status                  string
-	CreatedAt               time.Time
-	UpdatedAt               time.Time
-	Translations            json.RawMessage
+	ID                      uuid.UUID       `json:"id"`
+	Code                    string          `json:"code"`
+	CategoryID              uuid.UUID       `json:"category_id"`
+	ClassID                 uuid.UUID       `json:"class_id"`
+	Ownership               string          `json:"ownership"`
+	PartnerID               *uuid.UUID      `json:"partner_id"`
+	CommissionType          *string         `json:"commission_type"`
+	CommissionValue         int64           `json:"commission_value"`
+	HomePortID              uuid.UUID       `json:"home_port_id"`
+	MaxPassengers           int32           `json:"max_passengers"`
+	LengthCm                *int32          `json:"length_cm"`
+	BeamCm                  *int32          `json:"beam_cm"`
+	YearBuilt               *int32          `json:"year_built"`
+	Cabins                  int32           `json:"cabins"`
+	Bathrooms               int32           `json:"bathrooms"`
+	SpeedKnots              *int32          `json:"speed_knots"`
+	CrewCount               int32           `json:"crew_count"`
+	TurnaroundBufferMinutes int32           `json:"turnaround_buffer_minutes"`
+	OperatingStartMinute    int32           `json:"operating_start_minute"`
+	OperatingEndMinute      int32           `json:"operating_end_minute"`
+	OvernightAllowed        bool            `json:"overnight_allowed"`
+	PaymentPolicyID         uuid.UUID       `json:"payment_policy_id"`
+	CancellationPolicyID    uuid.UUID       `json:"cancellation_policy_id"`
+	SortOrder               int32           `json:"sort_order"`
+	Status                  string          `json:"status"`
+	CreatedAt               time.Time       `json:"created_at"`
+	UpdatedAt               time.Time       `json:"updated_at"`
+	Translations            json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) GetBoatAdmin(ctx context.Context, id uuid.UUID) (GetBoatAdminRow, error) {
@@ -497,8 +497,8 @@ SELECT boat_id, route_id, fixed_price, min_duration_minutes FROM boat_routes WHE
 `
 
 type GetBoatRouteParams struct {
-	BoatID  uuid.UUID
-	RouteID uuid.UUID
+	BoatID  uuid.UUID `json:"boat_id"`
+	RouteID uuid.UUID `json:"route_id"`
 }
 
 func (q *Queries) GetBoatRoute(ctx context.Context, arg GetBoatRouteParams) (BoatRoute, error) {
@@ -518,8 +518,8 @@ SELECT boat_id, locale, name, slug, summary, description, seo_title, seo_descrip
 `
 
 type GetBoatTranslationParams struct {
-	BoatID uuid.UUID
-	Locale string
+	BoatID uuid.UUID `json:"boat_id"`
+	Locale string    `json:"locale"`
 }
 
 func (q *Queries) GetBoatTranslation(ctx context.Context, arg GetBoatTranslationParams) (BoatTranslation, error) {
@@ -546,13 +546,13 @@ FROM cancellation_policies p WHERE p.id = $1
 `
 
 type GetCancellationPolicyRow struct {
-	ID           uuid.UUID
-	Name         string
-	Status       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Tiers        json.RawMessage
-	Descriptions json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	Name         string          `json:"name"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Tiers        json.RawMessage `json:"tiers"`
+	Descriptions json.RawMessage `json:"descriptions"`
 }
 
 func (q *Queries) GetCancellationPolicy(ctx context.Context, id uuid.UUID) (GetCancellationPolicyRow, error) {
@@ -642,12 +642,12 @@ FROM regions r WHERE r.id = $1
 `
 
 type GetRegionAdminRow struct {
-	ID           uuid.UUID
-	SortOrder    int32
-	Status       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	SortOrder    int32           `json:"sort_order"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) GetRegionAdmin(ctx context.Context, id uuid.UUID) (GetRegionAdminRow, error) {
@@ -669,8 +669,8 @@ SELECT region_id, locale, name, slug, description, seo_title, seo_description FR
 `
 
 type GetRegionTranslationParams struct {
-	RegionID uuid.UUID
-	Locale   string
+	RegionID uuid.UUID `json:"region_id"`
+	Locale   string    `json:"locale"`
 }
 
 func (q *Queries) GetRegionTranslation(ctx context.Context, arg GetRegionTranslationParams) (RegionTranslation, error) {
@@ -694,15 +694,15 @@ FROM routes r WHERE r.id = $1
 `
 
 type GetRouteAdminRow struct {
-	ID              uuid.UUID
-	RegionID        uuid.UUID
-	DeparturePortID uuid.UUID
-	ReturnPortID    uuid.UUID
-	DurationMinutes int32
-	Status          string
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	Translations    json.RawMessage
+	ID              uuid.UUID       `json:"id"`
+	RegionID        uuid.UUID       `json:"region_id"`
+	DeparturePortID uuid.UUID       `json:"departure_port_id"`
+	ReturnPortID    uuid.UUID       `json:"return_port_id"`
+	DurationMinutes int32           `json:"duration_minutes"`
+	Status          string          `json:"status"`
+	CreatedAt       time.Time       `json:"created_at"`
+	UpdatedAt       time.Time       `json:"updated_at"`
+	Translations    json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) GetRouteAdmin(ctx context.Context, id uuid.UUID) (GetRouteAdminRow, error) {
@@ -727,8 +727,8 @@ SELECT route_id, locale, name, slug, description, seo_title, seo_description FRO
 `
 
 type GetRouteTranslationParams struct {
-	RouteID uuid.UUID
-	Locale  string
+	RouteID uuid.UUID `json:"route_id"`
+	Locale  string    `json:"locale"`
 }
 
 func (q *Queries) GetRouteTranslation(ctx context.Context, arg GetRouteTranslationParams) (RouteTranslation, error) {
@@ -752,14 +752,14 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, boat_id, deck_label, is_sy
 `
 
 type InsertAreaParams struct {
-	BoatID    uuid.UUID
-	DeckLabel string
-	IsSystem  bool
-	MinPax    int32
-	MaxPax    int32
-	BasePrice int64
-	SortOrder int32
-	Status    string
+	BoatID    uuid.UUID `json:"boat_id"`
+	DeckLabel string    `json:"deck_label"`
+	IsSystem  bool      `json:"is_system"`
+	MinPax    int32     `json:"min_pax"`
+	MaxPax    int32     `json:"max_pax"`
+	BasePrice int64     `json:"base_price"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
 }
 
 func (q *Queries) InsertArea(ctx context.Context, arg InsertAreaParams) (Area, error) {
@@ -795,8 +795,8 @@ INSERT INTO area_facilities (area_id, facility_id) VALUES ($1, $2) ON CONFLICT D
 `
 
 type InsertAreaFacilityParams struct {
-	AreaID     uuid.UUID
-	FacilityID uuid.UUID
+	AreaID     uuid.UUID `json:"area_id"`
+	FacilityID uuid.UUID `json:"facility_id"`
 }
 
 func (q *Queries) InsertAreaFacility(ctx context.Context, arg InsertAreaFacilityParams) error {
@@ -813,30 +813,30 @@ RETURNING id, code, category_id, class_id, ownership, partner_id, commission_typ
 `
 
 type InsertBoatParams struct {
-	Code                    string
-	CategoryID              uuid.UUID
-	ClassID                 uuid.UUID
-	Ownership               string
-	PartnerID               *uuid.UUID
-	CommissionType          *string
-	CommissionValue         int64
-	HomePortID              uuid.UUID
-	MaxPassengers           int32
-	LengthCm                *int32
-	BeamCm                  *int32
-	YearBuilt               *int32
-	Cabins                  int32
-	Bathrooms               int32
-	SpeedKnots              *int32
-	CrewCount               int32
-	TurnaroundBufferMinutes int32
-	OperatingStartMinute    int32
-	OperatingEndMinute      int32
-	OvernightAllowed        bool
-	PaymentPolicyID         uuid.UUID
-	CancellationPolicyID    uuid.UUID
-	SortOrder               int32
-	Status                  string
+	Code                    string     `json:"code"`
+	CategoryID              uuid.UUID  `json:"category_id"`
+	ClassID                 uuid.UUID  `json:"class_id"`
+	Ownership               string     `json:"ownership"`
+	PartnerID               *uuid.UUID `json:"partner_id"`
+	CommissionType          *string    `json:"commission_type"`
+	CommissionValue         int64      `json:"commission_value"`
+	HomePortID              uuid.UUID  `json:"home_port_id"`
+	MaxPassengers           int32      `json:"max_passengers"`
+	LengthCm                *int32     `json:"length_cm"`
+	BeamCm                  *int32     `json:"beam_cm"`
+	YearBuilt               *int32     `json:"year_built"`
+	Cabins                  int32      `json:"cabins"`
+	Bathrooms               int32      `json:"bathrooms"`
+	SpeedKnots              *int32     `json:"speed_knots"`
+	CrewCount               int32      `json:"crew_count"`
+	TurnaroundBufferMinutes int32      `json:"turnaround_buffer_minutes"`
+	OperatingStartMinute    int32      `json:"operating_start_minute"`
+	OperatingEndMinute      int32      `json:"operating_end_minute"`
+	OvernightAllowed        bool       `json:"overnight_allowed"`
+	PaymentPolicyID         uuid.UUID  `json:"payment_policy_id"`
+	CancellationPolicyID    uuid.UUID  `json:"cancellation_policy_id"`
+	SortOrder               int32      `json:"sort_order"`
+	Status                  string     `json:"status"`
 }
 
 func (q *Queries) InsertBoat(ctx context.Context, arg InsertBoatParams) (Boat, error) {
@@ -904,8 +904,8 @@ INSERT INTO boat_facilities (boat_id, facility_id) VALUES ($1, $2) ON CONFLICT D
 `
 
 type InsertBoatFacilityParams struct {
-	BoatID     uuid.UUID
-	FacilityID uuid.UUID
+	BoatID     uuid.UUID `json:"boat_id"`
+	FacilityID uuid.UUID `json:"facility_id"`
 }
 
 func (q *Queries) InsertBoatFacility(ctx context.Context, arg InsertBoatFacilityParams) error {
@@ -918,8 +918,8 @@ INSERT INTO boat_regions (boat_id, region_id) VALUES ($1, $2) ON CONFLICT DO NOT
 `
 
 type InsertBoatRegionParams struct {
-	BoatID   uuid.UUID
-	RegionID uuid.UUID
+	BoatID   uuid.UUID `json:"boat_id"`
+	RegionID uuid.UUID `json:"region_id"`
 }
 
 func (q *Queries) InsertBoatRegion(ctx context.Context, arg InsertBoatRegionParams) error {
@@ -932,10 +932,10 @@ INSERT INTO boat_routes (boat_id, route_id, fixed_price, min_duration_minutes) V
 `
 
 type InsertBoatRouteParams struct {
-	BoatID             uuid.UUID
-	RouteID            uuid.UUID
-	FixedPrice         *int64
-	MinDurationMinutes *int32
+	BoatID             uuid.UUID `json:"boat_id"`
+	RouteID            uuid.UUID `json:"route_id"`
+	FixedPrice         *int64    `json:"fixed_price"`
+	MinDurationMinutes *int32    `json:"min_duration_minutes"`
 }
 
 func (q *Queries) InsertBoatRoute(ctx context.Context, arg InsertBoatRouteParams) error {
@@ -953,8 +953,8 @@ INSERT INTO cancellation_policies (name, status) VALUES ($1, $2) RETURNING id, n
 `
 
 type InsertCancellationPolicyParams struct {
-	Name   string
-	Status string
+	Name   string `json:"name"`
+	Status string `json:"status"`
 }
 
 func (q *Queries) InsertCancellationPolicy(ctx context.Context, arg InsertCancellationPolicyParams) (CancellationPolicy, error) {
@@ -975,9 +975,9 @@ INSERT INTO cancellation_policy_tiers (policy_id, min_days_before, refund_basis_
 `
 
 type InsertCancellationTierParams struct {
-	PolicyID          uuid.UUID
-	MinDaysBefore     int32
-	RefundBasisPoints int32
+	PolicyID          uuid.UUID `json:"policy_id"`
+	MinDaysBefore     int32     `json:"min_days_before"`
+	RefundBasisPoints int32     `json:"refund_basis_points"`
 }
 
 func (q *Queries) InsertCancellationTier(ctx context.Context, arg InsertCancellationTierParams) error {
@@ -990,8 +990,8 @@ INSERT INTO boat_categories (sort_order, status) VALUES ($1, $2) RETURNING id, s
 `
 
 type InsertCategoryParams struct {
-	SortOrder int32
-	Status    string
+	SortOrder int32  `json:"sort_order"`
+	Status    string `json:"status"`
 }
 
 func (q *Queries) InsertCategory(ctx context.Context, arg InsertCategoryParams) (BoatCategory, error) {
@@ -1011,8 +1011,8 @@ INSERT INTO boat_classes (sort_order, status) VALUES ($1, $2) RETURNING id, sort
 `
 
 type InsertClassParams struct {
-	SortOrder int32
-	Status    string
+	SortOrder int32  `json:"sort_order"`
+	Status    string `json:"status"`
 }
 
 func (q *Queries) InsertClass(ctx context.Context, arg InsertClassParams) (BoatClass, error) {
@@ -1032,8 +1032,8 @@ INSERT INTO facilities (icon, sort_order) VALUES ($1, $2) RETURNING id, icon, so
 `
 
 type InsertFacilityParams struct {
-	Icon      string
-	SortOrder int32
+	Icon      string `json:"icon"`
+	SortOrder int32  `json:"sort_order"`
 }
 
 func (q *Queries) InsertFacility(ctx context.Context, arg InsertFacilityParams) (Facility, error) {
@@ -1054,15 +1054,15 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, name, contact_name, em
 `
 
 type InsertPartnerParams struct {
-	Name              string
-	ContactName       string
-	Email             string
-	Phone             string
-	BankName          string
-	BankAccountName   string
-	BankAccountNumber string
-	Notes             string
-	Status            string
+	Name              string `json:"name"`
+	ContactName       string `json:"contact_name"`
+	Email             string `json:"email"`
+	Phone             string `json:"phone"`
+	BankName          string `json:"bank_name"`
+	BankAccountName   string `json:"bank_account_name"`
+	BankAccountNumber string `json:"bank_account_number"`
+	Notes             string `json:"notes"`
+	Status            string `json:"status"`
 }
 
 func (q *Queries) InsertPartner(ctx context.Context, arg InsertPartnerParams) (Partner, error) {
@@ -1100,12 +1100,12 @@ INSERT INTO payment_policies (name, type, deposit_type, deposit_value, balance_d
 `
 
 type InsertPaymentPolicyParams struct {
-	Name           string
-	Type           string
-	DepositType    *string
-	DepositValue   int64
-	BalanceDueDays int32
-	Status         string
+	Name           string  `json:"name"`
+	Type           string  `json:"type"`
+	DepositType    *string `json:"deposit_type"`
+	DepositValue   int64   `json:"deposit_value"`
+	BalanceDueDays int32   `json:"balance_due_days"`
+	Status         string  `json:"status"`
 }
 
 func (q *Queries) InsertPaymentPolicy(ctx context.Context, arg InsertPaymentPolicyParams) (PaymentPolicy, error) {
@@ -1137,12 +1137,12 @@ INSERT INTO ports (region_id, address, latitude, longitude, timezone, status) VA
 `
 
 type InsertPortParams struct {
-	RegionID  uuid.UUID
-	Address   string
-	Latitude  *float64
-	Longitude *float64
-	Timezone  string
-	Status    string
+	RegionID  uuid.UUID `json:"region_id"`
+	Address   string    `json:"address"`
+	Latitude  *float64  `json:"latitude"`
+	Longitude *float64  `json:"longitude"`
+	Timezone  string    `json:"timezone"`
+	Status    string    `json:"status"`
 }
 
 func (q *Queries) InsertPort(ctx context.Context, arg InsertPortParams) (Port, error) {
@@ -1174,8 +1174,8 @@ INSERT INTO regions (sort_order, status) VALUES ($1, $2) RETURNING id, sort_orde
 `
 
 type InsertRegionParams struct {
-	SortOrder int32
-	Status    string
+	SortOrder int32  `json:"sort_order"`
+	Status    string `json:"status"`
 }
 
 func (q *Queries) InsertRegion(ctx context.Context, arg InsertRegionParams) (Region, error) {
@@ -1196,11 +1196,11 @@ INSERT INTO routes (region_id, departure_port_id, return_port_id, duration_minut
 `
 
 type InsertRouteParams struct {
-	RegionID        uuid.UUID
-	DeparturePortID uuid.UUID
-	ReturnPortID    uuid.UUID
-	DurationMinutes int32
-	Status          string
+	RegionID        uuid.UUID `json:"region_id"`
+	DeparturePortID uuid.UUID `json:"departure_port_id"`
+	ReturnPortID    uuid.UUID `json:"return_port_id"`
+	DurationMinutes int32     `json:"duration_minutes"`
+	Status          string    `json:"status"`
 }
 
 func (q *Queries) InsertRoute(ctx context.Context, arg InsertRouteParams) (Route, error) {
@@ -1230,10 +1230,10 @@ INSERT INTO route_stops (route_id, sort_order, latitude, longitude) VALUES ($1, 
 `
 
 type InsertRouteStopParams struct {
-	RouteID   uuid.UUID
-	SortOrder int32
-	Latitude  *float64
-	Longitude *float64
+	RouteID   uuid.UUID `json:"route_id"`
+	SortOrder int32     `json:"sort_order"`
+	Latitude  *float64  `json:"latitude"`
+	Longitude *float64  `json:"longitude"`
 }
 
 func (q *Queries) InsertRouteStop(ctx context.Context, arg InsertRouteStopParams) (uuid.UUID, error) {
@@ -1254,10 +1254,10 @@ ON CONFLICT (entity_type, locale, old_slug) DO UPDATE SET entity_id = EXCLUDED.e
 `
 
 type InsertSlugRedirectParams struct {
-	EntityType string
-	Locale     string
-	OldSlug    string
-	EntityID   uuid.UUID
+	EntityType string    `json:"entity_type"`
+	Locale     string    `json:"locale"`
+	OldSlug    string    `json:"old_slug"`
+	EntityID   uuid.UUID `json:"entity_id"`
 }
 
 func (q *Queries) InsertSlugRedirect(ctx context.Context, arg InsertSlugRedirectParams) error {
@@ -1278,19 +1278,19 @@ FROM areas a WHERE a.boat_id = ANY($1::uuid[]) ORDER BY a.boat_id, a.sort_order,
 `
 
 type ListAreasRow struct {
-	ID           uuid.UUID
-	BoatID       uuid.UUID
-	DeckLabel    string
-	IsSystem     bool
-	MinPax       int32
-	MaxPax       int32
-	BasePrice    int64
-	SortOrder    int32
-	Status       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
-	FacilityIds  []uuid.UUID
+	ID           uuid.UUID       `json:"id"`
+	BoatID       uuid.UUID       `json:"boat_id"`
+	DeckLabel    string          `json:"deck_label"`
+	IsSystem     bool            `json:"is_system"`
+	MinPax       int32           `json:"min_pax"`
+	MaxPax       int32           `json:"max_pax"`
+	BasePrice    int64           `json:"base_price"`
+	SortOrder    int32           `json:"sort_order"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
+	FacilityIds  []uuid.UUID     `json:"facility_ids"`
 }
 
 // Areas
@@ -1446,40 +1446,40 @@ LIMIT $1 OFFSET $2
 `
 
 type ListBoatsAdminParams struct {
-	Limit  int32
-	Offset int32
-	Status *string
+	Limit  int32   `json:"limit"`
+	Offset int32   `json:"offset"`
+	Status *string `json:"status"`
 }
 
 type ListBoatsAdminRow struct {
-	ID                      uuid.UUID
-	Code                    string
-	CategoryID              uuid.UUID
-	ClassID                 uuid.UUID
-	Ownership               string
-	PartnerID               *uuid.UUID
-	CommissionType          *string
-	CommissionValue         int64
-	HomePortID              uuid.UUID
-	MaxPassengers           int32
-	LengthCm                *int32
-	BeamCm                  *int32
-	YearBuilt               *int32
-	Cabins                  int32
-	Bathrooms               int32
-	SpeedKnots              *int32
-	CrewCount               int32
-	TurnaroundBufferMinutes int32
-	OperatingStartMinute    int32
-	OperatingEndMinute      int32
-	OvernightAllowed        bool
-	PaymentPolicyID         uuid.UUID
-	CancellationPolicyID    uuid.UUID
-	SortOrder               int32
-	Status                  string
-	CreatedAt               time.Time
-	UpdatedAt               time.Time
-	Translations            json.RawMessage
+	ID                      uuid.UUID       `json:"id"`
+	Code                    string          `json:"code"`
+	CategoryID              uuid.UUID       `json:"category_id"`
+	ClassID                 uuid.UUID       `json:"class_id"`
+	Ownership               string          `json:"ownership"`
+	PartnerID               *uuid.UUID      `json:"partner_id"`
+	CommissionType          *string         `json:"commission_type"`
+	CommissionValue         int64           `json:"commission_value"`
+	HomePortID              uuid.UUID       `json:"home_port_id"`
+	MaxPassengers           int32           `json:"max_passengers"`
+	LengthCm                *int32          `json:"length_cm"`
+	BeamCm                  *int32          `json:"beam_cm"`
+	YearBuilt               *int32          `json:"year_built"`
+	Cabins                  int32           `json:"cabins"`
+	Bathrooms               int32           `json:"bathrooms"`
+	SpeedKnots              *int32          `json:"speed_knots"`
+	CrewCount               int32           `json:"crew_count"`
+	TurnaroundBufferMinutes int32           `json:"turnaround_buffer_minutes"`
+	OperatingStartMinute    int32           `json:"operating_start_minute"`
+	OperatingEndMinute      int32           `json:"operating_end_minute"`
+	OvernightAllowed        bool            `json:"overnight_allowed"`
+	PaymentPolicyID         uuid.UUID       `json:"payment_policy_id"`
+	CancellationPolicyID    uuid.UUID       `json:"cancellation_policy_id"`
+	SortOrder               int32           `json:"sort_order"`
+	Status                  string          `json:"status"`
+	CreatedAt               time.Time       `json:"created_at"`
+	UpdatedAt               time.Time       `json:"updated_at"`
+	Translations            json.RawMessage `json:"translations"`
 }
 
 // Boats
@@ -1556,36 +1556,36 @@ LIMIT $1 OFFSET $2
 `
 
 type ListBoatsPublicParams struct {
-	Limit      int32
-	Offset     int32
-	Locale     string
-	RegionID   *uuid.UUID
-	CategoryID *uuid.UUID
-	ClassID    *uuid.UUID
-	RouteID    *uuid.UUID
-	MinPax     int32
-	Ids        []uuid.UUID
+	Limit      int32       `json:"limit"`
+	Offset     int32       `json:"offset"`
+	Locale     string      `json:"locale"`
+	RegionID   *uuid.UUID  `json:"region_id"`
+	CategoryID *uuid.UUID  `json:"category_id"`
+	ClassID    *uuid.UUID  `json:"class_id"`
+	RouteID    *uuid.UUID  `json:"route_id"`
+	MinPax     int32       `json:"min_pax"`
+	Ids        []uuid.UUID `json:"ids"`
 }
 
 type ListBoatsPublicRow struct {
-	ID               uuid.UUID
-	Code             string
-	CategoryID       uuid.UUID
-	ClassID          uuid.UUID
-	HomePortID       uuid.UUID
-	MaxPassengers    int32
-	LengthCm         *int32
-	Cabins           int32
-	OvernightAllowed bool
-	SortOrder        int32
-	Locale           string
-	Name             string
-	Slug             string
-	Summary          string
-	FromPrice        int64
-	FromUnit         string
-	Rating           float64
-	ReviewCount      int64
+	ID               uuid.UUID `json:"id"`
+	Code             string    `json:"code"`
+	CategoryID       uuid.UUID `json:"category_id"`
+	ClassID          uuid.UUID `json:"class_id"`
+	HomePortID       uuid.UUID `json:"home_port_id"`
+	MaxPassengers    int32     `json:"max_passengers"`
+	LengthCm         *int32    `json:"length_cm"`
+	Cabins           int32     `json:"cabins"`
+	OvernightAllowed bool      `json:"overnight_allowed"`
+	SortOrder        int32     `json:"sort_order"`
+	Locale           string    `json:"locale"`
+	Name             string    `json:"name"`
+	Slug             string    `json:"slug"`
+	Summary          string    `json:"summary"`
+	FromPrice        int64     `json:"from_price"`
+	FromUnit         string    `json:"from_unit"`
+	Rating           float64   `json:"rating"`
+	ReviewCount      int64     `json:"review_count"`
 }
 
 func (q *Queries) ListBoatsPublic(ctx context.Context, arg ListBoatsPublicParams) ([]ListBoatsPublicRow, error) {
@@ -1645,13 +1645,13 @@ FROM cancellation_policies p ORDER BY p.created_at
 `
 
 type ListCancellationPoliciesRow struct {
-	ID           uuid.UUID
-	Name         string
-	Status       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Tiers        json.RawMessage
-	Descriptions json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	Name         string          `json:"name"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Tiers        json.RawMessage `json:"tiers"`
+	Descriptions json.RawMessage `json:"descriptions"`
 }
 
 func (q *Queries) ListCancellationPolicies(ctx context.Context) ([]ListCancellationPoliciesRow, error) {
@@ -1689,11 +1689,11 @@ FROM boat_categories c ORDER BY c.sort_order, c.created_at
 `
 
 type ListCategoriesRow struct {
-	ID           uuid.UUID
-	SortOrder    int32
-	Status       string
-	CreatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	SortOrder    int32           `json:"sort_order"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 // Simple translated master data (categories, classes, facilities)
@@ -1729,11 +1729,11 @@ FROM boat_classes c ORDER BY c.sort_order, c.created_at
 `
 
 type ListClassesRow struct {
-	ID           uuid.UUID
-	SortOrder    int32
-	Status       string
-	CreatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	SortOrder    int32           `json:"sort_order"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) ListClasses(ctx context.Context) ([]ListClassesRow, error) {
@@ -1768,11 +1768,11 @@ FROM facilities f ORDER BY f.sort_order, f.created_at
 `
 
 type ListFacilitiesRow struct {
-	ID           uuid.UUID
-	Icon         string
-	SortOrder    int32
-	CreatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	Icon         string          `json:"icon"`
+	SortOrder    int32           `json:"sort_order"`
+	CreatedAt    time.Time       `json:"created_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) ListFacilities(ctx context.Context) ([]ListFacilitiesRow, error) {
@@ -1883,16 +1883,16 @@ FROM ports p ORDER BY p.created_at
 `
 
 type ListPortsRow struct {
-	ID           uuid.UUID
-	RegionID     uuid.UUID
-	Address      string
-	Latitude     *float64
-	Longitude    *float64
-	Timezone     string
-	Status       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	RegionID     uuid.UUID       `json:"region_id"`
+	Address      string          `json:"address"`
+	Latitude     *float64        `json:"latitude"`
+	Longitude    *float64        `json:"longitude"`
+	Timezone     string          `json:"timezone"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 // Ports
@@ -1934,12 +1934,12 @@ FROM regions r ORDER BY r.sort_order, r.created_at
 `
 
 type ListRegionsAdminRow struct {
-	ID           uuid.UUID
-	SortOrder    int32
-	Status       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	SortOrder    int32           `json:"sort_order"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 // Regions
@@ -1982,14 +1982,14 @@ ORDER BY r.sort_order, t.name
 `
 
 type ListRegionsPublicRow struct {
-	ID             uuid.UUID
-	SortOrder      int32
-	Locale         string
-	Name           string
-	Slug           string
-	Description    string
-	SeoTitle       string
-	SeoDescription string
+	ID             uuid.UUID `json:"id"`
+	SortOrder      int32     `json:"sort_order"`
+	Locale         string    `json:"locale"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Description    string    `json:"description"`
+	SeoTitle       string    `json:"seo_title"`
+	SeoDescription string    `json:"seo_description"`
 }
 
 func (q *Queries) ListRegionsPublic(ctx context.Context, locale string) ([]ListRegionsPublicRow, error) {
@@ -2027,12 +2027,12 @@ FROM route_stops s WHERE s.route_id = ANY($1::uuid[]) ORDER BY s.route_id, s.sor
 `
 
 type ListRouteStopsRow struct {
-	ID           uuid.UUID
-	RouteID      uuid.UUID
-	SortOrder    int32
-	Latitude     *float64
-	Longitude    *float64
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	RouteID      uuid.UUID       `json:"route_id"`
+	SortOrder    int32           `json:"sort_order"`
+	Latitude     *float64        `json:"latitude"`
+	Longitude    *float64        `json:"longitude"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) ListRouteStops(ctx context.Context, routeIds []uuid.UUID) ([]ListRouteStopsRow, error) {
@@ -2069,15 +2069,15 @@ FROM routes r ORDER BY r.created_at
 `
 
 type ListRoutesAdminRow struct {
-	ID              uuid.UUID
-	RegionID        uuid.UUID
-	DeparturePortID uuid.UUID
-	ReturnPortID    uuid.UUID
-	DurationMinutes int32
-	Status          string
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	Translations    json.RawMessage
+	ID              uuid.UUID       `json:"id"`
+	RegionID        uuid.UUID       `json:"region_id"`
+	DeparturePortID uuid.UUID       `json:"departure_port_id"`
+	ReturnPortID    uuid.UUID       `json:"return_port_id"`
+	DurationMinutes int32           `json:"duration_minutes"`
+	Status          string          `json:"status"`
+	CreatedAt       time.Time       `json:"created_at"`
+	UpdatedAt       time.Time       `json:"updated_at"`
+	Translations    json.RawMessage `json:"translations"`
 }
 
 // Routes
@@ -2124,22 +2124,22 @@ ORDER BY t.name
 `
 
 type ListRoutesPublicParams struct {
-	Locale   string
-	RegionID *uuid.UUID
+	Locale   string     `json:"locale"`
+	RegionID *uuid.UUID `json:"region_id"`
 }
 
 type ListRoutesPublicRow struct {
-	ID              uuid.UUID
-	RegionID        uuid.UUID
-	DeparturePortID uuid.UUID
-	ReturnPortID    uuid.UUID
-	DurationMinutes int32
-	Locale          string
-	Name            string
-	Slug            string
-	Description     string
-	SeoTitle        string
-	SeoDescription  string
+	ID              uuid.UUID `json:"id"`
+	RegionID        uuid.UUID `json:"region_id"`
+	DeparturePortID uuid.UUID `json:"departure_port_id"`
+	ReturnPortID    uuid.UUID `json:"return_port_id"`
+	DurationMinutes int32     `json:"duration_minutes"`
+	Locale          string    `json:"locale"`
+	Name            string    `json:"name"`
+	Slug            string    `json:"slug"`
+	Description     string    `json:"description"`
+	SeoTitle        string    `json:"seo_title"`
+	SeoDescription  string    `json:"seo_description"`
 }
 
 func (q *Queries) ListRoutesPublic(ctx context.Context, arg ListRoutesPublicParams) ([]ListRoutesPublicRow, error) {
@@ -2188,10 +2188,10 @@ SELECT 'page', t.locale, t.slug, p.updated_at FROM pages p JOIN page_translation
 `
 
 type ListSitemapEntriesRow struct {
-	Kind      string
-	Locale    string
-	Slug      string
-	UpdatedAt time.Time
+	Kind      string    `json:"kind"`
+	Locale    string    `json:"locale"`
+	Slug      string    `json:"slug"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // Sitemap
@@ -2264,8 +2264,8 @@ UPDATE areas SET status = $2, updated_at = now() WHERE boat_id = $1 AND is_syste
 `
 
 type SetSystemAreaStatusParams struct {
-	BoatID uuid.UUID
-	Status string
+	BoatID uuid.UUID `json:"boat_id"`
+	Status string    `json:"status"`
 }
 
 func (q *Queries) SetSystemAreaStatus(ctx context.Context, arg SetSystemAreaStatusParams) error {
@@ -2279,13 +2279,13 @@ WHERE id = $1 RETURNING id, boat_id, deck_label, is_system, min_pax, max_pax, ba
 `
 
 type UpdateAreaParams struct {
-	ID        uuid.UUID
-	DeckLabel string
-	MinPax    int32
-	MaxPax    int32
-	BasePrice int64
-	SortOrder int32
-	Status    string
+	ID        uuid.UUID `json:"id"`
+	DeckLabel string    `json:"deck_label"`
+	MinPax    int32     `json:"min_pax"`
+	MaxPax    int32     `json:"max_pax"`
+	BasePrice int64     `json:"base_price"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
 }
 
 func (q *Queries) UpdateArea(ctx context.Context, arg UpdateAreaParams) (Area, error) {
@@ -2324,31 +2324,31 @@ WHERE id = $1 RETURNING id, code, category_id, class_id, ownership, partner_id, 
 `
 
 type UpdateBoatParams struct {
-	ID                      uuid.UUID
-	Code                    string
-	CategoryID              uuid.UUID
-	ClassID                 uuid.UUID
-	Ownership               string
-	PartnerID               *uuid.UUID
-	CommissionType          *string
-	CommissionValue         int64
-	HomePortID              uuid.UUID
-	MaxPassengers           int32
-	LengthCm                *int32
-	BeamCm                  *int32
-	YearBuilt               *int32
-	Cabins                  int32
-	Bathrooms               int32
-	SpeedKnots              *int32
-	CrewCount               int32
-	TurnaroundBufferMinutes int32
-	OperatingStartMinute    int32
-	OperatingEndMinute      int32
-	OvernightAllowed        bool
-	PaymentPolicyID         uuid.UUID
-	CancellationPolicyID    uuid.UUID
-	SortOrder               int32
-	Status                  string
+	ID                      uuid.UUID  `json:"id"`
+	Code                    string     `json:"code"`
+	CategoryID              uuid.UUID  `json:"category_id"`
+	ClassID                 uuid.UUID  `json:"class_id"`
+	Ownership               string     `json:"ownership"`
+	PartnerID               *uuid.UUID `json:"partner_id"`
+	CommissionType          *string    `json:"commission_type"`
+	CommissionValue         int64      `json:"commission_value"`
+	HomePortID              uuid.UUID  `json:"home_port_id"`
+	MaxPassengers           int32      `json:"max_passengers"`
+	LengthCm                *int32     `json:"length_cm"`
+	BeamCm                  *int32     `json:"beam_cm"`
+	YearBuilt               *int32     `json:"year_built"`
+	Cabins                  int32      `json:"cabins"`
+	Bathrooms               int32      `json:"bathrooms"`
+	SpeedKnots              *int32     `json:"speed_knots"`
+	CrewCount               int32      `json:"crew_count"`
+	TurnaroundBufferMinutes int32      `json:"turnaround_buffer_minutes"`
+	OperatingStartMinute    int32      `json:"operating_start_minute"`
+	OperatingEndMinute      int32      `json:"operating_end_minute"`
+	OvernightAllowed        bool       `json:"overnight_allowed"`
+	PaymentPolicyID         uuid.UUID  `json:"payment_policy_id"`
+	CancellationPolicyID    uuid.UUID  `json:"cancellation_policy_id"`
+	SortOrder               int32      `json:"sort_order"`
+	Status                  string     `json:"status"`
 }
 
 func (q *Queries) UpdateBoat(ctx context.Context, arg UpdateBoatParams) (Boat, error) {
@@ -2417,9 +2417,9 @@ UPDATE cancellation_policies SET name = $2, status = $3, updated_at = now() WHER
 `
 
 type UpdateCancellationPolicyParams struct {
-	ID     uuid.UUID
-	Name   string
-	Status string
+	ID     uuid.UUID `json:"id"`
+	Name   string    `json:"name"`
+	Status string    `json:"status"`
 }
 
 func (q *Queries) UpdateCancellationPolicy(ctx context.Context, arg UpdateCancellationPolicyParams) (CancellationPolicy, error) {
@@ -2440,9 +2440,9 @@ UPDATE boat_categories SET sort_order = $2, status = $3 WHERE id = $1 RETURNING 
 `
 
 type UpdateCategoryParams struct {
-	ID        uuid.UUID
-	SortOrder int32
-	Status    string
+	ID        uuid.UUID `json:"id"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
 }
 
 func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (BoatCategory, error) {
@@ -2462,9 +2462,9 @@ UPDATE boat_classes SET sort_order = $2, status = $3 WHERE id = $1 RETURNING id,
 `
 
 type UpdateClassParams struct {
-	ID        uuid.UUID
-	SortOrder int32
-	Status    string
+	ID        uuid.UUID `json:"id"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
 }
 
 func (q *Queries) UpdateClass(ctx context.Context, arg UpdateClassParams) (BoatClass, error) {
@@ -2484,9 +2484,9 @@ UPDATE facilities SET icon = $2, sort_order = $3 WHERE id = $1 RETURNING id, ico
 `
 
 type UpdateFacilityParams struct {
-	ID        uuid.UUID
-	Icon      string
-	SortOrder int32
+	ID        uuid.UUID `json:"id"`
+	Icon      string    `json:"icon"`
+	SortOrder int32     `json:"sort_order"`
 }
 
 func (q *Queries) UpdateFacility(ctx context.Context, arg UpdateFacilityParams) (Facility, error) {
@@ -2508,16 +2508,16 @@ WHERE id = $1 RETURNING id, name, contact_name, email, phone, bank_name, bank_ac
 `
 
 type UpdatePartnerParams struct {
-	ID                uuid.UUID
-	Name              string
-	ContactName       string
-	Email             string
-	Phone             string
-	BankName          string
-	BankAccountName   string
-	BankAccountNumber string
-	Notes             string
-	Status            string
+	ID                uuid.UUID `json:"id"`
+	Name              string    `json:"name"`
+	ContactName       string    `json:"contact_name"`
+	Email             string    `json:"email"`
+	Phone             string    `json:"phone"`
+	BankName          string    `json:"bank_name"`
+	BankAccountName   string    `json:"bank_account_name"`
+	BankAccountNumber string    `json:"bank_account_number"`
+	Notes             string    `json:"notes"`
+	Status            string    `json:"status"`
 }
 
 func (q *Queries) UpdatePartner(ctx context.Context, arg UpdatePartnerParams) (Partner, error) {
@@ -2557,13 +2557,13 @@ WHERE id = $1 RETURNING id, name, type, deposit_type, deposit_value, balance_due
 `
 
 type UpdatePaymentPolicyParams struct {
-	ID             uuid.UUID
-	Name           string
-	Type           string
-	DepositType    *string
-	DepositValue   int64
-	BalanceDueDays int32
-	Status         string
+	ID             uuid.UUID `json:"id"`
+	Name           string    `json:"name"`
+	Type           string    `json:"type"`
+	DepositType    *string   `json:"deposit_type"`
+	DepositValue   int64     `json:"deposit_value"`
+	BalanceDueDays int32     `json:"balance_due_days"`
+	Status         string    `json:"status"`
 }
 
 func (q *Queries) UpdatePaymentPolicy(ctx context.Context, arg UpdatePaymentPolicyParams) (PaymentPolicy, error) {
@@ -2597,13 +2597,13 @@ WHERE id = $1 RETURNING id, region_id, address, latitude, longitude, timezone, s
 `
 
 type UpdatePortParams struct {
-	ID        uuid.UUID
-	RegionID  uuid.UUID
-	Address   string
-	Latitude  *float64
-	Longitude *float64
-	Timezone  string
-	Status    string
+	ID        uuid.UUID `json:"id"`
+	RegionID  uuid.UUID `json:"region_id"`
+	Address   string    `json:"address"`
+	Latitude  *float64  `json:"latitude"`
+	Longitude *float64  `json:"longitude"`
+	Timezone  string    `json:"timezone"`
+	Status    string    `json:"status"`
 }
 
 func (q *Queries) UpdatePort(ctx context.Context, arg UpdatePortParams) (Port, error) {
@@ -2636,9 +2636,9 @@ UPDATE regions SET sort_order = $2, status = $3, updated_at = now() WHERE id = $
 `
 
 type UpdateRegionParams struct {
-	ID        uuid.UUID
-	SortOrder int32
-	Status    string
+	ID        uuid.UUID `json:"id"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
 }
 
 func (q *Queries) UpdateRegion(ctx context.Context, arg UpdateRegionParams) (Region, error) {
@@ -2660,12 +2660,12 @@ WHERE id = $1 RETURNING id, region_id, departure_port_id, return_port_id, durati
 `
 
 type UpdateRouteParams struct {
-	ID              uuid.UUID
-	RegionID        uuid.UUID
-	DeparturePortID uuid.UUID
-	ReturnPortID    uuid.UUID
-	DurationMinutes int32
-	Status          string
+	ID              uuid.UUID `json:"id"`
+	RegionID        uuid.UUID `json:"region_id"`
+	DeparturePortID uuid.UUID `json:"departure_port_id"`
+	ReturnPortID    uuid.UUID `json:"return_port_id"`
+	DurationMinutes int32     `json:"duration_minutes"`
+	Status          string    `json:"status"`
 }
 
 func (q *Queries) UpdateRoute(ctx context.Context, arg UpdateRouteParams) (Route, error) {
@@ -2697,10 +2697,10 @@ ON CONFLICT (area_id, locale) DO UPDATE SET name = EXCLUDED.name, description = 
 `
 
 type UpsertAreaTranslationParams struct {
-	AreaID      uuid.UUID
-	Locale      string
-	Name        string
-	Description string
+	AreaID      uuid.UUID `json:"area_id"`
+	Locale      string    `json:"locale"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
 }
 
 func (q *Queries) UpsertAreaTranslation(ctx context.Context, arg UpsertAreaTranslationParams) error {
@@ -2719,11 +2719,11 @@ ON CONFLICT (boat_id, rate_unit) DO UPDATE SET price = EXCLUDED.price, min_units
 `
 
 type UpsertBoatRateParams struct {
-	BoatID   uuid.UUID
-	RateUnit string
-	Price    int64
-	MinUnits int32
-	MaxUnits int32
+	BoatID   uuid.UUID `json:"boat_id"`
+	RateUnit string    `json:"rate_unit"`
+	Price    int64     `json:"price"`
+	MinUnits int32     `json:"min_units"`
+	MaxUnits int32     `json:"max_units"`
 }
 
 func (q *Queries) UpsertBoatRate(ctx context.Context, arg UpsertBoatRateParams) error {
@@ -2745,14 +2745,14 @@ ON CONFLICT (boat_id, locale) DO UPDATE SET name = EXCLUDED.name, slug = EXCLUDE
 `
 
 type UpsertBoatTranslationParams struct {
-	BoatID         uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Summary        string
-	Description    string
-	SeoTitle       string
-	SeoDescription string
+	BoatID         uuid.UUID `json:"boat_id"`
+	Locale         string    `json:"locale"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Summary        string    `json:"summary"`
+	Description    string    `json:"description"`
+	SeoTitle       string    `json:"seo_title"`
+	SeoDescription string    `json:"seo_description"`
 }
 
 func (q *Queries) UpsertBoatTranslation(ctx context.Context, arg UpsertBoatTranslationParams) error {
@@ -2775,9 +2775,9 @@ ON CONFLICT (policy_id, locale) DO UPDATE SET description = EXCLUDED.description
 `
 
 type UpsertCancellationPolicyTranslationParams struct {
-	PolicyID    uuid.UUID
-	Locale      string
-	Description string
+	PolicyID    uuid.UUID `json:"policy_id"`
+	Locale      string    `json:"locale"`
+	Description string    `json:"description"`
 }
 
 func (q *Queries) UpsertCancellationPolicyTranslation(ctx context.Context, arg UpsertCancellationPolicyTranslationParams) error {
@@ -2791,10 +2791,10 @@ ON CONFLICT (category_id, locale) DO UPDATE SET name = EXCLUDED.name, slug = EXC
 `
 
 type UpsertCategoryTranslationParams struct {
-	CategoryID uuid.UUID
-	Locale     string
-	Name       string
-	Slug       string
+	CategoryID uuid.UUID `json:"category_id"`
+	Locale     string    `json:"locale"`
+	Name       string    `json:"name"`
+	Slug       string    `json:"slug"`
 }
 
 func (q *Queries) UpsertCategoryTranslation(ctx context.Context, arg UpsertCategoryTranslationParams) error {
@@ -2813,10 +2813,10 @@ ON CONFLICT (class_id, locale) DO UPDATE SET name = EXCLUDED.name, slug = EXCLUD
 `
 
 type UpsertClassTranslationParams struct {
-	ClassID uuid.UUID
-	Locale  string
-	Name    string
-	Slug    string
+	ClassID uuid.UUID `json:"class_id"`
+	Locale  string    `json:"locale"`
+	Name    string    `json:"name"`
+	Slug    string    `json:"slug"`
 }
 
 func (q *Queries) UpsertClassTranslation(ctx context.Context, arg UpsertClassTranslationParams) error {
@@ -2835,9 +2835,9 @@ ON CONFLICT (facility_id, locale) DO UPDATE SET name = EXCLUDED.name
 `
 
 type UpsertFacilityTranslationParams struct {
-	FacilityID uuid.UUID
-	Locale     string
-	Name       string
+	FacilityID uuid.UUID `json:"facility_id"`
+	Locale     string    `json:"locale"`
+	Name       string    `json:"name"`
 }
 
 func (q *Queries) UpsertFacilityTranslation(ctx context.Context, arg UpsertFacilityTranslationParams) error {
@@ -2851,9 +2851,9 @@ ON CONFLICT (port_id, locale) DO UPDATE SET name = EXCLUDED.name
 `
 
 type UpsertPortTranslationParams struct {
-	PortID uuid.UUID
-	Locale string
-	Name   string
+	PortID uuid.UUID `json:"port_id"`
+	Locale string    `json:"locale"`
+	Name   string    `json:"name"`
 }
 
 func (q *Queries) UpsertPortTranslation(ctx context.Context, arg UpsertPortTranslationParams) error {
@@ -2869,13 +2869,13 @@ ON CONFLICT (region_id, locale) DO UPDATE SET name = EXCLUDED.name, slug = EXCLU
 `
 
 type UpsertRegionTranslationParams struct {
-	RegionID       uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Description    string
-	SeoTitle       string
-	SeoDescription string
+	RegionID       uuid.UUID `json:"region_id"`
+	Locale         string    `json:"locale"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Description    string    `json:"description"`
+	SeoTitle       string    `json:"seo_title"`
+	SeoDescription string    `json:"seo_description"`
 }
 
 func (q *Queries) UpsertRegionTranslation(ctx context.Context, arg UpsertRegionTranslationParams) error {
@@ -2897,10 +2897,10 @@ ON CONFLICT (stop_id, locale) DO UPDATE SET name = EXCLUDED.name, activity = EXC
 `
 
 type UpsertRouteStopTranslationParams struct {
-	StopID   uuid.UUID
-	Locale   string
-	Name     string
-	Activity string
+	StopID   uuid.UUID `json:"stop_id"`
+	Locale   string    `json:"locale"`
+	Name     string    `json:"name"`
+	Activity string    `json:"activity"`
 }
 
 func (q *Queries) UpsertRouteStopTranslation(ctx context.Context, arg UpsertRouteStopTranslationParams) error {
@@ -2921,13 +2921,13 @@ ON CONFLICT (route_id, locale) DO UPDATE SET name = EXCLUDED.name, slug = EXCLUD
 `
 
 type UpsertRouteTranslationParams struct {
-	RouteID        uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Description    string
-	SeoTitle       string
-	SeoDescription string
+	RouteID        uuid.UUID `json:"route_id"`
+	Locale         string    `json:"locale"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Description    string    `json:"description"`
+	SeoTitle       string    `json:"seo_title"`
+	SeoDescription string    `json:"seo_description"`
 }
 
 func (q *Queries) UpsertRouteTranslation(ctx context.Context, arg UpsertRouteTranslationParams) error {

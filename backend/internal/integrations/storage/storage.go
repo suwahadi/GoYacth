@@ -101,7 +101,7 @@ func (s *S3) Get(ctx context.Context, b Bucket, key string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer obj.Close()
+	defer func() { _ = obj.Close() }()
 	var buf bytes.Buffer
 	if _, err := buf.ReadFrom(obj); err != nil {
 		return nil, err

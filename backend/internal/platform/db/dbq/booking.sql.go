@@ -32,10 +32,10 @@ WHERE id = $1 RETURNING id, public_id, booking_number, invoice_number, user_id, 
 `
 
 type CancelBookingRowParams struct {
-	ID              uuid.UUID
-	CancelType      *string
-	CancelReason    string
-	ForfeitedAmount int64
+	ID              uuid.UUID `json:"id"`
+	CancelType      *string   `json:"cancel_type"`
+	CancelReason    string    `json:"cancel_reason"`
+	ForfeitedAmount int64     `json:"forfeited_amount"`
 }
 
 func (q *Queries) CancelBookingRow(ctx context.Context, arg CancelBookingRowParams) (Booking, error) {
@@ -102,8 +102,8 @@ UPDATE departures SET status = 'CANCELLED', cancel_reason = $2, updated_at = now
 `
 
 type CancelDepartureParams struct {
-	ID           uuid.UUID
-	CancelReason string
+	ID           uuid.UUID `json:"id"`
+	CancelReason string    `json:"cancel_reason"`
 }
 
 func (q *Queries) CancelDeparture(ctx context.Context, arg CancelDepartureParams) (Departure, error) {
@@ -159,15 +159,15 @@ WHERE ($1::text IS NULL OR b.status = $1)
 `
 
 type CountBookingsAdminParams struct {
-	Status         *string
-	PaymentStatus  *string
-	BoatID         *uuid.UUID
-	DepartureID    *uuid.UUID
-	UserID         *uuid.UUID
-	FromTime       *time.Time
-	ToTime         *time.Time
-	Search         *string
-	ExceptionsOnly bool
+	Status         *string    `json:"status"`
+	PaymentStatus  *string    `json:"payment_status"`
+	BoatID         *uuid.UUID `json:"boat_id"`
+	DepartureID    *uuid.UUID `json:"departure_id"`
+	UserID         *uuid.UUID `json:"user_id"`
+	FromTime       *time.Time `json:"from_time"`
+	ToTime         *time.Time `json:"to_time"`
+	Search         *string    `json:"search"`
+	ExceptionsOnly bool       `json:"exceptions_only"`
 }
 
 func (q *Queries) CountBookingsAdmin(ctx context.Context, arg CountBookingsAdminParams) (int64, error) {
@@ -265,8 +265,8 @@ DELETE FROM package_offerings WHERE package_id = $1 AND NOT (id = ANY($2::uuid[]
 `
 
 type DeletePackageOfferingsExceptParams struct {
-	PackageID uuid.UUID
-	Keep      []uuid.UUID
+	PackageID uuid.UUID   `json:"package_id"`
+	Keep      []uuid.UUID `json:"keep"`
 }
 
 func (q *Queries) DeletePackageOfferingsExcept(ctx context.Context, arg DeletePackageOfferingsExceptParams) error {
@@ -303,8 +303,8 @@ SELECT package_id FROM package_translations WHERE locale = $1 AND slug = $2
 `
 
 type FindPackageBySlugParams struct {
-	Locale string
-	Slug   string
+	Locale string `json:"locale"`
+	Slug   string `json:"slug"`
 }
 
 func (q *Queries) FindPackageBySlug(ctx context.Context, arg FindPackageBySlugParams) (uuid.UUID, error) {
@@ -341,8 +341,8 @@ SELECT id, boat_id, rate_unit, price, min_units, max_units FROM boat_rates WHERE
 `
 
 type GetBoatRateParams struct {
-	BoatID   uuid.UUID
-	RateUnit string
+	BoatID   uuid.UUID `json:"boat_id"`
+	RateUnit string    `json:"rate_unit"`
 }
 
 // Pricing inputs
@@ -688,23 +688,23 @@ FROM packages p WHERE p.id = $1
 `
 
 type GetPackageAdminRow struct {
-	ID                   uuid.UUID
-	Mode                 string
-	RouteID              *uuid.UUID
-	DurationMinutes      *int32
-	DepartureID          *uuid.UUID
-	MinPax               int32
-	MaxPax               int32
-	ValidFrom            time.Time
-	ValidUntil           time.Time
-	BookingCutoffHours   int32
-	PaymentPolicyID      uuid.UUID
-	CancellationPolicyID uuid.UUID
-	SortOrder            int32
-	Status               string
-	CreatedAt            time.Time
-	UpdatedAt            time.Time
-	Translations         json.RawMessage
+	ID                   uuid.UUID       `json:"id"`
+	Mode                 string          `json:"mode"`
+	RouteID              *uuid.UUID      `json:"route_id"`
+	DurationMinutes      *int32          `json:"duration_minutes"`
+	DepartureID          *uuid.UUID      `json:"departure_id"`
+	MinPax               int32           `json:"min_pax"`
+	MaxPax               int32           `json:"max_pax"`
+	ValidFrom            time.Time       `json:"valid_from"`
+	ValidUntil           time.Time       `json:"valid_until"`
+	BookingCutoffHours   int32           `json:"booking_cutoff_hours"`
+	PaymentPolicyID      uuid.UUID       `json:"payment_policy_id"`
+	CancellationPolicyID uuid.UUID       `json:"cancellation_policy_id"`
+	SortOrder            int32           `json:"sort_order"`
+	Status               string          `json:"status"`
+	CreatedAt            time.Time       `json:"created_at"`
+	UpdatedAt            time.Time       `json:"updated_at"`
+	Translations         json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) GetPackageAdmin(ctx context.Context, id uuid.UUID) (GetPackageAdminRow, error) {
@@ -755,8 +755,8 @@ SELECT package_id, locale, name, slug, summary, description, inclusions, exclusi
 `
 
 type GetPackageTranslationParams struct {
-	PackageID uuid.UUID
-	Locale    string
+	PackageID uuid.UUID `json:"package_id"`
+	Locale    string    `json:"locale"`
 }
 
 func (q *Queries) GetPackageTranslation(ctx context.Context, arg GetPackageTranslationParams) (PackageTranslation, error) {
@@ -831,16 +831,16 @@ VALUES ($1, $2, tstzrange($9::timestamptz, $10::timestamptz, '[)'), $3, $4, $5, 
 `
 
 type InsertAreaReservationParams struct {
-	AreaID      uuid.UUID
-	BoatID      uuid.UUID
-	Kind        string
-	BookingID   *uuid.UUID
-	DepartureID *uuid.UUID
-	BlockID     *uuid.UUID
-	Status      string
-	ExpiresAt   *time.Time
-	StartsAt    time.Time
-	EndsAt      time.Time
+	AreaID      uuid.UUID  `json:"area_id"`
+	BoatID      uuid.UUID  `json:"boat_id"`
+	Kind        string     `json:"kind"`
+	BookingID   *uuid.UUID `json:"booking_id"`
+	DepartureID *uuid.UUID `json:"departure_id"`
+	BlockID     *uuid.UUID `json:"block_id"`
+	Status      string     `json:"status"`
+	ExpiresAt   *time.Time `json:"expires_at"`
+	StartsAt    time.Time  `json:"starts_at"`
+	EndsAt      time.Time  `json:"ends_at"`
 }
 
 func (q *Queries) InsertAreaReservation(ctx context.Context, arg InsertAreaReservationParams) error {
@@ -864,13 +864,13 @@ INSERT INTO boat_blocks (boat_id, area_id, kind, starts_at, ends_at, reason, cre
 `
 
 type InsertBoatBlockParams struct {
-	BoatID    uuid.UUID
-	AreaID    *uuid.UUID
-	Kind      string
-	StartsAt  time.Time
-	EndsAt    time.Time
-	Reason    string
-	CreatedBy *uuid.UUID
+	BoatID    uuid.UUID  `json:"boat_id"`
+	AreaID    *uuid.UUID `json:"area_id"`
+	Kind      string     `json:"kind"`
+	StartsAt  time.Time  `json:"starts_at"`
+	EndsAt    time.Time  `json:"ends_at"`
+	Reason    string     `json:"reason"`
+	CreatedBy *uuid.UUID `json:"created_by"`
 }
 
 func (q *Queries) InsertBoatBlock(ctx context.Context, arg InsertBoatBlockParams) (BoatBlock, error) {
@@ -908,35 +908,35 @@ RETURNING id, public_id, booking_number, invoice_number, user_id, mode, package_
 `
 
 type InsertBookingParams struct {
-	BookingNumber   string
-	UserID          uuid.UUID
-	Mode            string
-	PackageID       *uuid.UUID
-	BoatID          uuid.UUID
-	RouteID         uuid.UUID
-	DepartureID     *uuid.UUID
-	DepartureSlotID *uuid.UUID
-	IsPrivateSlot   bool
-	StartsAt        time.Time
-	EndsAt          time.Time
-	Timezone        string
-	Pax             int32
-	PaymentScheme   string
-	Subtotal        int64
-	GrandTotal      int64
-	DepositAmount   int64
-	HoldExpiresAt   *time.Time
-	BalanceDueAt    *time.Time
-	Snapshot        json.RawMessage
-	Consents        json.RawMessage
-	LeadFullName    string
-	LeadEmail       string
-	LeadPhone       string
-	LeadNationality string
-	SpecialRequest  string
-	Locale          string
-	VerifyToken     string
-	CreatedByAdmin  *uuid.UUID
+	BookingNumber   string          `json:"booking_number"`
+	UserID          uuid.UUID       `json:"user_id"`
+	Mode            string          `json:"mode"`
+	PackageID       *uuid.UUID      `json:"package_id"`
+	BoatID          uuid.UUID       `json:"boat_id"`
+	RouteID         uuid.UUID       `json:"route_id"`
+	DepartureID     *uuid.UUID      `json:"departure_id"`
+	DepartureSlotID *uuid.UUID      `json:"departure_slot_id"`
+	IsPrivateSlot   bool            `json:"is_private_slot"`
+	StartsAt        time.Time       `json:"starts_at"`
+	EndsAt          time.Time       `json:"ends_at"`
+	Timezone        string          `json:"timezone"`
+	Pax             int32           `json:"pax"`
+	PaymentScheme   string          `json:"payment_scheme"`
+	Subtotal        int64           `json:"subtotal"`
+	GrandTotal      int64           `json:"grand_total"`
+	DepositAmount   int64           `json:"deposit_amount"`
+	HoldExpiresAt   *time.Time      `json:"hold_expires_at"`
+	BalanceDueAt    *time.Time      `json:"balance_due_at"`
+	Snapshot        json.RawMessage `json:"snapshot"`
+	Consents        json.RawMessage `json:"consents"`
+	LeadFullName    string          `json:"lead_full_name"`
+	LeadEmail       string          `json:"lead_email"`
+	LeadPhone       string          `json:"lead_phone"`
+	LeadNationality string          `json:"lead_nationality"`
+	SpecialRequest  string          `json:"special_request"`
+	Locale          string          `json:"locale"`
+	VerifyToken     string          `json:"verify_token"`
+	CreatedByAdmin  *uuid.UUID      `json:"created_by_admin"`
 }
 
 // Bookings
@@ -1029,10 +1029,10 @@ INSERT INTO booking_guests (booking_id, sort_order, full_name, phone) VALUES ($1
 `
 
 type InsertBookingGuestParams struct {
-	BookingID uuid.UUID
-	SortOrder int32
-	FullName  string
-	Phone     string
+	BookingID uuid.UUID `json:"booking_id"`
+	SortOrder int32     `json:"sort_order"`
+	FullName  string    `json:"full_name"`
+	Phone     string    `json:"phone"`
 }
 
 func (q *Queries) InsertBookingGuest(ctx context.Context, arg InsertBookingGuestParams) error {
@@ -1050,11 +1050,11 @@ INSERT INTO booking_identities (booking_id, id_type, ciphertext, key_id, last4) 
 `
 
 type InsertBookingIdentityParams struct {
-	BookingID  uuid.UUID
-	IDType     string
-	Ciphertext []byte
-	KeyID      *string
-	Last4      string
+	BookingID  uuid.UUID `json:"booking_id"`
+	IDType     string    `json:"id_type"`
+	Ciphertext []byte    `json:"ciphertext"`
+	KeyID      *string   `json:"key_id"`
+	Last4      string    `json:"last4"`
 }
 
 func (q *Queries) InsertBookingIdentity(ctx context.Context, arg InsertBookingIdentityParams) error {
@@ -1074,12 +1074,12 @@ INSERT INTO departures (boat_id, route_id, departs_at, returns_at, booking_close
 `
 
 type InsertDepartureParams struct {
-	BoatID          uuid.UUID
-	RouteID         uuid.UUID
-	DepartsAt       time.Time
-	ReturnsAt       time.Time
-	BookingClosesAt time.Time
-	CreatedBy       *uuid.UUID
+	BoatID          uuid.UUID  `json:"boat_id"`
+	RouteID         uuid.UUID  `json:"route_id"`
+	DepartsAt       time.Time  `json:"departs_at"`
+	ReturnsAt       time.Time  `json:"returns_at"`
+	BookingClosesAt time.Time  `json:"booking_closes_at"`
+	CreatedBy       *uuid.UUID `json:"created_by"`
 }
 
 // Departures
@@ -1114,13 +1114,13 @@ INSERT INTO departure_slots (departure_id, slot_type, price, seat_capacity, min_
 `
 
 type InsertDepartureSlotParams struct {
-	DepartureID  uuid.UUID
-	SlotType     string
-	Price        int64
-	SeatCapacity *int32
-	MinPax       int32
-	MaxPax       int32
-	SortOrder    int32
+	DepartureID  uuid.UUID `json:"departure_id"`
+	SlotType     string    `json:"slot_type"`
+	Price        int64     `json:"price"`
+	SeatCapacity *int32    `json:"seat_capacity"`
+	MinPax       int32     `json:"min_pax"`
+	MaxPax       int32     `json:"max_pax"`
+	SortOrder    int32     `json:"sort_order"`
 }
 
 func (q *Queries) InsertDepartureSlot(ctx context.Context, arg InsertDepartureSlotParams) (DepartureSlot, error) {
@@ -1153,9 +1153,9 @@ INSERT INTO departure_slot_areas (departure_id, slot_id, area_id) VALUES ($1, $2
 `
 
 type InsertDepartureSlotAreaParams struct {
-	DepartureID uuid.UUID
-	SlotID      uuid.UUID
-	AreaID      uuid.UUID
+	DepartureID uuid.UUID `json:"departure_id"`
+	SlotID      uuid.UUID `json:"slot_id"`
+	AreaID      uuid.UUID `json:"area_id"`
 }
 
 func (q *Queries) InsertDepartureSlotArea(ctx context.Context, arg InsertDepartureSlotAreaParams) error {
@@ -1170,19 +1170,19 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id, mo
 `
 
 type InsertPackageParams struct {
-	Mode                 string
-	RouteID              *uuid.UUID
-	DurationMinutes      *int32
-	DepartureID          *uuid.UUID
-	MinPax               int32
-	MaxPax               int32
-	ValidFrom            time.Time
-	ValidUntil           time.Time
-	BookingCutoffHours   int32
-	PaymentPolicyID      uuid.UUID
-	CancellationPolicyID uuid.UUID
-	SortOrder            int32
-	Status               string
+	Mode                 string     `json:"mode"`
+	RouteID              *uuid.UUID `json:"route_id"`
+	DurationMinutes      *int32     `json:"duration_minutes"`
+	DepartureID          *uuid.UUID `json:"departure_id"`
+	MinPax               int32      `json:"min_pax"`
+	MaxPax               int32      `json:"max_pax"`
+	ValidFrom            time.Time  `json:"valid_from"`
+	ValidUntil           time.Time  `json:"valid_until"`
+	BookingCutoffHours   int32      `json:"booking_cutoff_hours"`
+	PaymentPolicyID      uuid.UUID  `json:"payment_policy_id"`
+	CancellationPolicyID uuid.UUID  `json:"cancellation_policy_id"`
+	SortOrder            int32      `json:"sort_order"`
+	Status               string     `json:"status"`
 }
 
 func (q *Queries) InsertPackage(ctx context.Context, arg InsertPackageParams) (Package, error) {
@@ -1228,10 +1228,10 @@ INSERT INTO package_offerings (package_id, boat_id, departure_slot_id, price) VA
 `
 
 type InsertPackageOfferingParams struct {
-	PackageID       uuid.UUID
-	BoatID          uuid.UUID
-	DepartureSlotID *uuid.UUID
-	Price           int64
+	PackageID       uuid.UUID  `json:"package_id"`
+	BoatID          uuid.UUID  `json:"boat_id"`
+	DepartureSlotID *uuid.UUID `json:"departure_slot_id"`
+	Price           int64      `json:"price"`
 }
 
 func (q *Queries) InsertPackageOffering(ctx context.Context, arg InsertPackageOfferingParams) (PackageOffering, error) {
@@ -1258,12 +1258,12 @@ INSERT INTO price_overrides (boat_rate_id, package_offering_id, rule_type, on_da
 `
 
 type InsertPriceOverrideParams struct {
-	BoatRateID        *uuid.UUID
-	PackageOfferingID *uuid.UUID
-	RuleType          string
-	OnDate            *time.Time
-	SeasonID          *uuid.UUID
-	Price             int64
+	BoatRateID        *uuid.UUID `json:"boat_rate_id"`
+	PackageOfferingID *uuid.UUID `json:"package_offering_id"`
+	RuleType          string     `json:"rule_type"`
+	OnDate            *time.Time `json:"on_date"`
+	SeasonID          *uuid.UUID `json:"season_id"`
+	Price             int64      `json:"price"`
 }
 
 func (q *Queries) InsertPriceOverride(ctx context.Context, arg InsertPriceOverrideParams) (PriceOverride, error) {
@@ -1295,19 +1295,19 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id, na
 `
 
 type InsertPromotionParams struct {
-	Name          string
-	Code          *string
-	IsAutomatic   bool
-	DiscountType  string
-	DiscountValue int64
-	BoatID        *uuid.UUID
-	PackageID     *uuid.UUID
-	BookingMode   *string
-	MinSubtotal   int64
-	StartsAt      time.Time
-	EndsAt        time.Time
-	Quota         *int32
-	Status        string
+	Name          string     `json:"name"`
+	Code          *string    `json:"code"`
+	IsAutomatic   bool       `json:"is_automatic"`
+	DiscountType  string     `json:"discount_type"`
+	DiscountValue int64      `json:"discount_value"`
+	BoatID        *uuid.UUID `json:"boat_id"`
+	PackageID     *uuid.UUID `json:"package_id"`
+	BookingMode   *string    `json:"booking_mode"`
+	MinSubtotal   int64      `json:"min_subtotal"`
+	StartsAt      time.Time  `json:"starts_at"`
+	EndsAt        time.Time  `json:"ends_at"`
+	Quota         *int32     `json:"quota"`
+	Status        string     `json:"status"`
 }
 
 func (q *Queries) InsertPromotion(ctx context.Context, arg InsertPromotionParams) (Promotion, error) {
@@ -1354,8 +1354,8 @@ INSERT INTO promotion_redemptions (promotion_id, booking_id, status) VALUES ($1,
 `
 
 type InsertPromotionRedemptionParams struct {
-	PromotionID uuid.UUID
-	BookingID   uuid.UUID
+	PromotionID uuid.UUID `json:"promotion_id"`
+	BookingID   uuid.UUID `json:"booking_id"`
 }
 
 func (q *Queries) InsertPromotionRedemption(ctx context.Context, arg InsertPromotionRedemptionParams) error {
@@ -1368,10 +1368,10 @@ INSERT INTO seasons (name, kind, starts_on, ends_on) VALUES ($1, $2, $3, $4) RET
 `
 
 type InsertSeasonParams struct {
-	Name     string
-	Kind     string
-	StartsOn time.Time
-	EndsOn   time.Time
+	Name     string    `json:"name"`
+	Kind     string    `json:"kind"`
+	StartsOn time.Time `json:"starts_on"`
+	EndsOn   time.Time `json:"ends_on"`
 }
 
 func (q *Queries) InsertSeason(ctx context.Context, arg InsertSeasonParams) (Season, error) {
@@ -1398,11 +1398,11 @@ INSERT INTO tax_lines (code, basis_points, includes_previous_lines, sort_order, 
 `
 
 type InsertTaxLineParams struct {
-	Code                  string
-	BasisPoints           int32
-	IncludesPreviousLines bool
-	SortOrder             int32
-	Status                string
+	Code                  string `json:"code"`
+	BasisPoints           int32  `json:"basis_points"`
+	IncludesPreviousLines bool   `json:"includes_previous_lines"`
+	SortOrder             int32  `json:"sort_order"`
+	Status                string `json:"status"`
 }
 
 func (q *Queries) InsertTaxLine(ctx context.Context, arg InsertTaxLineParams) (TaxLine, error) {
@@ -1504,15 +1504,15 @@ FROM tax_lines t WHERE t.status = 'ACTIVE' ORDER BY t.sort_order, t.created_at
 `
 
 type ListActiveTaxLinesRow struct {
-	ID                    uuid.UUID
-	Code                  string
-	BasisPoints           int32
-	IncludesPreviousLines bool
-	SortOrder             int32
-	Status                string
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
-	Names                 json.RawMessage
+	ID                    uuid.UUID       `json:"id"`
+	Code                  string          `json:"code"`
+	BasisPoints           int32           `json:"basis_points"`
+	IncludesPreviousLines bool            `json:"includes_previous_lines"`
+	SortOrder             int32           `json:"sort_order"`
+	Status                string          `json:"status"`
+	CreatedAt             time.Time       `json:"created_at"`
+	UpdatedAt             time.Time       `json:"updated_at"`
+	Names                 json.RawMessage `json:"names"`
 }
 
 func (q *Queries) ListActiveTaxLines(ctx context.Context) ([]ListActiveTaxLinesRow, error) {
@@ -1618,8 +1618,8 @@ SELECT id, boat_id, area_id, kind, starts_at, ends_at, reason, created_by, creat
 `
 
 type ListBoatBlocksParams struct {
-	BoatID   uuid.UUID
-	FromTime time.Time
+	BoatID   uuid.UUID `json:"boat_id"`
+	FromTime time.Time `json:"from_time"`
 }
 
 func (q *Queries) ListBoatBlocks(ctx context.Context, arg ListBoatBlocksParams) ([]BoatBlock, error) {
@@ -1664,22 +1664,22 @@ LIMIT 5000
 `
 
 type ListBoatReservationsParams struct {
-	BoatIds  []uuid.UUID
-	FromTime time.Time
-	ToTime   time.Time
+	BoatIds  []uuid.UUID `json:"boat_ids"`
+	FromTime time.Time   `json:"from_time"`
+	ToTime   time.Time   `json:"to_time"`
 }
 
 type ListBoatReservationsRow struct {
-	ID          uuid.UUID
-	AreaID      uuid.UUID
-	Kind        string
-	Status      string
-	BookingID   *uuid.UUID
-	DepartureID *uuid.UUID
-	BlockID     *uuid.UUID
-	ExpiresAt   *time.Time
-	StartsAt    time.Time
-	EndsAt      time.Time
+	ID          uuid.UUID  `json:"id"`
+	AreaID      uuid.UUID  `json:"area_id"`
+	Kind        string     `json:"kind"`
+	Status      string     `json:"status"`
+	BookingID   *uuid.UUID `json:"booking_id"`
+	DepartureID *uuid.UUID `json:"departure_id"`
+	BlockID     *uuid.UUID `json:"block_id"`
+	ExpiresAt   *time.Time `json:"expires_at"`
+	StartsAt    time.Time  `json:"starts_at"`
+	EndsAt      time.Time  `json:"ends_at"`
 }
 
 func (q *Queries) ListBoatReservations(ctx context.Context, arg ListBoatReservationsParams) ([]ListBoatReservationsRow, error) {
@@ -1720,12 +1720,12 @@ WHERE b.status <> 'ARCHIVED' ORDER BY b.sort_order, t.name
 `
 
 type ListBoatsBasicRow struct {
-	ID                      uuid.UUID
-	Code                    string
-	Status                  string
-	MaxPassengers           int32
-	TurnaroundBufferMinutes int32
-	Name                    string
+	ID                      uuid.UUID `json:"id"`
+	Code                    string    `json:"code"`
+	Status                  string    `json:"status"`
+	MaxPassengers           int32     `json:"max_passengers"`
+	TurnaroundBufferMinutes int32     `json:"turnaround_buffer_minutes"`
+	Name                    string    `json:"name"`
 }
 
 func (q *Queries) ListBoatsBasic(ctx context.Context) ([]ListBoatsBasicRow, error) {
@@ -1832,17 +1832,17 @@ LIMIT $1 OFFSET $2
 `
 
 type ListBookingsAdminParams struct {
-	Limit          int32
-	Offset         int32
-	Status         *string
-	PaymentStatus  *string
-	BoatID         *uuid.UUID
-	DepartureID    *uuid.UUID
-	UserID         *uuid.UUID
-	FromTime       *time.Time
-	ToTime         *time.Time
-	Search         *string
-	ExceptionsOnly bool
+	Limit          int32      `json:"limit"`
+	Offset         int32      `json:"offset"`
+	Status         *string    `json:"status"`
+	PaymentStatus  *string    `json:"payment_status"`
+	BoatID         *uuid.UUID `json:"boat_id"`
+	DepartureID    *uuid.UUID `json:"departure_id"`
+	UserID         *uuid.UUID `json:"user_id"`
+	FromTime       *time.Time `json:"from_time"`
+	ToTime         *time.Time `json:"to_time"`
+	Search         *string    `json:"search"`
+	ExceptionsOnly bool       `json:"exceptions_only"`
 }
 
 func (q *Queries) ListBookingsAdmin(ctx context.Context, arg ListBookingsAdminParams) ([]Booking, error) {
@@ -1932,18 +1932,18 @@ FROM departure_slots s WHERE s.departure_id = ANY($1::uuid[]) ORDER BY s.departu
 `
 
 type ListDepartureSlotsRow struct {
-	ID           uuid.UUID
-	DepartureID  uuid.UUID
-	SlotType     string
-	Price        int64
-	SeatCapacity *int32
-	MinPax       int32
-	MaxPax       int32
-	SortOrder    int32
-	CreatedAt    time.Time
-	AreaIds      []uuid.UUID
-	BookedPax    int64
-	BookingCount int64
+	ID           uuid.UUID   `json:"id"`
+	DepartureID  uuid.UUID   `json:"departure_id"`
+	SlotType     string      `json:"slot_type"`
+	Price        int64       `json:"price"`
+	SeatCapacity *int32      `json:"seat_capacity"`
+	MinPax       int32       `json:"min_pax"`
+	MaxPax       int32       `json:"max_pax"`
+	SortOrder    int32       `json:"sort_order"`
+	CreatedAt    time.Time   `json:"created_at"`
+	AreaIds      []uuid.UUID `json:"area_ids"`
+	BookedPax    int64       `json:"booked_pax"`
+	BookingCount int64       `json:"booking_count"`
 }
 
 func (q *Queries) ListDepartureSlots(ctx context.Context, departureIds []uuid.UUID) ([]ListDepartureSlotsRow, error) {
@@ -1990,26 +1990,26 @@ LIMIT $1 OFFSET $2
 `
 
 type ListDeparturesAdminParams struct {
-	Limit    int32
-	Offset   int32
-	BoatID   *uuid.UUID
-	FromTime *time.Time
-	ToTime   *time.Time
+	Limit    int32      `json:"limit"`
+	Offset   int32      `json:"offset"`
+	BoatID   *uuid.UUID `json:"boat_id"`
+	FromTime *time.Time `json:"from_time"`
+	ToTime   *time.Time `json:"to_time"`
 }
 
 type ListDeparturesAdminRow struct {
-	ID              uuid.UUID
-	BoatID          uuid.UUID
-	RouteID         uuid.UUID
-	DepartsAt       time.Time
-	ReturnsAt       time.Time
-	BookingClosesAt time.Time
-	Status          string
-	CancelReason    string
-	CreatedBy       *uuid.UUID
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	BookedPax       int64
+	ID              uuid.UUID  `json:"id"`
+	BoatID          uuid.UUID  `json:"boat_id"`
+	RouteID         uuid.UUID  `json:"route_id"`
+	DepartsAt       time.Time  `json:"departs_at"`
+	ReturnsAt       time.Time  `json:"returns_at"`
+	BookingClosesAt time.Time  `json:"booking_closes_at"`
+	Status          string     `json:"status"`
+	CancelReason    string     `json:"cancel_reason"`
+	CreatedBy       *uuid.UUID `json:"created_by"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	BookedPax       int64      `json:"booked_pax"`
 }
 
 func (q *Queries) ListDeparturesAdmin(ctx context.Context, arg ListDeparturesAdminParams) ([]ListDeparturesAdminRow, error) {
@@ -2063,11 +2063,11 @@ LIMIT $1
 `
 
 type ListDeparturesPublicParams struct {
-	Limit    int32
-	BoatID   *uuid.UUID
-	RouteID  *uuid.UUID
-	FromTime *time.Time
-	ToTime   *time.Time
+	Limit    int32      `json:"limit"`
+	BoatID   *uuid.UUID `json:"boat_id"`
+	RouteID  *uuid.UUID `json:"route_id"`
+	FromTime *time.Time `json:"from_time"`
+	ToTime   *time.Time `json:"to_time"`
 }
 
 func (q *Queries) ListDeparturesPublic(ctx context.Context, arg ListDeparturesPublicParams) ([]Departure, error) {
@@ -2116,9 +2116,9 @@ WHERE boat_id = $1 AND status = 'HELD' AND expires_at <= now()
 `
 
 type ListExpiredHeldOverlappingParams struct {
-	BoatID   uuid.UUID
-	StartsAt time.Time
-	EndsAt   time.Time
+	BoatID   uuid.UUID `json:"boat_id"`
+	StartsAt time.Time `json:"starts_at"`
+	EndsAt   time.Time `json:"ends_at"`
 }
 
 func (q *Queries) ListExpiredHeldOverlapping(ctx context.Context, arg ListExpiredHeldOverlappingParams) ([]*uuid.UUID, error) {
@@ -2196,17 +2196,17 @@ WHERE o.package_offering_id = $1
 `
 
 type ListOverridesForOfferingRow struct {
-	ID                uuid.UUID
-	BoatRateID        *uuid.UUID
-	PackageOfferingID *uuid.UUID
-	RuleType          string
-	OnDate            *time.Time
-	SeasonID          *uuid.UUID
-	Price             int64
-	CreatedAt         time.Time
-	SeasonKind        *string
-	SeasonStartsOn    *time.Time
-	SeasonEndsOn      *time.Time
+	ID                uuid.UUID  `json:"id"`
+	BoatRateID        *uuid.UUID `json:"boat_rate_id"`
+	PackageOfferingID *uuid.UUID `json:"package_offering_id"`
+	RuleType          string     `json:"rule_type"`
+	OnDate            *time.Time `json:"on_date"`
+	SeasonID          *uuid.UUID `json:"season_id"`
+	Price             int64      `json:"price"`
+	CreatedAt         time.Time  `json:"created_at"`
+	SeasonKind        *string    `json:"season_kind"`
+	SeasonStartsOn    *time.Time `json:"season_starts_on"`
+	SeasonEndsOn      *time.Time `json:"season_ends_on"`
 }
 
 func (q *Queries) ListOverridesForOffering(ctx context.Context, packageOfferingID *uuid.UUID) ([]ListOverridesForOfferingRow, error) {
@@ -2248,17 +2248,17 @@ WHERE o.boat_rate_id = $1
 `
 
 type ListOverridesForRateRow struct {
-	ID                uuid.UUID
-	BoatRateID        *uuid.UUID
-	PackageOfferingID *uuid.UUID
-	RuleType          string
-	OnDate            *time.Time
-	SeasonID          *uuid.UUID
-	Price             int64
-	CreatedAt         time.Time
-	SeasonKind        *string
-	SeasonStartsOn    *time.Time
-	SeasonEndsOn      *time.Time
+	ID                uuid.UUID  `json:"id"`
+	BoatRateID        *uuid.UUID `json:"boat_rate_id"`
+	PackageOfferingID *uuid.UUID `json:"package_offering_id"`
+	RuleType          string     `json:"rule_type"`
+	OnDate            *time.Time `json:"on_date"`
+	SeasonID          *uuid.UUID `json:"season_id"`
+	Price             int64      `json:"price"`
+	CreatedAt         time.Time  `json:"created_at"`
+	SeasonKind        *string    `json:"season_kind"`
+	SeasonStartsOn    *time.Time `json:"season_starts_on"`
+	SeasonEndsOn      *time.Time `json:"season_ends_on"`
 }
 
 func (q *Queries) ListOverridesForRate(ctx context.Context, boatRateID *uuid.UUID) ([]ListOverridesForRateRow, error) {
@@ -2331,23 +2331,23 @@ FROM packages p ORDER BY p.sort_order, p.created_at DESC LIMIT 500
 `
 
 type ListPackagesAdminRow struct {
-	ID                   uuid.UUID
-	Mode                 string
-	RouteID              *uuid.UUID
-	DurationMinutes      *int32
-	DepartureID          *uuid.UUID
-	MinPax               int32
-	MaxPax               int32
-	ValidFrom            time.Time
-	ValidUntil           time.Time
-	BookingCutoffHours   int32
-	PaymentPolicyID      uuid.UUID
-	CancellationPolicyID uuid.UUID
-	SortOrder            int32
-	Status               string
-	CreatedAt            time.Time
-	UpdatedAt            time.Time
-	Translations         json.RawMessage
+	ID                   uuid.UUID       `json:"id"`
+	Mode                 string          `json:"mode"`
+	RouteID              *uuid.UUID      `json:"route_id"`
+	DurationMinutes      *int32          `json:"duration_minutes"`
+	DepartureID          *uuid.UUID      `json:"departure_id"`
+	MinPax               int32           `json:"min_pax"`
+	MaxPax               int32           `json:"max_pax"`
+	ValidFrom            time.Time       `json:"valid_from"`
+	ValidUntil           time.Time       `json:"valid_until"`
+	BookingCutoffHours   int32           `json:"booking_cutoff_hours"`
+	PaymentPolicyID      uuid.UUID       `json:"payment_policy_id"`
+	CancellationPolicyID uuid.UUID       `json:"cancellation_policy_id"`
+	SortOrder            int32           `json:"sort_order"`
+	Status               string          `json:"status"`
+	CreatedAt            time.Time       `json:"created_at"`
+	UpdatedAt            time.Time       `json:"updated_at"`
+	Translations         json.RawMessage `json:"translations"`
 }
 
 // Packages
@@ -2405,27 +2405,27 @@ LIMIT $1 OFFSET $2
 `
 
 type ListPackagesPublicParams struct {
-	Limit  int32
-	Offset int32
-	Locale string
-	Ids    []uuid.UUID
+	Limit  int32       `json:"limit"`
+	Offset int32       `json:"offset"`
+	Locale string      `json:"locale"`
+	Ids    []uuid.UUID `json:"ids"`
 }
 
 type ListPackagesPublicRow struct {
-	ID              uuid.UUID
-	Mode            string
-	RouteID         *uuid.UUID
-	DurationMinutes *int32
-	DepartureID     *uuid.UUID
-	MinPax          int32
-	MaxPax          int32
-	ValidFrom       time.Time
-	ValidUntil      time.Time
-	SortOrder       int32
-	Name            string
-	Slug            string
-	Summary         string
-	FromPrice       int64
+	ID              uuid.UUID  `json:"id"`
+	Mode            string     `json:"mode"`
+	RouteID         *uuid.UUID `json:"route_id"`
+	DurationMinutes *int32     `json:"duration_minutes"`
+	DepartureID     *uuid.UUID `json:"departure_id"`
+	MinPax          int32      `json:"min_pax"`
+	MaxPax          int32      `json:"max_pax"`
+	ValidFrom       time.Time  `json:"valid_from"`
+	ValidUntil      time.Time  `json:"valid_until"`
+	SortOrder       int32      `json:"sort_order"`
+	Name            string     `json:"name"`
+	Slug            string     `json:"slug"`
+	Summary         string     `json:"summary"`
+	FromPrice       int64      `json:"from_price"`
 }
 
 func (q *Queries) ListPackagesPublic(ctx context.Context, arg ListPackagesPublicParams) ([]ListPackagesPublicRow, error) {
@@ -2508,8 +2508,8 @@ ORDER BY rule_type, on_date NULLS LAST LIMIT 1000
 `
 
 type ListPriceOverridesParams struct {
-	BoatRateID        *uuid.UUID
-	PackageOfferingID *uuid.UUID
+	BoatRateID        *uuid.UUID `json:"boat_rate_id"`
+	PackageOfferingID *uuid.UUID `json:"package_offering_id"`
 }
 
 func (q *Queries) ListPriceOverrides(ctx context.Context, arg ListPriceOverridesParams) ([]PriceOverride, error) {
@@ -2622,15 +2622,15 @@ FROM tax_lines t ORDER BY t.sort_order, t.created_at
 `
 
 type ListTaxLinesAdminRow struct {
-	ID                    uuid.UUID
-	Code                  string
-	BasisPoints           int32
-	IncludesPreviousLines bool
-	SortOrder             int32
-	Status                string
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
-	Names                 json.RawMessage
+	ID                    uuid.UUID       `json:"id"`
+	Code                  string          `json:"code"`
+	BasisPoints           int32           `json:"basis_points"`
+	IncludesPreviousLines bool            `json:"includes_previous_lines"`
+	SortOrder             int32           `json:"sort_order"`
+	Status                string          `json:"status"`
+	CreatedAt             time.Time       `json:"created_at"`
+	UpdatedAt             time.Time       `json:"updated_at"`
+	Names                 json.RawMessage `json:"names"`
 }
 
 func (q *Queries) ListTaxLinesAdmin(ctx context.Context) ([]ListTaxLinesAdminRow, error) {
@@ -2668,9 +2668,9 @@ SELECT id, public_id, booking_number, invoice_number, user_id, mode, package_id,
 `
 
 type ListUserBookingsParams struct {
-	UserID uuid.UUID
-	Limit  int32
-	Offset int32
+	UserID uuid.UUID `json:"user_id"`
+	Limit  int32     `json:"limit"`
+	Offset int32     `json:"offset"`
 }
 
 func (q *Queries) ListUserBookings(ctx context.Context, arg ListUserBookingsParams) ([]Booking, error) {
@@ -2872,8 +2872,8 @@ UPDATE bookings SET exception_reason = $2, updated_at = now() WHERE id = $1
 `
 
 type SetBookingExceptionParams struct {
-	ID              uuid.UUID
-	ExceptionReason *string
+	ID              uuid.UUID `json:"id"`
+	ExceptionReason *string   `json:"exception_reason"`
 }
 
 func (q *Queries) SetBookingException(ctx context.Context, arg SetBookingExceptionParams) error {
@@ -2888,8 +2888,8 @@ WHERE id = $2 RETURNING id, public_id, booking_number, invoice_number, user_id, 
 `
 
 type SetBookingStatusParams struct {
-	Status string
-	ID     uuid.UUID
+	Status string    `json:"status"`
+	ID     uuid.UUID `json:"id"`
 }
 
 func (q *Queries) SetBookingStatus(ctx context.Context, arg SetBookingStatusParams) (Booking, error) {
@@ -2973,8 +2973,8 @@ UPDATE departures SET booking_closes_at = $2, updated_at = now() WHERE id = $1 R
 `
 
 type UpdateDepartureCloseParams struct {
-	ID              uuid.UUID
-	BookingClosesAt time.Time
+	ID              uuid.UUID `json:"id"`
+	BookingClosesAt time.Time `json:"booking_closes_at"`
 }
 
 func (q *Queries) UpdateDepartureClose(ctx context.Context, arg UpdateDepartureCloseParams) (Departure, error) {
@@ -3001,9 +3001,9 @@ UPDATE departure_slots SET price = $2, max_pax = $3 WHERE id = $1
 `
 
 type UpdateDepartureSlotPriceParams struct {
-	ID     uuid.UUID
-	Price  int64
-	MaxPax int32
+	ID     uuid.UUID `json:"id"`
+	Price  int64     `json:"price"`
+	MaxPax int32     `json:"max_pax"`
 }
 
 func (q *Queries) UpdateDepartureSlotPrice(ctx context.Context, arg UpdateDepartureSlotPriceParams) error {
@@ -3018,20 +3018,20 @@ WHERE id = $1 RETURNING id, mode, route_id, duration_minutes, departure_id, min_
 `
 
 type UpdatePackageParams struct {
-	ID                   uuid.UUID
-	Mode                 string
-	RouteID              *uuid.UUID
-	DurationMinutes      *int32
-	DepartureID          *uuid.UUID
-	MinPax               int32
-	MaxPax               int32
-	ValidFrom            time.Time
-	ValidUntil           time.Time
-	BookingCutoffHours   int32
-	PaymentPolicyID      uuid.UUID
-	CancellationPolicyID uuid.UUID
-	SortOrder            int32
-	Status               string
+	ID                   uuid.UUID  `json:"id"`
+	Mode                 string     `json:"mode"`
+	RouteID              *uuid.UUID `json:"route_id"`
+	DurationMinutes      *int32     `json:"duration_minutes"`
+	DepartureID          *uuid.UUID `json:"departure_id"`
+	MinPax               int32      `json:"min_pax"`
+	MaxPax               int32      `json:"max_pax"`
+	ValidFrom            time.Time  `json:"valid_from"`
+	ValidUntil           time.Time  `json:"valid_until"`
+	BookingCutoffHours   int32      `json:"booking_cutoff_hours"`
+	PaymentPolicyID      uuid.UUID  `json:"payment_policy_id"`
+	CancellationPolicyID uuid.UUID  `json:"cancellation_policy_id"`
+	SortOrder            int32      `json:"sort_order"`
+	Status               string     `json:"status"`
 }
 
 func (q *Queries) UpdatePackage(ctx context.Context, arg UpdatePackageParams) (Package, error) {
@@ -3078,11 +3078,11 @@ UPDATE package_offerings SET boat_id = $2, departure_slot_id = $3, price = $4 WH
 `
 
 type UpdatePackageOfferingParams struct {
-	ID              uuid.UUID
-	BoatID          uuid.UUID
-	DepartureSlotID *uuid.UUID
-	Price           int64
-	PackageID       uuid.UUID
+	ID              uuid.UUID  `json:"id"`
+	BoatID          uuid.UUID  `json:"boat_id"`
+	DepartureSlotID *uuid.UUID `json:"departure_slot_id"`
+	Price           int64      `json:"price"`
+	PackageID       uuid.UUID  `json:"package_id"`
 }
 
 func (q *Queries) UpdatePackageOffering(ctx context.Context, arg UpdatePackageOfferingParams) error {
@@ -3103,20 +3103,20 @@ WHERE id = $1 RETURNING id, name, code, is_automatic, discount_type, discount_va
 `
 
 type UpdatePromotionParams struct {
-	ID            uuid.UUID
-	Name          string
-	Code          *string
-	IsAutomatic   bool
-	DiscountType  string
-	DiscountValue int64
-	BoatID        *uuid.UUID
-	PackageID     *uuid.UUID
-	BookingMode   *string
-	MinSubtotal   int64
-	StartsAt      time.Time
-	EndsAt        time.Time
-	Quota         *int32
-	Status        string
+	ID            uuid.UUID  `json:"id"`
+	Name          string     `json:"name"`
+	Code          *string    `json:"code"`
+	IsAutomatic   bool       `json:"is_automatic"`
+	DiscountType  string     `json:"discount_type"`
+	DiscountValue int64      `json:"discount_value"`
+	BoatID        *uuid.UUID `json:"boat_id"`
+	PackageID     *uuid.UUID `json:"package_id"`
+	BookingMode   *string    `json:"booking_mode"`
+	MinSubtotal   int64      `json:"min_subtotal"`
+	StartsAt      time.Time  `json:"starts_at"`
+	EndsAt        time.Time  `json:"ends_at"`
+	Quota         *int32     `json:"quota"`
+	Status        string     `json:"status"`
 }
 
 func (q *Queries) UpdatePromotion(ctx context.Context, arg UpdatePromotionParams) (Promotion, error) {
@@ -3164,11 +3164,11 @@ UPDATE seasons SET name = $2, kind = $3, starts_on = $4, ends_on = $5 WHERE id =
 `
 
 type UpdateSeasonParams struct {
-	ID       uuid.UUID
-	Name     string
-	Kind     string
-	StartsOn time.Time
-	EndsOn   time.Time
+	ID       uuid.UUID `json:"id"`
+	Name     string    `json:"name"`
+	Kind     string    `json:"kind"`
+	StartsOn time.Time `json:"starts_on"`
+	EndsOn   time.Time `json:"ends_on"`
 }
 
 func (q *Queries) UpdateSeason(ctx context.Context, arg UpdateSeasonParams) (Season, error) {
@@ -3196,12 +3196,12 @@ UPDATE tax_lines SET code = $2, basis_points = $3, includes_previous_lines = $4,
 `
 
 type UpdateTaxLineParams struct {
-	ID                    uuid.UUID
-	Code                  string
-	BasisPoints           int32
-	IncludesPreviousLines bool
-	SortOrder             int32
-	Status                string
+	ID                    uuid.UUID `json:"id"`
+	Code                  string    `json:"code"`
+	BasisPoints           int32     `json:"basis_points"`
+	IncludesPreviousLines bool      `json:"includes_previous_lines"`
+	SortOrder             int32     `json:"sort_order"`
+	Status                string    `json:"status"`
 }
 
 func (q *Queries) UpdateTaxLine(ctx context.Context, arg UpdateTaxLineParams) (TaxLine, error) {
@@ -3235,16 +3235,16 @@ ON CONFLICT (package_id, locale) DO UPDATE SET name = EXCLUDED.name, slug = EXCL
 `
 
 type UpsertPackageTranslationParams struct {
-	PackageID      uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Summary        string
-	Description    string
-	Inclusions     json.RawMessage
-	Exclusions     json.RawMessage
-	SeoTitle       string
-	SeoDescription string
+	PackageID      uuid.UUID       `json:"package_id"`
+	Locale         string          `json:"locale"`
+	Name           string          `json:"name"`
+	Slug           string          `json:"slug"`
+	Summary        string          `json:"summary"`
+	Description    string          `json:"description"`
+	Inclusions     json.RawMessage `json:"inclusions"`
+	Exclusions     json.RawMessage `json:"exclusions"`
+	SeoTitle       string          `json:"seo_title"`
+	SeoDescription string          `json:"seo_description"`
 }
 
 func (q *Queries) UpsertPackageTranslation(ctx context.Context, arg UpsertPackageTranslationParams) error {
@@ -3271,12 +3271,12 @@ ON CONFLICT (method) DO UPDATE SET fee_type = EXCLUDED.fee_type, fee_value = EXC
 `
 
 type UpsertPaymentMethodFeeParams struct {
-	Method      string
-	FeeType     string
-	FeeValue    int64
-	HoldMinutes int32
-	Enabled     bool
-	SortOrder   int32
+	Method      string `json:"method"`
+	FeeType     string `json:"fee_type"`
+	FeeValue    int64  `json:"fee_value"`
+	HoldMinutes int32  `json:"hold_minutes"`
+	Enabled     bool   `json:"enabled"`
+	SortOrder   int32  `json:"sort_order"`
 }
 
 func (q *Queries) UpsertPaymentMethodFee(ctx context.Context, arg UpsertPaymentMethodFeeParams) error {
@@ -3297,9 +3297,9 @@ ON CONFLICT (tax_line_id, locale) DO UPDATE SET name = EXCLUDED.name
 `
 
 type UpsertTaxLineTranslationParams struct {
-	TaxLineID uuid.UUID
-	Locale    string
-	Name      string
+	TaxLineID uuid.UUID `json:"tax_line_id"`
+	Locale    string    `json:"locale"`
+	Name      string    `json:"name"`
 }
 
 func (q *Queries) UpsertTaxLineTranslation(ctx context.Context, arg UpsertTaxLineTranslationParams) error {

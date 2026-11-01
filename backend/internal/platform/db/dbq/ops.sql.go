@@ -48,14 +48,14 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, partner_id, period_start, 
 `
 
 type InsertPayoutParams struct {
-	PartnerID    uuid.UUID
-	PeriodStart  time.Time
-	PeriodEnd    time.Time
-	Amount       int64
-	PaidOn       time.Time
-	ProofMediaID *uuid.UUID
-	Notes        string
-	RecordedBy   *uuid.UUID
+	PartnerID    uuid.UUID  `json:"partner_id"`
+	PeriodStart  time.Time  `json:"period_start"`
+	PeriodEnd    time.Time  `json:"period_end"`
+	Amount       int64      `json:"amount"`
+	PaidOn       time.Time  `json:"paid_on"`
+	ProofMediaID *uuid.UUID `json:"proof_media_id"`
+	Notes        string     `json:"notes"`
+	RecordedBy   *uuid.UUID `json:"recorded_by"`
 }
 
 func (q *Queries) InsertPayout(ctx context.Context, arg InsertPayoutParams) (Payout, error) {
@@ -90,9 +90,9 @@ INSERT INTO payout_bookings (payout_id, booking_id, partner_amount) VALUES ($1, 
 `
 
 type InsertPayoutBookingParams struct {
-	PayoutID      uuid.UUID
-	BookingID     uuid.UUID
-	PartnerAmount int64
+	PayoutID      uuid.UUID `json:"payout_id"`
+	BookingID     uuid.UUID `json:"booking_id"`
+	PartnerAmount int64     `json:"partner_amount"`
 }
 
 func (q *Queries) InsertPayoutBooking(ctx context.Context, arg InsertPayoutBookingParams) error {
@@ -107,16 +107,16 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, booking_id, user_
 `
 
 type InsertReviewParams struct {
-	BookingID     uuid.UUID
-	UserID        uuid.UUID
-	BoatID        uuid.UUID
-	RatingOverall int32
-	RatingBoat    int32
-	RatingService int32
-	RatingCrew    int32
-	Title         string
-	Body          string
-	Locale        string
+	BookingID     uuid.UUID `json:"booking_id"`
+	UserID        uuid.UUID `json:"user_id"`
+	BoatID        uuid.UUID `json:"boat_id"`
+	RatingOverall int32     `json:"rating_overall"`
+	RatingBoat    int32     `json:"rating_boat"`
+	RatingService int32     `json:"rating_service"`
+	RatingCrew    int32     `json:"rating_crew"`
+	Title         string    `json:"title"`
+	Body          string    `json:"body"`
+	Locale        string    `json:"locale"`
 }
 
 // Reviews
@@ -263,17 +263,17 @@ ORDER BY p.paid_on DESC LIMIT 500
 `
 
 type ListPayoutsRow struct {
-	ID           uuid.UUID
-	PartnerID    uuid.UUID
-	PeriodStart  time.Time
-	PeriodEnd    time.Time
-	Amount       int64
-	PaidOn       time.Time
-	ProofMediaID *uuid.UUID
-	Notes        string
-	RecordedBy   *uuid.UUID
-	CreatedAt    time.Time
-	PartnerName  string
+	ID           uuid.UUID  `json:"id"`
+	PartnerID    uuid.UUID  `json:"partner_id"`
+	PeriodStart  time.Time  `json:"period_start"`
+	PeriodEnd    time.Time  `json:"period_end"`
+	Amount       int64      `json:"amount"`
+	PaidOn       time.Time  `json:"paid_on"`
+	ProofMediaID *uuid.UUID `json:"proof_media_id"`
+	Notes        string     `json:"notes"`
+	RecordedBy   *uuid.UUID `json:"recorded_by"`
+	CreatedAt    time.Time  `json:"created_at"`
+	PartnerName  string     `json:"partner_name"`
 }
 
 func (q *Queries) ListPayouts(ctx context.Context, partnerID *uuid.UUID) ([]ListPayoutsRow, error) {
@@ -342,31 +342,31 @@ ORDER BY r.created_at DESC LIMIT $1 OFFSET $2
 `
 
 type ListReviewsAdminParams struct {
-	Limit  int32
-	Offset int32
-	Status *string
+	Limit  int32   `json:"limit"`
+	Offset int32   `json:"offset"`
+	Status *string `json:"status"`
 }
 
 type ListReviewsAdminRow struct {
-	ID            uuid.UUID
-	BookingID     uuid.UUID
-	UserID        uuid.UUID
-	BoatID        uuid.UUID
-	RatingOverall int32
-	RatingBoat    int32
-	RatingService int32
-	RatingCrew    int32
-	Title         string
-	Body          string
-	Locale        string
-	Status        string
-	IsFeatured    bool
-	ModeratedBy   *uuid.UUID
-	ModeratedAt   *time.Time
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	AuthorName    string
-	BookingNumber string
+	ID            uuid.UUID  `json:"id"`
+	BookingID     uuid.UUID  `json:"booking_id"`
+	UserID        uuid.UUID  `json:"user_id"`
+	BoatID        uuid.UUID  `json:"boat_id"`
+	RatingOverall int32      `json:"rating_overall"`
+	RatingBoat    int32      `json:"rating_boat"`
+	RatingService int32      `json:"rating_service"`
+	RatingCrew    int32      `json:"rating_crew"`
+	Title         string     `json:"title"`
+	Body          string     `json:"body"`
+	Locale        string     `json:"locale"`
+	Status        string     `json:"status"`
+	IsFeatured    bool       `json:"is_featured"`
+	ModeratedBy   *uuid.UUID `json:"moderated_by"`
+	ModeratedAt   *time.Time `json:"moderated_at"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
+	AuthorName    string     `json:"author_name"`
+	BookingNumber string     `json:"booking_number"`
 }
 
 func (q *Queries) ListReviewsAdmin(ctx context.Context, arg ListReviewsAdminParams) ([]ListReviewsAdminRow, error) {
@@ -419,26 +419,26 @@ ORDER BY r.created_at DESC LIMIT $1 OFFSET $2
 `
 
 type ListReviewsPublicParams struct {
-	Limit        int32
-	Offset       int32
-	BoatID       *uuid.UUID
-	FeaturedOnly bool
+	Limit        int32      `json:"limit"`
+	Offset       int32      `json:"offset"`
+	BoatID       *uuid.UUID `json:"boat_id"`
+	FeaturedOnly bool       `json:"featured_only"`
 }
 
 type ListReviewsPublicRow struct {
-	ID            uuid.UUID
-	BoatID        uuid.UUID
-	RatingOverall int32
-	RatingBoat    int32
-	RatingService int32
-	RatingCrew    int32
-	Title         string
-	Body          string
-	Locale        string
-	CreatedAt     time.Time
-	IsFeatured    bool
-	AuthorName    string
-	AuthorCountry string
+	ID            uuid.UUID `json:"id"`
+	BoatID        uuid.UUID `json:"boat_id"`
+	RatingOverall int32     `json:"rating_overall"`
+	RatingBoat    int32     `json:"rating_boat"`
+	RatingService int32     `json:"rating_service"`
+	RatingCrew    int32     `json:"rating_crew"`
+	Title         string    `json:"title"`
+	Body          string    `json:"body"`
+	Locale        string    `json:"locale"`
+	CreatedAt     time.Time `json:"created_at"`
+	IsFeatured    bool      `json:"is_featured"`
+	AuthorName    string    `json:"author_name"`
+	AuthorCountry string    `json:"author_country"`
 }
 
 func (q *Queries) ListReviewsPublic(ctx context.Context, arg ListReviewsPublicParams) ([]ListReviewsPublicRow, error) {
@@ -494,25 +494,25 @@ ORDER BY b.ends_at
 `
 
 type ListSettlementBookingsParams struct {
-	PartnerID   *uuid.UUID
-	PeriodStart time.Time
-	PeriodEnd   time.Time
+	PartnerID   *uuid.UUID `json:"partner_id"`
+	PeriodStart time.Time  `json:"period_start"`
+	PeriodEnd   time.Time  `json:"period_end"`
 }
 
 type ListSettlementBookingsRow struct {
-	ID              uuid.UUID
-	PublicID        uuid.UUID
-	BookingNumber   string
-	Status          string
-	Subtotal        int64
-	AmountPaid      int64
-	AmountRefunded  int64
-	ForfeitedAmount int64
-	StartsAt        time.Time
-	EndsAt          time.Time
-	Snapshot        json.RawMessage
-	BoatID          uuid.UUID
-	PayoutID        *uuid.UUID
+	ID              uuid.UUID       `json:"id"`
+	PublicID        uuid.UUID       `json:"public_id"`
+	BookingNumber   string          `json:"booking_number"`
+	Status          string          `json:"status"`
+	Subtotal        int64           `json:"subtotal"`
+	AmountPaid      int64           `json:"amount_paid"`
+	AmountRefunded  int64           `json:"amount_refunded"`
+	ForfeitedAmount int64           `json:"forfeited_amount"`
+	StartsAt        time.Time       `json:"starts_at"`
+	EndsAt          time.Time       `json:"ends_at"`
+	Snapshot        json.RawMessage `json:"snapshot"`
+	BoatID          uuid.UUID       `json:"boat_id"`
+	PayoutID        *uuid.UUID      `json:"payout_id"`
 }
 
 // Settlements
@@ -579,10 +579,10 @@ UPDATE reviews SET status = $2, is_featured = $3, moderated_by = $4, moderated_a
 `
 
 type ModerateReviewParams struct {
-	ID          uuid.UUID
-	Status      string
-	IsFeatured  bool
-	ModeratedBy *uuid.UUID
+	ID          uuid.UUID  `json:"id"`
+	Status      string     `json:"status"`
+	IsFeatured  bool       `json:"is_featured"`
+	ModeratedBy *uuid.UUID `json:"moderated_by"`
 }
 
 func (q *Queries) ModerateReview(ctx context.Context, arg ModerateReviewParams) (Review, error) {
@@ -629,21 +629,21 @@ SELECT
 `
 
 type OverviewCountsParams struct {
-	DayStart   time.Time
-	WeekStart  time.Time
-	MonthStart time.Time
+	DayStart   time.Time `json:"day_start"`
+	WeekStart  time.Time `json:"week_start"`
+	MonthStart time.Time `json:"month_start"`
 }
 
 type OverviewCountsRow struct {
-	BookingsToday   int64
-	BookingsWeek    int64
-	RevenueMonth    int64
-	RefundsMonth    int64
-	PendingPayments int64
-	Exceptions      int64
-	PendingRequests int64
-	OpenRefunds     int64
-	PendingReviews  int64
+	BookingsToday   int64 `json:"bookings_today"`
+	BookingsWeek    int64 `json:"bookings_week"`
+	RevenueMonth    int64 `json:"revenue_month"`
+	RefundsMonth    int64 `json:"refunds_month"`
+	PendingPayments int64 `json:"pending_payments"`
+	Exceptions      int64 `json:"exceptions"`
+	PendingRequests int64 `json:"pending_requests"`
+	OpenRefunds     int64 `json:"open_refunds"`
+	PendingReviews  int64 `json:"pending_reviews"`
 }
 
 func (q *Queries) OverviewCounts(ctx context.Context, arg OverviewCountsParams) (OverviewCountsRow, error) {
@@ -688,27 +688,27 @@ ORDER BY b.created_at LIMIT 20000
 `
 
 type ReportBookingsParams struct {
-	FromTime time.Time
-	ToTime   time.Time
+	FromTime time.Time `json:"from_time"`
+	ToTime   time.Time `json:"to_time"`
 }
 
 type ReportBookingsRow struct {
-	BookingNumber  string
-	Status         string
-	PaymentStatus  string
-	Mode           string
-	StartsAt       time.Time
-	Pax            int32
-	GrandTotal     int64
-	AmountPaid     int64
-	FeesPaid       int64
-	AmountRefunded int64
-	LeadEmail      string
-	CreatedAt      time.Time
-	BoatID         uuid.UUID
-	PackageID      *uuid.UUID
-	RouteID        uuid.UUID
-	Snapshot       json.RawMessage
+	BookingNumber  string          `json:"booking_number"`
+	Status         string          `json:"status"`
+	PaymentStatus  string          `json:"payment_status"`
+	Mode           string          `json:"mode"`
+	StartsAt       time.Time       `json:"starts_at"`
+	Pax            int32           `json:"pax"`
+	GrandTotal     int64           `json:"grand_total"`
+	AmountPaid     int64           `json:"amount_paid"`
+	FeesPaid       int64           `json:"fees_paid"`
+	AmountRefunded int64           `json:"amount_refunded"`
+	LeadEmail      string          `json:"lead_email"`
+	CreatedAt      time.Time       `json:"created_at"`
+	BoatID         uuid.UUID       `json:"boat_id"`
+	PackageID      *uuid.UUID      `json:"package_id"`
+	RouteID        uuid.UUID       `json:"route_id"`
+	Snapshot       json.RawMessage `json:"snapshot"`
 }
 
 func (q *Queries) ReportBookings(ctx context.Context, arg ReportBookingsParams) ([]ReportBookingsRow, error) {
@@ -757,19 +757,19 @@ ORDER BY b.cancelled_at LIMIT 20000
 `
 
 type ReportCancellationsParams struct {
-	FromTime time.Time
-	ToTime   time.Time
+	FromTime time.Time `json:"from_time"`
+	ToTime   time.Time `json:"to_time"`
 }
 
 type ReportCancellationsRow struct {
-	BookingNumber   string
-	CancelType      *string
-	CancelReason    string
-	CancelledAt     *time.Time
-	AmountPaid      int64
-	ForfeitedAmount int64
-	AmountRefunded  int64
-	RefundTotal     int64
+	BookingNumber   string     `json:"booking_number"`
+	CancelType      *string    `json:"cancel_type"`
+	CancelReason    string     `json:"cancel_reason"`
+	CancelledAt     *time.Time `json:"cancelled_at"`
+	AmountPaid      int64      `json:"amount_paid"`
+	ForfeitedAmount int64      `json:"forfeited_amount"`
+	AmountRefunded  int64      `json:"amount_refunded"`
+	RefundTotal     int64      `json:"refund_total"`
 }
 
 func (q *Queries) ReportCancellations(ctx context.Context, arg ReportCancellationsParams) ([]ReportCancellationsRow, error) {
@@ -812,15 +812,15 @@ GROUP BY p.method ORDER BY p.method
 `
 
 type RevenueByMethodParams struct {
-	FromTime time.Time
-	ToTime   time.Time
+	FromTime time.Time `json:"from_time"`
+	ToTime   time.Time `json:"to_time"`
 }
 
 type RevenueByMethodRow struct {
-	Method   string
-	Payments int64
-	Gross    int64
-	Refunded int64
+	Method   string `json:"method"`
+	Payments int64  `json:"payments"`
+	Gross    int64  `json:"gross"`
+	Refunded int64  `json:"refunded"`
 }
 
 // Reports and overview
@@ -856,11 +856,11 @@ FROM reviews WHERE status = 'PUBLISHED' AND boat_id = $1
 `
 
 type ReviewStatsRow struct {
-	Total   int64
-	Overall float64
-	Boat    float64
-	Service float64
-	Crew    float64
+	Total   int64   `json:"total"`
+	Overall float64 `json:"overall"`
+	Boat    float64 `json:"boat"`
+	Service float64 `json:"service"`
+	Crew    float64 `json:"crew"`
 }
 
 func (q *Queries) ReviewStats(ctx context.Context, boatID uuid.UUID) (ReviewStatsRow, error) {
@@ -883,15 +883,15 @@ ORDER BY b.starts_at LIMIT 50
 `
 
 type UpcomingDeparturesRow struct {
-	ID            uuid.UUID
-	PublicID      uuid.UUID
-	BookingNumber string
-	Mode          string
-	Status        string
-	StartsAt      time.Time
-	Timezone      string
-	Pax           int32
-	Snapshot      json.RawMessage
+	ID            uuid.UUID       `json:"id"`
+	PublicID      uuid.UUID       `json:"public_id"`
+	BookingNumber string          `json:"booking_number"`
+	Mode          string          `json:"mode"`
+	Status        string          `json:"status"`
+	StartsAt      time.Time       `json:"starts_at"`
+	Timezone      string          `json:"timezone"`
+	Pax           int32           `json:"pax"`
+	Snapshot      json.RawMessage `json:"snapshot"`
 }
 
 func (q *Queries) UpcomingDepartures(ctx context.Context) ([]UpcomingDeparturesRow, error) {

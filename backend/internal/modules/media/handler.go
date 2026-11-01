@@ -50,7 +50,7 @@ func ReadUpload(w http.ResponseWriter, r *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, httpx.Validation(map[string]string{"file": "REQUIRED"})
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	data, err := io.ReadAll(io.LimitReader(f, MaxUploadBytes+1))
 	if err != nil {
 		return nil, err

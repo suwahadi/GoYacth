@@ -27,9 +27,9 @@ UPDATE idempotency_keys SET status_code = $2, response_body = $3, completed_at =
 `
 
 type CompleteIdempotencyKeyParams struct {
-	ID           uuid.UUID
-	StatusCode   *int32
-	ResponseBody []byte
+	ID           uuid.UUID `json:"id"`
+	StatusCode   *int32    `json:"status_code"`
+	ResponseBody []byte    `json:"response_body"`
 }
 
 func (q *Queries) CompleteIdempotencyKey(ctx context.Context, arg CompleteIdempotencyKeyParams) error {
@@ -45,9 +45,9 @@ WHERE ($1::text IS NULL OR a.entity_type = $1)
 `
 
 type CountAuditLogsParams struct {
-	EntityType *string
-	EntityID   *string
-	ActorID    *uuid.UUID
+	EntityType *string    `json:"entity_type"`
+	EntityID   *string    `json:"entity_id"`
+	ActorID    *uuid.UUID `json:"actor_id"`
 }
 
 func (q *Queries) CountAuditLogs(ctx context.Context, arg CountAuditLogsParams) (int64, error) {
@@ -93,8 +93,8 @@ DELETE FROM media_usages WHERE entity_type = $1 AND entity_id = $2 RETURNING med
 `
 
 type DeleteMediaUsagesForEntityParams struct {
-	EntityType string
-	EntityID   uuid.UUID
+	EntityType string    `json:"entity_type"`
+	EntityID   uuid.UUID `json:"entity_id"`
 }
 
 func (q *Queries) DeleteMediaUsagesForEntity(ctx context.Context, arg DeleteMediaUsagesForEntityParams) ([]uuid.UUID, error) {
@@ -122,9 +122,9 @@ DELETE FROM media_usages WHERE entity_type = $1 AND entity_id = $2 AND role = $3
 `
 
 type DeleteMediaUsagesForRoleParams struct {
-	EntityType string
-	EntityID   uuid.UUID
-	Role       string
+	EntityType string    `json:"entity_type"`
+	EntityID   uuid.UUID `json:"entity_id"`
+	Role       string    `json:"role"`
 }
 
 func (q *Queries) DeleteMediaUsagesForRole(ctx context.Context, arg DeleteMediaUsagesForRoleParams) ([]uuid.UUID, error) {
@@ -166,9 +166,9 @@ FOR UPDATE
 `
 
 type GetIdempotencyKeyForUpdateParams struct {
-	Scope  string
-	Key    string
-	UserID *uuid.UUID
+	Scope  string     `json:"scope"`
+	Key    string     `json:"key"`
+	UserID *uuid.UUID `json:"user_id"`
 }
 
 func (q *Queries) GetIdempotencyKeyForUpdate(ctx context.Context, arg GetIdempotencyKeyForUpdateParams) (IdempotencyKey, error) {
@@ -236,14 +236,14 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 `
 
 type InsertAuditLogParams struct {
-	ActorID    *uuid.UUID
-	Action     string
-	EntityType string
-	EntityID   string
-	Before     json.RawMessage
-	After      json.RawMessage
-	RequestID  string
-	IpAddress  string
+	ActorID    *uuid.UUID      `json:"actor_id"`
+	Action     string          `json:"action"`
+	EntityType string          `json:"entity_type"`
+	EntityID   string          `json:"entity_id"`
+	Before     json.RawMessage `json:"before"`
+	After      json.RawMessage `json:"after"`
+	RequestID  string          `json:"request_id"`
+	IpAddress  string          `json:"ip_address"`
 }
 
 func (q *Queries) InsertAuditLog(ctx context.Context, arg InsertAuditLogParams) error {
@@ -268,10 +268,10 @@ RETURNING id
 `
 
 type InsertIdempotencyKeyParams struct {
-	Scope       string
-	UserID      *uuid.UUID
-	Key         string
-	RequestHash []byte
+	Scope       string     `json:"scope"`
+	UserID      *uuid.UUID `json:"user_id"`
+	Key         string     `json:"key"`
+	RequestHash []byte     `json:"request_hash"`
 }
 
 func (q *Queries) InsertIdempotencyKey(ctx context.Context, arg InsertIdempotencyKeyParams) (uuid.UUID, error) {
@@ -293,12 +293,12 @@ RETURNING id, bucket, base_name, status, content_type, width, height, variants, 
 `
 
 type InsertMediaParams struct {
-	Bucket      string
-	BaseName    string
-	ContentType string
-	UploadedBy  *uuid.UUID
-	ByteSize    int64
-	DeleteAfter *time.Time
+	Bucket      string     `json:"bucket"`
+	BaseName    string     `json:"base_name"`
+	ContentType string     `json:"content_type"`
+	UploadedBy  *uuid.UUID `json:"uploaded_by"`
+	ByteSize    int64      `json:"byte_size"`
+	DeleteAfter *time.Time `json:"delete_after"`
 }
 
 func (q *Queries) InsertMedia(ctx context.Context, arg InsertMediaParams) (Medium, error) {
@@ -336,11 +336,11 @@ ON CONFLICT (entity_type, entity_id, role, media_id) DO UPDATE SET sort_order = 
 `
 
 type InsertMediaUsageParams struct {
-	MediaID    uuid.UUID
-	EntityType string
-	EntityID   uuid.UUID
-	Role       string
-	SortOrder  int32
+	MediaID    uuid.UUID `json:"media_id"`
+	EntityType string    `json:"entity_type"`
+	EntityID   uuid.UUID `json:"entity_id"`
+	Role       string    `json:"role"`
+	SortOrder  int32     `json:"sort_order"`
 }
 
 func (q *Queries) InsertMediaUsage(ctx context.Context, arg InsertMediaUsageParams) error {
@@ -365,25 +365,25 @@ LIMIT $1 OFFSET $2
 `
 
 type ListAuditLogsParams struct {
-	Limit      int32
-	Offset     int32
-	EntityType *string
-	EntityID   *string
-	ActorID    *uuid.UUID
+	Limit      int32      `json:"limit"`
+	Offset     int32      `json:"offset"`
+	EntityType *string    `json:"entity_type"`
+	EntityID   *string    `json:"entity_id"`
+	ActorID    *uuid.UUID `json:"actor_id"`
 }
 
 type ListAuditLogsRow struct {
-	ID         int64
-	ActorID    *uuid.UUID
-	Action     string
-	EntityType string
-	EntityID   string
-	Before     json.RawMessage
-	After      json.RawMessage
-	RequestID  string
-	IpAddress  string
-	CreatedAt  time.Time
-	ActorEmail *string
+	ID         int64           `json:"id"`
+	ActorID    *uuid.UUID      `json:"actor_id"`
+	Action     string          `json:"action"`
+	EntityType string          `json:"entity_type"`
+	EntityID   string          `json:"entity_id"`
+	Before     json.RawMessage `json:"before"`
+	After      json.RawMessage `json:"after"`
+	RequestID  string          `json:"request_id"`
+	IpAddress  string          `json:"ip_address"`
+	CreatedAt  time.Time       `json:"created_at"`
+	ActorEmail *string         `json:"actor_email"`
 }
 
 func (q *Queries) ListAuditLogs(ctx context.Context, arg ListAuditLogsParams) ([]ListAuditLogsRow, error) {
@@ -429,8 +429,8 @@ SELECT id, bucket, base_name, status, content_type, width, height, variants, byt
 `
 
 type ListMediaAdminParams struct {
-	Limit  int32
-	Offset int32
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
 }
 
 func (q *Queries) ListMediaAdmin(ctx context.Context, arg ListMediaAdminParams) ([]Medium, error) {
@@ -536,8 +536,8 @@ SELECT id, media_id, entity_type, entity_id, role, sort_order, created_at FROM m
 `
 
 type ListMediaUsagesParams struct {
-	EntityType string
-	EntityIds  []uuid.UUID
+	EntityType string      `json:"entity_type"`
+	EntityIds  []uuid.UUID `json:"entity_ids"`
 }
 
 func (q *Queries) ListMediaUsages(ctx context.Context, arg ListMediaUsagesParams) ([]MediaUsage, error) {
@@ -659,8 +659,8 @@ UPDATE media SET status = 'FAILED', failure_reason = $2, updated_at = now() WHER
 `
 
 type MarkMediaFailedParams struct {
-	ID            uuid.UUID
-	FailureReason string
+	ID            uuid.UUID `json:"id"`
+	FailureReason string    `json:"failure_reason"`
 }
 
 func (q *Queries) MarkMediaFailed(ctx context.Context, arg MarkMediaFailedParams) error {
@@ -673,10 +673,10 @@ UPDATE media SET status = 'READY', width = $2, height = $3, variants = $4, updat
 `
 
 type MarkMediaReadyParams struct {
-	ID       uuid.UUID
-	Width    *int32
-	Height   *int32
-	Variants json.RawMessage
+	ID       uuid.UUID       `json:"id"`
+	Width    *int32          `json:"width"`
+	Height   *int32          `json:"height"`
+	Variants json.RawMessage `json:"variants"`
 }
 
 func (q *Queries) MarkMediaReady(ctx context.Context, arg MarkMediaReadyParams) error {
@@ -705,9 +705,9 @@ ON CONFLICT (media_id, locale) DO UPDATE SET alt_text = EXCLUDED.alt_text
 `
 
 type UpsertMediaTranslationParams struct {
-	MediaID uuid.UUID
-	Locale  string
-	AltText string
+	MediaID uuid.UUID `json:"media_id"`
+	Locale  string    `json:"locale"`
+	AltText string    `json:"alt_text"`
 }
 
 func (q *Queries) UpsertMediaTranslation(ctx context.Context, arg UpsertMediaTranslationParams) error {
@@ -721,9 +721,9 @@ ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_by = EXCLUDED.up
 `
 
 type UpsertSettingParams struct {
-	Key       string
-	Value     json.RawMessage
-	UpdatedBy *uuid.UUID
+	Key       string          `json:"key"`
+	Value     json.RawMessage `json:"value"`
+	UpdatedBy *uuid.UUID      `json:"updated_by"`
 }
 
 func (q *Queries) UpsertSetting(ctx context.Context, arg UpsertSettingParams) error {

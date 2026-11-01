@@ -13,808 +13,808 @@ import (
 )
 
 type AdminInvite struct {
-	ID         uuid.UUID
-	Email      string
-	InvitedBy  *uuid.UUID
-	AcceptedAt *time.Time
-	AcceptedBy *uuid.UUID
-	CreatedAt  time.Time
+	ID         uuid.UUID  `json:"id"`
+	Email      string     `json:"email"`
+	InvitedBy  *uuid.UUID `json:"invited_by"`
+	AcceptedAt *time.Time `json:"accepted_at"`
+	AcceptedBy *uuid.UUID `json:"accepted_by"`
+	CreatedAt  time.Time  `json:"created_at"`
 }
 
 type Area struct {
-	ID        uuid.UUID
-	BoatID    uuid.UUID
-	DeckLabel string
-	IsSystem  bool
-	MinPax    int32
-	MaxPax    int32
-	BasePrice int64
-	SortOrder int32
-	Status    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	BoatID    uuid.UUID `json:"boat_id"`
+	DeckLabel string    `json:"deck_label"`
+	IsSystem  bool      `json:"is_system"`
+	MinPax    int32     `json:"min_pax"`
+	MaxPax    int32     `json:"max_pax"`
+	BasePrice int64     `json:"base_price"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type AreaFacility struct {
-	AreaID     uuid.UUID
-	FacilityID uuid.UUID
+	AreaID     uuid.UUID `json:"area_id"`
+	FacilityID uuid.UUID `json:"facility_id"`
 }
 
 type AreaReservation struct {
-	ID          uuid.UUID
-	AreaID      uuid.UUID
-	BoatID      uuid.UUID
-	Period      pgtype.Range[pgtype.Timestamptz]
-	Kind        string
-	BookingID   *uuid.UUID
-	DepartureID *uuid.UUID
-	BlockID     *uuid.UUID
-	Status      string
-	ExpiresAt   *time.Time
-	CreatedAt   time.Time
+	ID          uuid.UUID                        `json:"id"`
+	AreaID      uuid.UUID                        `json:"area_id"`
+	BoatID      uuid.UUID                        `json:"boat_id"`
+	Period      pgtype.Range[pgtype.Timestamptz] `json:"period"`
+	Kind        string                           `json:"kind"`
+	BookingID   *uuid.UUID                       `json:"booking_id"`
+	DepartureID *uuid.UUID                       `json:"departure_id"`
+	BlockID     *uuid.UUID                       `json:"block_id"`
+	Status      string                           `json:"status"`
+	ExpiresAt   *time.Time                       `json:"expires_at"`
+	CreatedAt   time.Time                        `json:"created_at"`
 }
 
 type AreaTranslation struct {
-	AreaID      uuid.UUID
-	Locale      string
-	Name        string
-	Description string
+	AreaID      uuid.UUID `json:"area_id"`
+	Locale      string    `json:"locale"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
 }
 
 type AuditLog struct {
-	ID         int64
-	ActorID    *uuid.UUID
-	Action     string
-	EntityType string
-	EntityID   string
-	Before     json.RawMessage
-	After      json.RawMessage
-	RequestID  string
-	IpAddress  string
-	CreatedAt  time.Time
+	ID         int64           `json:"id"`
+	ActorID    *uuid.UUID      `json:"actor_id"`
+	Action     string          `json:"action"`
+	EntityType string          `json:"entity_type"`
+	EntityID   string          `json:"entity_id"`
+	Before     json.RawMessage `json:"before"`
+	After      json.RawMessage `json:"after"`
+	RequestID  string          `json:"request_id"`
+	IpAddress  string          `json:"ip_address"`
+	CreatedAt  time.Time       `json:"created_at"`
 }
 
 type Boat struct {
-	ID                      uuid.UUID
-	Code                    string
-	CategoryID              uuid.UUID
-	ClassID                 uuid.UUID
-	Ownership               string
-	PartnerID               *uuid.UUID
-	CommissionType          *string
-	CommissionValue         int64
-	HomePortID              uuid.UUID
-	MaxPassengers           int32
-	LengthCm                *int32
-	BeamCm                  *int32
-	YearBuilt               *int32
-	Cabins                  int32
-	Bathrooms               int32
-	SpeedKnots              *int32
-	CrewCount               int32
-	TurnaroundBufferMinutes int32
-	OperatingStartMinute    int32
-	OperatingEndMinute      int32
-	OvernightAllowed        bool
-	PaymentPolicyID         uuid.UUID
-	CancellationPolicyID    uuid.UUID
-	SortOrder               int32
-	Status                  string
-	CreatedAt               time.Time
-	UpdatedAt               time.Time
+	ID                      uuid.UUID  `json:"id"`
+	Code                    string     `json:"code"`
+	CategoryID              uuid.UUID  `json:"category_id"`
+	ClassID                 uuid.UUID  `json:"class_id"`
+	Ownership               string     `json:"ownership"`
+	PartnerID               *uuid.UUID `json:"partner_id"`
+	CommissionType          *string    `json:"commission_type"`
+	CommissionValue         int64      `json:"commission_value"`
+	HomePortID              uuid.UUID  `json:"home_port_id"`
+	MaxPassengers           int32      `json:"max_passengers"`
+	LengthCm                *int32     `json:"length_cm"`
+	BeamCm                  *int32     `json:"beam_cm"`
+	YearBuilt               *int32     `json:"year_built"`
+	Cabins                  int32      `json:"cabins"`
+	Bathrooms               int32      `json:"bathrooms"`
+	SpeedKnots              *int32     `json:"speed_knots"`
+	CrewCount               int32      `json:"crew_count"`
+	TurnaroundBufferMinutes int32      `json:"turnaround_buffer_minutes"`
+	OperatingStartMinute    int32      `json:"operating_start_minute"`
+	OperatingEndMinute      int32      `json:"operating_end_minute"`
+	OvernightAllowed        bool       `json:"overnight_allowed"`
+	PaymentPolicyID         uuid.UUID  `json:"payment_policy_id"`
+	CancellationPolicyID    uuid.UUID  `json:"cancellation_policy_id"`
+	SortOrder               int32      `json:"sort_order"`
+	Status                  string     `json:"status"`
+	CreatedAt               time.Time  `json:"created_at"`
+	UpdatedAt               time.Time  `json:"updated_at"`
 }
 
 type BoatBlock struct {
-	ID        uuid.UUID
-	BoatID    uuid.UUID
-	AreaID    *uuid.UUID
-	Kind      string
-	StartsAt  time.Time
-	EndsAt    time.Time
-	Reason    string
-	CreatedBy *uuid.UUID
-	CreatedAt time.Time
+	ID        uuid.UUID  `json:"id"`
+	BoatID    uuid.UUID  `json:"boat_id"`
+	AreaID    *uuid.UUID `json:"area_id"`
+	Kind      string     `json:"kind"`
+	StartsAt  time.Time  `json:"starts_at"`
+	EndsAt    time.Time  `json:"ends_at"`
+	Reason    string     `json:"reason"`
+	CreatedBy *uuid.UUID `json:"created_by"`
+	CreatedAt time.Time  `json:"created_at"`
 }
 
 type BoatCategory struct {
-	ID        uuid.UUID
-	SortOrder int32
-	Status    string
-	CreatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type BoatCategoryTranslation struct {
-	CategoryID uuid.UUID
-	Locale     string
-	Name       string
-	Slug       string
+	CategoryID uuid.UUID `json:"category_id"`
+	Locale     string    `json:"locale"`
+	Name       string    `json:"name"`
+	Slug       string    `json:"slug"`
 }
 
 type BoatClass struct {
-	ID        uuid.UUID
-	SortOrder int32
-	Status    string
-	CreatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type BoatClassTranslation struct {
-	ClassID uuid.UUID
-	Locale  string
-	Name    string
-	Slug    string
+	ClassID uuid.UUID `json:"class_id"`
+	Locale  string    `json:"locale"`
+	Name    string    `json:"name"`
+	Slug    string    `json:"slug"`
 }
 
 type BoatFacility struct {
-	BoatID     uuid.UUID
-	FacilityID uuid.UUID
+	BoatID     uuid.UUID `json:"boat_id"`
+	FacilityID uuid.UUID `json:"facility_id"`
 }
 
 type BoatRate struct {
-	ID       uuid.UUID
-	BoatID   uuid.UUID
-	RateUnit string
-	Price    int64
-	MinUnits int32
-	MaxUnits int32
+	ID       uuid.UUID `json:"id"`
+	BoatID   uuid.UUID `json:"boat_id"`
+	RateUnit string    `json:"rate_unit"`
+	Price    int64     `json:"price"`
+	MinUnits int32     `json:"min_units"`
+	MaxUnits int32     `json:"max_units"`
 }
 
 type BoatRegion struct {
-	BoatID   uuid.UUID
-	RegionID uuid.UUID
+	BoatID   uuid.UUID `json:"boat_id"`
+	RegionID uuid.UUID `json:"region_id"`
 }
 
 type BoatRoute struct {
-	BoatID             uuid.UUID
-	RouteID            uuid.UUID
-	FixedPrice         *int64
-	MinDurationMinutes *int32
+	BoatID             uuid.UUID `json:"boat_id"`
+	RouteID            uuid.UUID `json:"route_id"`
+	FixedPrice         *int64    `json:"fixed_price"`
+	MinDurationMinutes *int32    `json:"min_duration_minutes"`
 }
 
 type BoatTranslation struct {
-	BoatID         uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Summary        string
-	Description    string
-	SeoTitle       string
-	SeoDescription string
+	BoatID         uuid.UUID `json:"boat_id"`
+	Locale         string    `json:"locale"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Summary        string    `json:"summary"`
+	Description    string    `json:"description"`
+	SeoTitle       string    `json:"seo_title"`
+	SeoDescription string    `json:"seo_description"`
 }
 
 type Booking struct {
-	ID                 uuid.UUID
-	PublicID           uuid.UUID
-	BookingNumber      string
-	InvoiceNumber      *string
-	UserID             uuid.UUID
-	Mode               string
-	PackageID          *uuid.UUID
-	BoatID             uuid.UUID
-	RouteID            uuid.UUID
-	DepartureID        *uuid.UUID
-	DepartureSlotID    *uuid.UUID
-	IsPrivateSlot      bool
-	StartsAt           time.Time
-	EndsAt             time.Time
-	Timezone           string
-	Pax                int32
-	Status             string
-	PaymentStatus      string
-	PaymentScheme      string
-	Subtotal           int64
-	GrandTotal         int64
-	DepositAmount      int64
-	AmountPaid         int64
-	FeesPaid           int64
-	AmountRefunded     int64
-	ForfeitedAmount    int64
-	Currency           string
-	HoldExpiresAt      *time.Time
-	BalanceDueAt       *time.Time
-	Snapshot           json.RawMessage
-	Consents           json.RawMessage
-	LeadFullName       string
-	LeadEmail          string
-	LeadPhone          string
-	LeadNationality    string
-	SpecialRequest     string
-	Locale             string
-	VerifyToken        string
-	VerifyTokenRevoked bool
-	ExceptionReason    *string
-	CancelType         *string
-	CancelReason       string
-	CancelledAt        *time.Time
-	CreatedByAdmin     *uuid.UUID
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
+	ID                 uuid.UUID       `json:"id"`
+	PublicID           uuid.UUID       `json:"public_id"`
+	BookingNumber      string          `json:"booking_number"`
+	InvoiceNumber      *string         `json:"invoice_number"`
+	UserID             uuid.UUID       `json:"user_id"`
+	Mode               string          `json:"mode"`
+	PackageID          *uuid.UUID      `json:"package_id"`
+	BoatID             uuid.UUID       `json:"boat_id"`
+	RouteID            uuid.UUID       `json:"route_id"`
+	DepartureID        *uuid.UUID      `json:"departure_id"`
+	DepartureSlotID    *uuid.UUID      `json:"departure_slot_id"`
+	IsPrivateSlot      bool            `json:"is_private_slot"`
+	StartsAt           time.Time       `json:"starts_at"`
+	EndsAt             time.Time       `json:"ends_at"`
+	Timezone           string          `json:"timezone"`
+	Pax                int32           `json:"pax"`
+	Status             string          `json:"status"`
+	PaymentStatus      string          `json:"payment_status"`
+	PaymentScheme      string          `json:"payment_scheme"`
+	Subtotal           int64           `json:"subtotal"`
+	GrandTotal         int64           `json:"grand_total"`
+	DepositAmount      int64           `json:"deposit_amount"`
+	AmountPaid         int64           `json:"amount_paid"`
+	FeesPaid           int64           `json:"fees_paid"`
+	AmountRefunded     int64           `json:"amount_refunded"`
+	ForfeitedAmount    int64           `json:"forfeited_amount"`
+	Currency           string          `json:"currency"`
+	HoldExpiresAt      *time.Time      `json:"hold_expires_at"`
+	BalanceDueAt       *time.Time      `json:"balance_due_at"`
+	Snapshot           json.RawMessage `json:"snapshot"`
+	Consents           json.RawMessage `json:"consents"`
+	LeadFullName       string          `json:"lead_full_name"`
+	LeadEmail          string          `json:"lead_email"`
+	LeadPhone          string          `json:"lead_phone"`
+	LeadNationality    string          `json:"lead_nationality"`
+	SpecialRequest     string          `json:"special_request"`
+	Locale             string          `json:"locale"`
+	VerifyToken        string          `json:"verify_token"`
+	VerifyTokenRevoked bool            `json:"verify_token_revoked"`
+	ExceptionReason    *string         `json:"exception_reason"`
+	CancelType         *string         `json:"cancel_type"`
+	CancelReason       string          `json:"cancel_reason"`
+	CancelledAt        *time.Time      `json:"cancelled_at"`
+	CreatedByAdmin     *uuid.UUID      `json:"created_by_admin"`
+	CreatedAt          time.Time       `json:"created_at"`
+	UpdatedAt          time.Time       `json:"updated_at"`
 }
 
 type BookingGuest struct {
-	ID        uuid.UUID
-	BookingID uuid.UUID
-	SortOrder int32
-	FullName  string
-	Phone     string
+	ID        uuid.UUID `json:"id"`
+	BookingID uuid.UUID `json:"booking_id"`
+	SortOrder int32     `json:"sort_order"`
+	FullName  string    `json:"full_name"`
+	Phone     string    `json:"phone"`
 }
 
 type BookingIdentity struct {
-	BookingID  uuid.UUID
-	IDType     string
-	Ciphertext []byte
-	KeyID      *string
-	Last4      string
-	PurgedAt   *time.Time
+	BookingID  uuid.UUID  `json:"booking_id"`
+	IDType     string     `json:"id_type"`
+	Ciphertext []byte     `json:"ciphertext"`
+	KeyID      *string    `json:"key_id"`
+	Last4      string     `json:"last4"`
+	PurgedAt   *time.Time `json:"purged_at"`
 }
 
 type BookingRequest struct {
-	ID         uuid.UUID
-	BookingID  uuid.UUID
-	Type       string
-	Status     string
-	Message    string
-	Resolution string
-	ResolvedBy *uuid.UUID
-	ResolvedAt *time.Time
-	CreatedAt  time.Time
+	ID         uuid.UUID  `json:"id"`
+	BookingID  uuid.UUID  `json:"booking_id"`
+	Type       string     `json:"type"`
+	Status     string     `json:"status"`
+	Message    string     `json:"message"`
+	Resolution string     `json:"resolution"`
+	ResolvedBy *uuid.UUID `json:"resolved_by"`
+	ResolvedAt *time.Time `json:"resolved_at"`
+	CreatedAt  time.Time  `json:"created_at"`
 }
 
 type CancellationPolicy struct {
-	ID        uuid.UUID
-	Name      string
-	Status    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type CancellationPolicyTier struct {
-	ID                uuid.UUID
-	PolicyID          uuid.UUID
-	MinDaysBefore     int32
-	RefundBasisPoints int32
+	ID                uuid.UUID `json:"id"`
+	PolicyID          uuid.UUID `json:"policy_id"`
+	MinDaysBefore     int32     `json:"min_days_before"`
+	RefundBasisPoints int32     `json:"refund_basis_points"`
 }
 
 type CancellationPolicyTranslation struct {
-	PolicyID    uuid.UUID
-	Locale      string
-	Description string
+	PolicyID    uuid.UUID `json:"policy_id"`
+	Locale      string    `json:"locale"`
+	Description string    `json:"description"`
 }
 
 type Departure struct {
-	ID              uuid.UUID
-	BoatID          uuid.UUID
-	RouteID         uuid.UUID
-	DepartsAt       time.Time
-	ReturnsAt       time.Time
-	BookingClosesAt time.Time
-	Status          string
-	CancelReason    string
-	CreatedBy       *uuid.UUID
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	ID              uuid.UUID  `json:"id"`
+	BoatID          uuid.UUID  `json:"boat_id"`
+	RouteID         uuid.UUID  `json:"route_id"`
+	DepartsAt       time.Time  `json:"departs_at"`
+	ReturnsAt       time.Time  `json:"returns_at"`
+	BookingClosesAt time.Time  `json:"booking_closes_at"`
+	Status          string     `json:"status"`
+	CancelReason    string     `json:"cancel_reason"`
+	CreatedBy       *uuid.UUID `json:"created_by"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
 }
 
 type DepartureSlot struct {
-	ID           uuid.UUID
-	DepartureID  uuid.UUID
-	SlotType     string
-	Price        int64
-	SeatCapacity *int32
-	MinPax       int32
-	MaxPax       int32
-	SortOrder    int32
-	CreatedAt    time.Time
+	ID           uuid.UUID `json:"id"`
+	DepartureID  uuid.UUID `json:"departure_id"`
+	SlotType     string    `json:"slot_type"`
+	Price        int64     `json:"price"`
+	SeatCapacity *int32    `json:"seat_capacity"`
+	MinPax       int32     `json:"min_pax"`
+	MaxPax       int32     `json:"max_pax"`
+	SortOrder    int32     `json:"sort_order"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type DepartureSlotArea struct {
-	DepartureID uuid.UUID
-	SlotID      uuid.UUID
-	AreaID      uuid.UUID
+	DepartureID uuid.UUID `json:"departure_id"`
+	SlotID      uuid.UUID `json:"slot_id"`
+	AreaID      uuid.UUID `json:"area_id"`
 }
 
 type Facility struct {
-	ID        uuid.UUID
-	Icon      string
-	SortOrder int32
-	CreatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	Icon      string    `json:"icon"`
+	SortOrder int32     `json:"sort_order"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type FacilityTranslation struct {
-	FacilityID uuid.UUID
-	Locale     string
-	Name       string
+	FacilityID uuid.UUID `json:"facility_id"`
+	Locale     string    `json:"locale"`
+	Name       string    `json:"name"`
 }
 
 type Faq struct {
-	ID        uuid.UUID
-	Category  string
-	BoatID    *uuid.UUID
-	PackageID *uuid.UUID
-	SortOrder int32
-	Status    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID  `json:"id"`
+	Category  string     `json:"category"`
+	BoatID    *uuid.UUID `json:"boat_id"`
+	PackageID *uuid.UUID `json:"package_id"`
+	SortOrder int32      `json:"sort_order"`
+	Status    string     `json:"status"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
 }
 
 type FaqTranslation struct {
-	FaqID    uuid.UUID
-	Locale   string
-	Question string
-	Answer   string
+	FaqID    uuid.UUID `json:"faq_id"`
+	Locale   string    `json:"locale"`
+	Question string    `json:"question"`
+	Answer   string    `json:"answer"`
 }
 
 type IdempotencyKey struct {
-	ID           uuid.UUID
-	Scope        string
-	UserID       *uuid.UUID
-	Key          string
-	RequestHash  []byte
-	StatusCode   *int32
-	ResponseBody []byte
-	CreatedAt    time.Time
-	CompletedAt  *time.Time
+	ID           uuid.UUID  `json:"id"`
+	Scope        string     `json:"scope"`
+	UserID       *uuid.UUID `json:"user_id"`
+	Key          string     `json:"key"`
+	RequestHash  []byte     `json:"request_hash"`
+	StatusCode   *int32     `json:"status_code"`
+	ResponseBody []byte     `json:"response_body"`
+	CreatedAt    time.Time  `json:"created_at"`
+	CompletedAt  *time.Time `json:"completed_at"`
 }
 
 type InvoiceSequence struct {
-	Year      int32
-	LastValue int64
+	Year      int32 `json:"year"`
+	LastValue int64 `json:"last_value"`
 }
 
 type MediaTranslation struct {
-	MediaID uuid.UUID
-	Locale  string
-	AltText string
+	MediaID uuid.UUID `json:"media_id"`
+	Locale  string    `json:"locale"`
+	AltText string    `json:"alt_text"`
 }
 
 type MediaUsage struct {
-	ID         uuid.UUID
-	MediaID    uuid.UUID
-	EntityType string
-	EntityID   uuid.UUID
-	Role       string
-	SortOrder  int32
-	CreatedAt  time.Time
+	ID         uuid.UUID `json:"id"`
+	MediaID    uuid.UUID `json:"media_id"`
+	EntityType string    `json:"entity_type"`
+	EntityID   uuid.UUID `json:"entity_id"`
+	Role       string    `json:"role"`
+	SortOrder  int32     `json:"sort_order"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 type Medium struct {
-	ID            uuid.UUID
-	Bucket        string
-	BaseName      string
-	Status        string
-	ContentType   string
-	Width         *int32
-	Height        *int32
-	Variants      json.RawMessage
-	ByteSize      int64
-	FailureReason string
-	UploadedBy    *uuid.UUID
-	DeleteAfter   *time.Time
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID            uuid.UUID       `json:"id"`
+	Bucket        string          `json:"bucket"`
+	BaseName      string          `json:"base_name"`
+	Status        string          `json:"status"`
+	ContentType   string          `json:"content_type"`
+	Width         *int32          `json:"width"`
+	Height        *int32          `json:"height"`
+	Variants      json.RawMessage `json:"variants"`
+	ByteSize      int64           `json:"byte_size"`
+	FailureReason string          `json:"failure_reason"`
+	UploadedBy    *uuid.UUID      `json:"uploaded_by"`
+	DeleteAfter   *time.Time      `json:"delete_after"`
+	CreatedAt     time.Time       `json:"created_at"`
+	UpdatedAt     time.Time       `json:"updated_at"`
 }
 
 type NotificationLog struct {
-	ID        uuid.UUID
-	Kind      string
-	DedupeKey string
-	BookingID *uuid.UUID
-	UserID    *uuid.UUID
-	Recipient string
-	Locale    string
-	Status    string
-	Attempts  int32
-	LastError string
-	SentAt    *time.Time
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID  `json:"id"`
+	Kind      string     `json:"kind"`
+	DedupeKey string     `json:"dedupe_key"`
+	BookingID *uuid.UUID `json:"booking_id"`
+	UserID    *uuid.UUID `json:"user_id"`
+	Recipient string     `json:"recipient"`
+	Locale    string     `json:"locale"`
+	Status    string     `json:"status"`
+	Attempts  int32      `json:"attempts"`
+	LastError string     `json:"last_error"`
+	SentAt    *time.Time `json:"sent_at"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
 }
 
 type OauthState struct {
-	State        string
-	CodeVerifier string
-	Nonce        string
-	ReturnTo     string
-	ExpiresAt    time.Time
-	CreatedAt    time.Time
+	State        string    `json:"state"`
+	CodeVerifier string    `json:"code_verifier"`
+	Nonce        string    `json:"nonce"`
+	ReturnTo     string    `json:"return_to"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type Package struct {
-	ID                   uuid.UUID
-	Mode                 string
-	RouteID              *uuid.UUID
-	DurationMinutes      *int32
-	DepartureID          *uuid.UUID
-	MinPax               int32
-	MaxPax               int32
-	ValidFrom            time.Time
-	ValidUntil           time.Time
-	BookingCutoffHours   int32
-	PaymentPolicyID      uuid.UUID
-	CancellationPolicyID uuid.UUID
-	SortOrder            int32
-	Status               string
-	CreatedAt            time.Time
-	UpdatedAt            time.Time
+	ID                   uuid.UUID  `json:"id"`
+	Mode                 string     `json:"mode"`
+	RouteID              *uuid.UUID `json:"route_id"`
+	DurationMinutes      *int32     `json:"duration_minutes"`
+	DepartureID          *uuid.UUID `json:"departure_id"`
+	MinPax               int32      `json:"min_pax"`
+	MaxPax               int32      `json:"max_pax"`
+	ValidFrom            time.Time  `json:"valid_from"`
+	ValidUntil           time.Time  `json:"valid_until"`
+	BookingCutoffHours   int32      `json:"booking_cutoff_hours"`
+	PaymentPolicyID      uuid.UUID  `json:"payment_policy_id"`
+	CancellationPolicyID uuid.UUID  `json:"cancellation_policy_id"`
+	SortOrder            int32      `json:"sort_order"`
+	Status               string     `json:"status"`
+	CreatedAt            time.Time  `json:"created_at"`
+	UpdatedAt            time.Time  `json:"updated_at"`
 }
 
 type PackageOffering struct {
-	ID              uuid.UUID
-	PackageID       uuid.UUID
-	BoatID          uuid.UUID
-	DepartureSlotID *uuid.UUID
-	Price           int64
-	CreatedAt       time.Time
+	ID              uuid.UUID  `json:"id"`
+	PackageID       uuid.UUID  `json:"package_id"`
+	BoatID          uuid.UUID  `json:"boat_id"`
+	DepartureSlotID *uuid.UUID `json:"departure_slot_id"`
+	Price           int64      `json:"price"`
+	CreatedAt       time.Time  `json:"created_at"`
 }
 
 type PackageTranslation struct {
-	PackageID      uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Summary        string
-	Description    string
-	Inclusions     json.RawMessage
-	Exclusions     json.RawMessage
-	SeoTitle       string
-	SeoDescription string
+	PackageID      uuid.UUID       `json:"package_id"`
+	Locale         string          `json:"locale"`
+	Name           string          `json:"name"`
+	Slug           string          `json:"slug"`
+	Summary        string          `json:"summary"`
+	Description    string          `json:"description"`
+	Inclusions     json.RawMessage `json:"inclusions"`
+	Exclusions     json.RawMessage `json:"exclusions"`
+	SeoTitle       string          `json:"seo_title"`
+	SeoDescription string          `json:"seo_description"`
 }
 
 type Page struct {
-	ID          uuid.UUID
-	Status      string
-	PublishedAt *time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          uuid.UUID  `json:"id"`
+	Status      string     `json:"status"`
+	PublishedAt *time.Time `json:"published_at"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
 }
 
 type PageSection struct {
-	ID        uuid.UUID
-	Type      string
-	SortOrder int32
-	IsActive  bool
-	Config    json.RawMessage
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID       `json:"id"`
+	Type      string          `json:"type"`
+	SortOrder int32           `json:"sort_order"`
+	IsActive  bool            `json:"is_active"`
+	Config    json.RawMessage `json:"config"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
 }
 
 type PageSectionTranslation struct {
-	SectionID uuid.UUID
-	Locale    string
-	Content   json.RawMessage
+	SectionID uuid.UUID       `json:"section_id"`
+	Locale    string          `json:"locale"`
+	Content   json.RawMessage `json:"content"`
 }
 
 type PageTranslation struct {
-	PageID         uuid.UUID
-	Locale         string
-	Title          string
-	Slug           string
-	Blocks         json.RawMessage
-	SeoTitle       string
-	SeoDescription string
+	PageID         uuid.UUID       `json:"page_id"`
+	Locale         string          `json:"locale"`
+	Title          string          `json:"title"`
+	Slug           string          `json:"slug"`
+	Blocks         json.RawMessage `json:"blocks"`
+	SeoTitle       string          `json:"seo_title"`
+	SeoDescription string          `json:"seo_description"`
 }
 
 type Partner struct {
-	ID                uuid.UUID
-	Name              string
-	ContactName       string
-	Email             string
-	Phone             string
-	BankName          string
-	BankAccountName   string
-	BankAccountNumber string
-	Notes             string
-	Status            string
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	ID                uuid.UUID `json:"id"`
+	Name              string    `json:"name"`
+	ContactName       string    `json:"contact_name"`
+	Email             string    `json:"email"`
+	Phone             string    `json:"phone"`
+	BankName          string    `json:"bank_name"`
+	BankAccountName   string    `json:"bank_account_name"`
+	BankAccountNumber string    `json:"bank_account_number"`
+	Notes             string    `json:"notes"`
+	Status            string    `json:"status"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
 }
 
 type Payment struct {
-	ID                  uuid.UUID
-	BookingID           uuid.UUID
-	Kind                string
-	Provider            string
-	Method              string
-	OrderID             string
-	PrincipalAmount     int64
-	FeeAmount           int64
-	GrossAmount         int64
-	Currency            string
-	Status              string
-	ProviderStatus      string
-	ProviderFraud       string
-	ProviderTxnID       string
-	ProviderPaymentType string
-	SnapToken           string
-	SnapRedirectUrl     string
-	VaNumbers           json.RawMessage
-	ExpiresAt           *time.Time
-	PaidAt              *time.Time
-	IsException         bool
-	ManualPaidOn        *time.Time
-	ProofMediaID        *uuid.UUID
-	RecordedBy          *uuid.UUID
-	Notes               string
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
+	ID                  uuid.UUID       `json:"id"`
+	BookingID           uuid.UUID       `json:"booking_id"`
+	Kind                string          `json:"kind"`
+	Provider            string          `json:"provider"`
+	Method              string          `json:"method"`
+	OrderID             string          `json:"order_id"`
+	PrincipalAmount     int64           `json:"principal_amount"`
+	FeeAmount           int64           `json:"fee_amount"`
+	GrossAmount         int64           `json:"gross_amount"`
+	Currency            string          `json:"currency"`
+	Status              string          `json:"status"`
+	ProviderStatus      string          `json:"provider_status"`
+	ProviderFraud       string          `json:"provider_fraud"`
+	ProviderTxnID       string          `json:"provider_txn_id"`
+	ProviderPaymentType string          `json:"provider_payment_type"`
+	SnapToken           string          `json:"snap_token"`
+	SnapRedirectUrl     string          `json:"snap_redirect_url"`
+	VaNumbers           json.RawMessage `json:"va_numbers"`
+	ExpiresAt           *time.Time      `json:"expires_at"`
+	PaidAt              *time.Time      `json:"paid_at"`
+	IsException         bool            `json:"is_exception"`
+	ManualPaidOn        *time.Time      `json:"manual_paid_on"`
+	ProofMediaID        *uuid.UUID      `json:"proof_media_id"`
+	RecordedBy          *uuid.UUID      `json:"recorded_by"`
+	Notes               string          `json:"notes"`
+	CreatedAt           time.Time       `json:"created_at"`
+	UpdatedAt           time.Time       `json:"updated_at"`
 }
 
 type PaymentEvent struct {
-	ID                uuid.UUID
-	PaymentID         *uuid.UUID
-	OrderID           string
-	DedupeKey         string
-	Source            string
-	TransactionStatus string
-	FraudStatus       string
-	StatusCode        string
-	GrossAmount       string
-	Verdict           string
-	VerdictReason     string
-	Payload           json.RawMessage
-	CreatedAt         time.Time
+	ID                uuid.UUID       `json:"id"`
+	PaymentID         *uuid.UUID      `json:"payment_id"`
+	OrderID           string          `json:"order_id"`
+	DedupeKey         string          `json:"dedupe_key"`
+	Source            string          `json:"source"`
+	TransactionStatus string          `json:"transaction_status"`
+	FraudStatus       string          `json:"fraud_status"`
+	StatusCode        string          `json:"status_code"`
+	GrossAmount       string          `json:"gross_amount"`
+	Verdict           string          `json:"verdict"`
+	VerdictReason     string          `json:"verdict_reason"`
+	Payload           json.RawMessage `json:"payload"`
+	CreatedAt         time.Time       `json:"created_at"`
 }
 
 type PaymentMethodFee struct {
-	Method      string
-	FeeType     string
-	FeeValue    int64
-	HoldMinutes int32
-	Enabled     bool
-	SortOrder   int32
-	UpdatedAt   time.Time
+	Method      string    `json:"method"`
+	FeeType     string    `json:"fee_type"`
+	FeeValue    int64     `json:"fee_value"`
+	HoldMinutes int32     `json:"hold_minutes"`
+	Enabled     bool      `json:"enabled"`
+	SortOrder   int32     `json:"sort_order"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type PaymentPolicy struct {
-	ID             uuid.UUID
-	Name           string
-	Type           string
-	DepositType    *string
-	DepositValue   int64
-	BalanceDueDays int32
-	Status         string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID             uuid.UUID `json:"id"`
+	Name           string    `json:"name"`
+	Type           string    `json:"type"`
+	DepositType    *string   `json:"deposit_type"`
+	DepositValue   int64     `json:"deposit_value"`
+	BalanceDueDays int32     `json:"balance_due_days"`
+	Status         string    `json:"status"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 type Payout struct {
-	ID           uuid.UUID
-	PartnerID    uuid.UUID
-	PeriodStart  time.Time
-	PeriodEnd    time.Time
-	Amount       int64
-	PaidOn       time.Time
-	ProofMediaID *uuid.UUID
-	Notes        string
-	RecordedBy   *uuid.UUID
-	CreatedAt    time.Time
+	ID           uuid.UUID  `json:"id"`
+	PartnerID    uuid.UUID  `json:"partner_id"`
+	PeriodStart  time.Time  `json:"period_start"`
+	PeriodEnd    time.Time  `json:"period_end"`
+	Amount       int64      `json:"amount"`
+	PaidOn       time.Time  `json:"paid_on"`
+	ProofMediaID *uuid.UUID `json:"proof_media_id"`
+	Notes        string     `json:"notes"`
+	RecordedBy   *uuid.UUID `json:"recorded_by"`
+	CreatedAt    time.Time  `json:"created_at"`
 }
 
 type PayoutBooking struct {
-	PayoutID      uuid.UUID
-	BookingID     uuid.UUID
-	PartnerAmount int64
+	PayoutID      uuid.UUID `json:"payout_id"`
+	BookingID     uuid.UUID `json:"booking_id"`
+	PartnerAmount int64     `json:"partner_amount"`
 }
 
 type Port struct {
-	ID        uuid.UUID
-	RegionID  uuid.UUID
-	Address   string
-	Latitude  *float64
-	Longitude *float64
-	Timezone  string
-	Status    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	RegionID  uuid.UUID `json:"region_id"`
+	Address   string    `json:"address"`
+	Latitude  *float64  `json:"latitude"`
+	Longitude *float64  `json:"longitude"`
+	Timezone  string    `json:"timezone"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type PortTranslation struct {
-	PortID uuid.UUID
-	Locale string
-	Name   string
+	PortID uuid.UUID `json:"port_id"`
+	Locale string    `json:"locale"`
+	Name   string    `json:"name"`
 }
 
 type PriceOverride struct {
-	ID                uuid.UUID
-	BoatRateID        *uuid.UUID
-	PackageOfferingID *uuid.UUID
-	RuleType          string
-	OnDate            *time.Time
-	SeasonID          *uuid.UUID
-	Price             int64
-	CreatedAt         time.Time
+	ID                uuid.UUID  `json:"id"`
+	BoatRateID        *uuid.UUID `json:"boat_rate_id"`
+	PackageOfferingID *uuid.UUID `json:"package_offering_id"`
+	RuleType          string     `json:"rule_type"`
+	OnDate            *time.Time `json:"on_date"`
+	SeasonID          *uuid.UUID `json:"season_id"`
+	Price             int64      `json:"price"`
+	CreatedAt         time.Time  `json:"created_at"`
 }
 
 type Promotion struct {
-	ID            uuid.UUID
-	Name          string
-	Code          *string
-	IsAutomatic   bool
-	DiscountType  string
-	DiscountValue int64
-	BoatID        *uuid.UUID
-	PackageID     *uuid.UUID
-	BookingMode   *string
-	MinSubtotal   int64
-	StartsAt      time.Time
-	EndsAt        time.Time
-	Quota         *int32
-	UsedCount     int32
-	Status        string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID            uuid.UUID  `json:"id"`
+	Name          string     `json:"name"`
+	Code          *string    `json:"code"`
+	IsAutomatic   bool       `json:"is_automatic"`
+	DiscountType  string     `json:"discount_type"`
+	DiscountValue int64      `json:"discount_value"`
+	BoatID        *uuid.UUID `json:"boat_id"`
+	PackageID     *uuid.UUID `json:"package_id"`
+	BookingMode   *string    `json:"booking_mode"`
+	MinSubtotal   int64      `json:"min_subtotal"`
+	StartsAt      time.Time  `json:"starts_at"`
+	EndsAt        time.Time  `json:"ends_at"`
+	Quota         *int32     `json:"quota"`
+	UsedCount     int32      `json:"used_count"`
+	Status        string     `json:"status"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
 }
 
 type PromotionRedemption struct {
-	PromotionID uuid.UUID
-	BookingID   uuid.UUID
-	Status      string
-	CreatedAt   time.Time
+	PromotionID uuid.UUID `json:"promotion_id"`
+	BookingID   uuid.UUID `json:"booking_id"`
+	Status      string    `json:"status"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type Refund struct {
-	ID                uuid.UUID
-	BookingID         uuid.UUID
-	PaymentID         *uuid.UUID
-	ReasonType        string
-	Amount            int64
-	IncludesFeeAmount int64
-	Channel           string
-	Status            string
-	ProviderRefundKey *string
-	BankName          string
-	BankAccountName   string
-	BankAccountNumber string
-	ProofMediaID      *uuid.UUID
-	Notes             string
-	RequestedBy       *uuid.UUID
-	ApprovedBy        *uuid.UUID
-	CompletedAt       *time.Time
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	ID                uuid.UUID  `json:"id"`
+	BookingID         uuid.UUID  `json:"booking_id"`
+	PaymentID         *uuid.UUID `json:"payment_id"`
+	ReasonType        string     `json:"reason_type"`
+	Amount            int64      `json:"amount"`
+	IncludesFeeAmount int64      `json:"includes_fee_amount"`
+	Channel           string     `json:"channel"`
+	Status            string     `json:"status"`
+	ProviderRefundKey *string    `json:"provider_refund_key"`
+	BankName          string     `json:"bank_name"`
+	BankAccountName   string     `json:"bank_account_name"`
+	BankAccountNumber string     `json:"bank_account_number"`
+	ProofMediaID      *uuid.UUID `json:"proof_media_id"`
+	Notes             string     `json:"notes"`
+	RequestedBy       *uuid.UUID `json:"requested_by"`
+	ApprovedBy        *uuid.UUID `json:"approved_by"`
+	CompletedAt       *time.Time `json:"completed_at"`
+	CreatedAt         time.Time  `json:"created_at"`
+	UpdatedAt         time.Time  `json:"updated_at"`
 }
 
 type Region struct {
-	ID        uuid.UUID
-	SortOrder int32
-	Status    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	SortOrder int32     `json:"sort_order"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type RegionTranslation struct {
-	RegionID       uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Description    string
-	SeoTitle       string
-	SeoDescription string
+	RegionID       uuid.UUID `json:"region_id"`
+	Locale         string    `json:"locale"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Description    string    `json:"description"`
+	SeoTitle       string    `json:"seo_title"`
+	SeoDescription string    `json:"seo_description"`
 }
 
 type Review struct {
-	ID            uuid.UUID
-	BookingID     uuid.UUID
-	UserID        uuid.UUID
-	BoatID        uuid.UUID
-	RatingOverall int32
-	RatingBoat    int32
-	RatingService int32
-	RatingCrew    int32
-	Title         string
-	Body          string
-	Locale        string
-	Status        string
-	IsFeatured    bool
-	ModeratedBy   *uuid.UUID
-	ModeratedAt   *time.Time
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID            uuid.UUID  `json:"id"`
+	BookingID     uuid.UUID  `json:"booking_id"`
+	UserID        uuid.UUID  `json:"user_id"`
+	BoatID        uuid.UUID  `json:"boat_id"`
+	RatingOverall int32      `json:"rating_overall"`
+	RatingBoat    int32      `json:"rating_boat"`
+	RatingService int32      `json:"rating_service"`
+	RatingCrew    int32      `json:"rating_crew"`
+	Title         string     `json:"title"`
+	Body          string     `json:"body"`
+	Locale        string     `json:"locale"`
+	Status        string     `json:"status"`
+	IsFeatured    bool       `json:"is_featured"`
+	ModeratedBy   *uuid.UUID `json:"moderated_by"`
+	ModeratedAt   *time.Time `json:"moderated_at"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
 }
 
 type Route struct {
-	ID              uuid.UUID
-	RegionID        uuid.UUID
-	DeparturePortID uuid.UUID
-	ReturnPortID    uuid.UUID
-	DurationMinutes int32
-	Status          string
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	ID              uuid.UUID `json:"id"`
+	RegionID        uuid.UUID `json:"region_id"`
+	DeparturePortID uuid.UUID `json:"departure_port_id"`
+	ReturnPortID    uuid.UUID `json:"return_port_id"`
+	DurationMinutes int32     `json:"duration_minutes"`
+	Status          string    `json:"status"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
 
 type RouteStop struct {
-	ID        uuid.UUID
-	RouteID   uuid.UUID
-	SortOrder int32
-	Latitude  *float64
-	Longitude *float64
+	ID        uuid.UUID `json:"id"`
+	RouteID   uuid.UUID `json:"route_id"`
+	SortOrder int32     `json:"sort_order"`
+	Latitude  *float64  `json:"latitude"`
+	Longitude *float64  `json:"longitude"`
 }
 
 type RouteStopTranslation struct {
-	StopID   uuid.UUID
-	Locale   string
-	Name     string
-	Activity string
+	StopID   uuid.UUID `json:"stop_id"`
+	Locale   string    `json:"locale"`
+	Name     string    `json:"name"`
+	Activity string    `json:"activity"`
 }
 
 type RouteTranslation struct {
-	RouteID        uuid.UUID
-	Locale         string
-	Name           string
-	Slug           string
-	Description    string
-	SeoTitle       string
-	SeoDescription string
+	RouteID        uuid.UUID `json:"route_id"`
+	Locale         string    `json:"locale"`
+	Name           string    `json:"name"`
+	Slug           string    `json:"slug"`
+	Description    string    `json:"description"`
+	SeoTitle       string    `json:"seo_title"`
+	SeoDescription string    `json:"seo_description"`
 }
 
 type Season struct {
-	ID        uuid.UUID
-	Name      string
-	Kind      string
-	StartsOn  time.Time
-	EndsOn    time.Time
-	CreatedAt time.Time
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Kind      string    `json:"kind"`
+	StartsOn  time.Time `json:"starts_on"`
+	EndsOn    time.Time `json:"ends_on"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Session struct {
-	ID         uuid.UUID
-	TokenHash  []byte
-	UserID     uuid.UUID
-	CsrfToken  string
-	UserAgent  string
-	IpAddress  string
-	ExpiresAt  time.Time
-	RevokedAt  *time.Time
-	LastSeenAt time.Time
-	CreatedAt  time.Time
+	ID         uuid.UUID  `json:"id"`
+	TokenHash  []byte     `json:"token_hash"`
+	UserID     uuid.UUID  `json:"user_id"`
+	CsrfToken  string     `json:"csrf_token"`
+	UserAgent  string     `json:"user_agent"`
+	IpAddress  string     `json:"ip_address"`
+	ExpiresAt  time.Time  `json:"expires_at"`
+	RevokedAt  *time.Time `json:"revoked_at"`
+	LastSeenAt time.Time  `json:"last_seen_at"`
+	CreatedAt  time.Time  `json:"created_at"`
 }
 
 type Setting struct {
-	Key       string
-	Value     json.RawMessage
-	UpdatedBy *uuid.UUID
-	UpdatedAt time.Time
+	Key       string          `json:"key"`
+	Value     json.RawMessage `json:"value"`
+	UpdatedBy *uuid.UUID      `json:"updated_by"`
+	UpdatedAt time.Time       `json:"updated_at"`
 }
 
 type SlugRedirect struct {
-	ID         uuid.UUID
-	EntityType string
-	Locale     string
-	OldSlug    string
-	EntityID   uuid.UUID
-	CreatedAt  time.Time
+	ID         uuid.UUID `json:"id"`
+	EntityType string    `json:"entity_type"`
+	Locale     string    `json:"locale"`
+	OldSlug    string    `json:"old_slug"`
+	EntityID   uuid.UUID `json:"entity_id"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 type TaxLine struct {
-	ID                    uuid.UUID
-	Code                  string
-	BasisPoints           int32
-	IncludesPreviousLines bool
-	SortOrder             int32
-	Status                string
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
+	ID                    uuid.UUID `json:"id"`
+	Code                  string    `json:"code"`
+	BasisPoints           int32     `json:"basis_points"`
+	IncludesPreviousLines bool      `json:"includes_previous_lines"`
+	SortOrder             int32     `json:"sort_order"`
+	Status                string    `json:"status"`
+	CreatedAt             time.Time `json:"created_at"`
+	UpdatedAt             time.Time `json:"updated_at"`
 }
 
 type TaxLineTranslation struct {
-	TaxLineID uuid.UUID
-	Locale    string
-	Name      string
+	TaxLineID uuid.UUID `json:"tax_line_id"`
+	Locale    string    `json:"locale"`
+	Name      string    `json:"name"`
 }
 
 type User struct {
-	ID              uuid.UUID
-	Provider        string
-	ProviderSubject string
-	Email           string
-	FullName        string
-	AvatarUrl       string
-	Phone           string
-	Nationality     string
-	PreferredLocale string
-	Role            string
-	Status          string
-	LastLoginAt     *time.Time
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	ID              uuid.UUID  `json:"id"`
+	Provider        string     `json:"provider"`
+	ProviderSubject string     `json:"provider_subject"`
+	Email           string     `json:"email"`
+	FullName        string     `json:"full_name"`
+	AvatarUrl       string     `json:"avatar_url"`
+	Phone           string     `json:"phone"`
+	Nationality     string     `json:"nationality"`
+	PreferredLocale string     `json:"preferred_locale"`
+	Role            string     `json:"role"`
+	Status          string     `json:"status"`
+	LastLoginAt     *time.Time `json:"last_login_at"`
+	CreatedAt       time.Time  `json:"created_at"`
+	UpdatedAt       time.Time  `json:"updated_at"`
 }

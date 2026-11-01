@@ -318,7 +318,9 @@ func TestScenario15TrackingHasNoPII(t *testing.T) {
 	}
 }
 
-func contains(b []byte, s string) bool { return len(s) > 0 && json.Valid(b) && stringContains(string(b), s) }
+func contains(b []byte, s string) bool {
+	return len(s) > 0 && json.Valid(b) && stringContains(string(b), s)
+}
 
 func stringContains(h, n string) bool {
 	for i := 0; i+len(n) <= len(h); i++ {

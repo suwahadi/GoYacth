@@ -17,8 +17,8 @@ UPDATE admin_invites SET accepted_at = now(), accepted_by = $2 WHERE id = $1
 `
 
 type AcceptAdminInviteParams struct {
-	ID         uuid.UUID
-	AcceptedBy *uuid.UUID
+	ID         uuid.UUID  `json:"id"`
+	AcceptedBy *uuid.UUID `json:"accepted_by"`
 }
 
 func (q *Queries) AcceptAdminInvite(ctx context.Context, arg AcceptAdminInviteParams) error {
@@ -116,8 +116,8 @@ WHERE s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > now()
 `
 
 type GetSessionWithUserRow struct {
-	Session Session
-	User    User
+	Session Session `json:"session"`
+	User    User    `json:"user"`
 }
 
 func (q *Queries) GetSessionWithUser(ctx context.Context, tokenHash []byte) (GetSessionWithUserRow, error) {
@@ -183,8 +183,8 @@ SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nati
 `
 
 type GetUserByProviderParams struct {
-	Provider        string
-	ProviderSubject string
+	Provider        string `json:"provider"`
+	ProviderSubject string `json:"provider_subject"`
 }
 
 func (q *Queries) GetUserByProvider(ctx context.Context, arg GetUserByProviderParams) (User, error) {
@@ -214,8 +214,8 @@ INSERT INTO admin_invites (email, invited_by) VALUES ($1, $2) RETURNING id, emai
 `
 
 type InsertAdminInviteParams struct {
-	Email     string
-	InvitedBy *uuid.UUID
+	Email     string     `json:"email"`
+	InvitedBy *uuid.UUID `json:"invited_by"`
 }
 
 func (q *Queries) InsertAdminInvite(ctx context.Context, arg InsertAdminInviteParams) (AdminInvite, error) {
@@ -257,11 +257,11 @@ INSERT INTO oauth_states (state, code_verifier, nonce, return_to, expires_at) VA
 `
 
 type InsertOAuthStateParams struct {
-	State        string
-	CodeVerifier string
-	Nonce        string
-	ReturnTo     string
-	ExpiresAt    time.Time
+	State        string    `json:"state"`
+	CodeVerifier string    `json:"code_verifier"`
+	Nonce        string    `json:"nonce"`
+	ReturnTo     string    `json:"return_to"`
+	ExpiresAt    time.Time `json:"expires_at"`
 }
 
 func (q *Queries) InsertOAuthState(ctx context.Context, arg InsertOAuthStateParams) error {
@@ -282,12 +282,12 @@ RETURNING id, token_hash, user_id, csrf_token, user_agent, ip_address, expires_a
 `
 
 type InsertSessionParams struct {
-	TokenHash []byte
-	UserID    uuid.UUID
-	CsrfToken string
-	UserAgent string
-	IpAddress string
-	ExpiresAt time.Time
+	TokenHash []byte    `json:"token_hash"`
+	UserID    uuid.UUID `json:"user_id"`
+	CsrfToken string    `json:"csrf_token"`
+	UserAgent string    `json:"user_agent"`
+	IpAddress string    `json:"ip_address"`
+	ExpiresAt time.Time `json:"expires_at"`
 }
 
 func (q *Queries) InsertSession(ctx context.Context, arg InsertSessionParams) (Session, error) {
@@ -322,13 +322,13 @@ RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, n
 `
 
 type InsertUserParams struct {
-	Provider        string
-	ProviderSubject string
-	Email           string
-	FullName        string
-	AvatarUrl       string
-	Role            string
-	PreferredLocale string
+	Provider        string `json:"provider"`
+	ProviderSubject string `json:"provider_subject"`
+	Email           string `json:"email"`
+	FullName        string `json:"full_name"`
+	AvatarUrl       string `json:"avatar_url"`
+	Role            string `json:"role"`
+	PreferredLocale string `json:"preferred_locale"`
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, error) {
@@ -451,8 +451,8 @@ UPDATE sessions SET last_seen_at = now(), expires_at = $2 WHERE id = $1
 `
 
 type TouchSessionParams struct {
-	ID        uuid.UUID
-	ExpiresAt time.Time
+	ID        uuid.UUID `json:"id"`
+	ExpiresAt time.Time `json:"expires_at"`
 }
 
 func (q *Queries) TouchSession(ctx context.Context, arg TouchSessionParams) error {
@@ -469,11 +469,11 @@ RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, n
 `
 
 type UpdateUserLoginParams struct {
-	ID        uuid.UUID
-	Email     string
-	AvatarUrl string
-	Role      string
-	FullName  string
+	ID        uuid.UUID `json:"id"`
+	Email     string    `json:"email"`
+	AvatarUrl string    `json:"avatar_url"`
+	Role      string    `json:"role"`
+	FullName  string    `json:"full_name"`
 }
 
 func (q *Queries) UpdateUserLogin(ctx context.Context, arg UpdateUserLoginParams) (User, error) {

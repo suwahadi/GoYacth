@@ -8,8 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -30,6 +32,7 @@ Usage:
   cli admin grant <email>       allowlist an email as ADMIN (bootstraps the first admin)
   cli seed reference            insert default policies, tax lines and payment method fees if absent
   cli keygen                    print a new identity encryption key (id:base64)
+  cli health <url>              exit 0 when the URL answers 2xx (container health checks)
 
 Environment: DATABASE_URL`
 
@@ -47,6 +50,20 @@ func run(args []string) error {
 	}
 	ctx := context.Background()
 	switch args[0] {
+	case "health":
+		if len(args) < 2 {
+			return errors.New("usage: cli health <url>")
+		}
+		client := &http.Client{Timeout: 3 * time.Second}
+		res, err := client.Get(args[1])
+		if err != nil {
+			return err
+		}
+		_ = res.Body.Close()
+		if res.StatusCode < 200 || res.StatusCode > 299 {
+			return fmt.Errorf("health check returned %d", res.StatusCode)
+		}
+		return nil
 	case "keygen":
 		key := make([]byte, 32)
 		if _, err := rand.Read(key); err != nil {
@@ -123,7 +140,7 @@ func migrate(ctx context.Context, direction string) error {
 	if err != nil {
 		return err
 	}
-	defer sqlDB.Close()
+	defer func() { _ = sqlDB.Close() }()
 	migrations, err := fs.Sub(db.Migrations, "migrations")
 	if err != nil {
 		return err

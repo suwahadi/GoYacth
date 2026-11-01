@@ -187,7 +187,7 @@ func (h *Handler) report(w http.ResponseWriter, r *http.Request) {
 	switch qs.Get("format") {
 	case "xlsx":
 		f := excelize.NewFile()
-		defer f.Close()
+		defer func() { _ = f.Close() }()
 		sheet := "Report"
 		_ = f.SetSheetName("Sheet1", sheet)
 		for i, hdr := range t.header {

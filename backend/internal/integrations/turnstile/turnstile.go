@@ -41,7 +41,7 @@ func (v *Verifier) Verify(ctx context.Context, token, ip string) bool {
 		slog.WarnContext(ctx, "turnstile verify", "error", err)
 		return false
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	var out struct {
 		Success bool `json:"success"`
 	}

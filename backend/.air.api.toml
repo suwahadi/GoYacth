@@ -1,0 +1,9 @@
+root = "."
+tmp_dir = "tmp"
+[build]
+cmd = "go build -o ./tmp/api ./cmd/api"
+bin = "./tmp/api"
+include_ext = ["go", "json", "sql"]
+exclude_dir = ["tmp", "internal/testutil", "internal/scenarios"]
+[log]
+time = false

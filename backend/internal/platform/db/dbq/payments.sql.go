@@ -22,12 +22,12 @@ WHERE id = $6 RETURNING id, public_id, booking_number, invoice_number, user_id, 
 `
 
 type ApplyBookingPaymentParams struct {
-	Principal     int64
-	Fee           int64
-	PaymentStatus string
-	Status        string
-	InvoiceNumber *string
-	ID            uuid.UUID
+	Principal     int64     `json:"principal"`
+	Fee           int64     `json:"fee"`
+	PaymentStatus string    `json:"payment_status"`
+	Status        string    `json:"status"`
+	InvoiceNumber *string   `json:"invoice_number"`
+	ID            uuid.UUID `json:"id"`
 }
 
 func (q *Queries) ApplyBookingPayment(ctx context.Context, arg ApplyBookingPaymentParams) (Booking, error) {
@@ -151,9 +151,9 @@ WHERE ($1::text IS NULL OR p.status = $1)
 `
 
 type CountPaymentsAdminParams struct {
-	Status         *string
-	Method         *string
-	ExceptionsOnly bool
+	Status         *string `json:"status"`
+	Method         *string `json:"method"`
+	ExceptionsOnly bool    `json:"exceptions_only"`
 }
 
 func (q *Queries) CountPaymentsAdmin(ctx context.Context, arg CountPaymentsAdminParams) (int64, error) {
@@ -328,9 +328,9 @@ INSERT INTO booking_requests (booking_id, type, message) VALUES ($1, $2, $3) RET
 `
 
 type InsertBookingRequestParams struct {
-	BookingID uuid.UUID
-	Type      string
-	Message   string
+	BookingID uuid.UUID `json:"booking_id"`
+	Type      string    `json:"type"`
+	Message   string    `json:"message"`
 }
 
 // Booking requests
@@ -359,21 +359,21 @@ RETURNING id, booking_id, kind, provider, method, order_id, principal_amount, fe
 `
 
 type InsertPaymentParams struct {
-	BookingID       uuid.UUID
-	Kind            string
-	Provider        string
-	Method          string
-	OrderID         string
-	PrincipalAmount int64
-	FeeAmount       int64
-	GrossAmount     int64
-	Status          string
-	ExpiresAt       *time.Time
-	PaidAt          *time.Time
-	ManualPaidOn    *time.Time
-	ProofMediaID    *uuid.UUID
-	RecordedBy      *uuid.UUID
-	Notes           string
+	BookingID       uuid.UUID  `json:"booking_id"`
+	Kind            string     `json:"kind"`
+	Provider        string     `json:"provider"`
+	Method          string     `json:"method"`
+	OrderID         string     `json:"order_id"`
+	PrincipalAmount int64      `json:"principal_amount"`
+	FeeAmount       int64      `json:"fee_amount"`
+	GrossAmount     int64      `json:"gross_amount"`
+	Status          string     `json:"status"`
+	ExpiresAt       *time.Time `json:"expires_at"`
+	PaidAt          *time.Time `json:"paid_at"`
+	ManualPaidOn    *time.Time `json:"manual_paid_on"`
+	ProofMediaID    *uuid.UUID `json:"proof_media_id"`
+	RecordedBy      *uuid.UUID `json:"recorded_by"`
+	Notes           string     `json:"notes"`
 }
 
 func (q *Queries) InsertPayment(ctx context.Context, arg InsertPaymentParams) (Payment, error) {
@@ -435,17 +435,17 @@ RETURNING id
 `
 
 type InsertPaymentEventParams struct {
-	PaymentID         *uuid.UUID
-	OrderID           string
-	DedupeKey         string
-	Source            string
-	TransactionStatus string
-	FraudStatus       string
-	StatusCode        string
-	GrossAmount       string
-	Verdict           string
-	VerdictReason     string
-	Payload           json.RawMessage
+	PaymentID         *uuid.UUID      `json:"payment_id"`
+	OrderID           string          `json:"order_id"`
+	DedupeKey         string          `json:"dedupe_key"`
+	Source            string          `json:"source"`
+	TransactionStatus string          `json:"transaction_status"`
+	FraudStatus       string          `json:"fraud_status"`
+	StatusCode        string          `json:"status_code"`
+	GrossAmount       string          `json:"gross_amount"`
+	Verdict           string          `json:"verdict"`
+	VerdictReason     string          `json:"verdict_reason"`
+	Payload           json.RawMessage `json:"payload"`
 }
 
 func (q *Queries) InsertPaymentEvent(ctx context.Context, arg InsertPaymentEventParams) (uuid.UUID, error) {
@@ -474,19 +474,19 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id, bo
 `
 
 type InsertRefundParams struct {
-	BookingID         uuid.UUID
-	PaymentID         *uuid.UUID
-	ReasonType        string
-	Amount            int64
-	IncludesFeeAmount int64
-	Channel           string
-	Status            string
-	BankName          string
-	BankAccountName   string
-	BankAccountNumber string
-	Notes             string
-	RequestedBy       *uuid.UUID
-	ApprovedBy        *uuid.UUID
+	BookingID         uuid.UUID  `json:"booking_id"`
+	PaymentID         *uuid.UUID `json:"payment_id"`
+	ReasonType        string     `json:"reason_type"`
+	Amount            int64      `json:"amount"`
+	IncludesFeeAmount int64      `json:"includes_fee_amount"`
+	Channel           string     `json:"channel"`
+	Status            string     `json:"status"`
+	BankName          string     `json:"bank_name"`
+	BankAccountName   string     `json:"bank_account_name"`
+	BankAccountNumber string     `json:"bank_account_number"`
+	Notes             string     `json:"notes"`
+	RequestedBy       *uuid.UUID `json:"requested_by"`
+	ApprovedBy        *uuid.UUID `json:"approved_by"`
 }
 
 // Refunds
@@ -668,9 +668,9 @@ ORDER BY created_at DESC LIMIT $1 OFFSET $2
 `
 
 type ListPaymentEventsParams struct {
-	Limit   int32
-	Offset  int32
-	OrderID *string
+	Limit   int32   `json:"limit"`
+	Offset  int32   `json:"offset"`
+	OrderID *string `json:"order_id"`
 }
 
 func (q *Queries) ListPaymentEvents(ctx context.Context, arg ListPaymentEventsParams) ([]PaymentEvent, error) {
@@ -716,43 +716,43 @@ ORDER BY p.created_at DESC LIMIT $1 OFFSET $2
 `
 
 type ListPaymentsAdminParams struct {
-	Limit          int32
-	Offset         int32
-	Status         *string
-	Method         *string
-	ExceptionsOnly bool
+	Limit          int32   `json:"limit"`
+	Offset         int32   `json:"offset"`
+	Status         *string `json:"status"`
+	Method         *string `json:"method"`
+	ExceptionsOnly bool    `json:"exceptions_only"`
 }
 
 type ListPaymentsAdminRow struct {
-	ID                  uuid.UUID
-	BookingID           uuid.UUID
-	Kind                string
-	Provider            string
-	Method              string
-	OrderID             string
-	PrincipalAmount     int64
-	FeeAmount           int64
-	GrossAmount         int64
-	Currency            string
-	Status              string
-	ProviderStatus      string
-	ProviderFraud       string
-	ProviderTxnID       string
-	ProviderPaymentType string
-	SnapToken           string
-	SnapRedirectUrl     string
-	VaNumbers           json.RawMessage
-	ExpiresAt           *time.Time
-	PaidAt              *time.Time
-	IsException         bool
-	ManualPaidOn        *time.Time
-	ProofMediaID        *uuid.UUID
-	RecordedBy          *uuid.UUID
-	Notes               string
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
-	BookingNumber       string
-	BookingPublicID     uuid.UUID
+	ID                  uuid.UUID       `json:"id"`
+	BookingID           uuid.UUID       `json:"booking_id"`
+	Kind                string          `json:"kind"`
+	Provider            string          `json:"provider"`
+	Method              string          `json:"method"`
+	OrderID             string          `json:"order_id"`
+	PrincipalAmount     int64           `json:"principal_amount"`
+	FeeAmount           int64           `json:"fee_amount"`
+	GrossAmount         int64           `json:"gross_amount"`
+	Currency            string          `json:"currency"`
+	Status              string          `json:"status"`
+	ProviderStatus      string          `json:"provider_status"`
+	ProviderFraud       string          `json:"provider_fraud"`
+	ProviderTxnID       string          `json:"provider_txn_id"`
+	ProviderPaymentType string          `json:"provider_payment_type"`
+	SnapToken           string          `json:"snap_token"`
+	SnapRedirectUrl     string          `json:"snap_redirect_url"`
+	VaNumbers           json.RawMessage `json:"va_numbers"`
+	ExpiresAt           *time.Time      `json:"expires_at"`
+	PaidAt              *time.Time      `json:"paid_at"`
+	IsException         bool            `json:"is_exception"`
+	ManualPaidOn        *time.Time      `json:"manual_paid_on"`
+	ProofMediaID        *uuid.UUID      `json:"proof_media_id"`
+	RecordedBy          *uuid.UUID      `json:"recorded_by"`
+	Notes               string          `json:"notes"`
+	CreatedAt           time.Time       `json:"created_at"`
+	UpdatedAt           time.Time       `json:"updated_at"`
+	BookingNumber       string          `json:"booking_number"`
+	BookingPublicID     uuid.UUID       `json:"booking_public_id"`
 }
 
 func (q *Queries) ListPaymentsAdmin(ctx context.Context, arg ListPaymentsAdminParams) ([]ListPaymentsAdminRow, error) {
@@ -817,17 +817,17 @@ WHERE r.status = 'PENDING' ORDER BY r.created_at LIMIT 200
 `
 
 type ListPendingRequestsRow struct {
-	ID              uuid.UUID
-	BookingID       uuid.UUID
-	Type            string
-	Status          string
-	Message         string
-	Resolution      string
-	ResolvedBy      *uuid.UUID
-	ResolvedAt      *time.Time
-	CreatedAt       time.Time
-	BookingNumber   string
-	BookingPublicID uuid.UUID
+	ID              uuid.UUID  `json:"id"`
+	BookingID       uuid.UUID  `json:"booking_id"`
+	Type            string     `json:"type"`
+	Status          string     `json:"status"`
+	Message         string     `json:"message"`
+	Resolution      string     `json:"resolution"`
+	ResolvedBy      *uuid.UUID `json:"resolved_by"`
+	ResolvedAt      *time.Time `json:"resolved_at"`
+	CreatedAt       time.Time  `json:"created_at"`
+	BookingNumber   string     `json:"booking_number"`
+	BookingPublicID uuid.UUID  `json:"booking_public_id"`
 }
 
 func (q *Queries) ListPendingRequests(ctx context.Context) ([]ListPendingRequestsRow, error) {
@@ -869,33 +869,33 @@ ORDER BY r.created_at DESC LIMIT $1 OFFSET $2
 `
 
 type ListRefundsAdminParams struct {
-	Limit  int32
-	Offset int32
-	Status *string
+	Limit  int32   `json:"limit"`
+	Offset int32   `json:"offset"`
+	Status *string `json:"status"`
 }
 
 type ListRefundsAdminRow struct {
-	ID                uuid.UUID
-	BookingID         uuid.UUID
-	PaymentID         *uuid.UUID
-	ReasonType        string
-	Amount            int64
-	IncludesFeeAmount int64
-	Channel           string
-	Status            string
-	ProviderRefundKey *string
-	BankName          string
-	BankAccountName   string
-	BankAccountNumber string
-	ProofMediaID      *uuid.UUID
-	Notes             string
-	RequestedBy       *uuid.UUID
-	ApprovedBy        *uuid.UUID
-	CompletedAt       *time.Time
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
-	BookingNumber     string
-	BookingPublicID   uuid.UUID
+	ID                uuid.UUID  `json:"id"`
+	BookingID         uuid.UUID  `json:"booking_id"`
+	PaymentID         *uuid.UUID `json:"payment_id"`
+	ReasonType        string     `json:"reason_type"`
+	Amount            int64      `json:"amount"`
+	IncludesFeeAmount int64      `json:"includes_fee_amount"`
+	Channel           string     `json:"channel"`
+	Status            string     `json:"status"`
+	ProviderRefundKey *string    `json:"provider_refund_key"`
+	BankName          string     `json:"bank_name"`
+	BankAccountName   string     `json:"bank_account_name"`
+	BankAccountNumber string     `json:"bank_account_number"`
+	ProofMediaID      *uuid.UUID `json:"proof_media_id"`
+	Notes             string     `json:"notes"`
+	RequestedBy       *uuid.UUID `json:"requested_by"`
+	ApprovedBy        *uuid.UUID `json:"approved_by"`
+	CompletedAt       *time.Time `json:"completed_at"`
+	CreatedAt         time.Time  `json:"created_at"`
+	UpdatedAt         time.Time  `json:"updated_at"`
+	BookingNumber     string     `json:"booking_number"`
+	BookingPublicID   uuid.UUID  `json:"booking_public_id"`
 }
 
 func (q *Queries) ListRefundsAdmin(ctx context.Context, arg ListRefundsAdminParams) ([]ListRefundsAdminRow, error) {
@@ -1101,10 +1101,10 @@ UPDATE booking_requests SET status = $2, resolution = $3, resolved_by = $4, reso
 `
 
 type ResolveBookingRequestParams struct {
-	ID         uuid.UUID
-	Status     string
-	Resolution string
-	ResolvedBy *uuid.UUID
+	ID         uuid.UUID  `json:"id"`
+	Status     string     `json:"status"`
+	Resolution string     `json:"resolution"`
+	ResolvedBy *uuid.UUID `json:"resolved_by"`
 }
 
 func (q *Queries) ResolveBookingRequest(ctx context.Context, arg ResolveBookingRequestParams) (BookingRequest, error) {
@@ -1134,9 +1134,9 @@ UPDATE bookings SET amount_refunded = $2, payment_status = $3, updated_at = now(
 `
 
 type SetBookingRefundedParams struct {
-	ID             uuid.UUID
-	AmountRefunded int64
-	PaymentStatus  string
+	ID             uuid.UUID `json:"id"`
+	AmountRefunded int64     `json:"amount_refunded"`
+	PaymentStatus  string    `json:"payment_status"`
 }
 
 func (q *Queries) SetBookingRefunded(ctx context.Context, arg SetBookingRefundedParams) (Booking, error) {
@@ -1198,9 +1198,9 @@ UPDATE payments SET snap_token = $2, snap_redirect_url = $3, updated_at = now() 
 `
 
 type SetPaymentSnapParams struct {
-	ID              uuid.UUID
-	SnapToken       string
-	SnapRedirectUrl string
+	ID              uuid.UUID `json:"id"`
+	SnapToken       string    `json:"snap_token"`
+	SnapRedirectUrl string    `json:"snap_redirect_url"`
 }
 
 func (q *Queries) SetPaymentSnap(ctx context.Context, arg SetPaymentSnapParams) (Payment, error) {
@@ -1244,10 +1244,10 @@ WHERE id = $1 AND channel = 'MANUAL' AND status IN ('REQUESTED', 'APPROVED') RET
 `
 
 type SetRefundBankDetailsParams struct {
-	ID                uuid.UUID
-	BankName          string
-	BankAccountName   string
-	BankAccountNumber string
+	ID                uuid.UUID `json:"id"`
+	BankName          string    `json:"bank_name"`
+	BankAccountName   string    `json:"bank_account_name"`
+	BankAccountNumber string    `json:"bank_account_number"`
 }
 
 func (q *Queries) SetRefundBankDetails(ctx context.Context, arg SetRefundBankDetailsParams) (Refund, error) {
@@ -1311,15 +1311,15 @@ WHERE id = $1 RETURNING id, booking_id, kind, provider, method, order_id, princi
 `
 
 type UpdatePaymentFromProviderParams struct {
-	ID                  uuid.UUID
-	Status              string
-	ProviderStatus      string
-	ProviderFraud       string
-	ProviderTxnID       string
-	ProviderPaymentType string
-	VaNumbers           json.RawMessage
-	PaidAt              *time.Time
-	IsException         bool
+	ID                  uuid.UUID       `json:"id"`
+	Status              string          `json:"status"`
+	ProviderStatus      string          `json:"provider_status"`
+	ProviderFraud       string          `json:"provider_fraud"`
+	ProviderTxnID       string          `json:"provider_txn_id"`
+	ProviderPaymentType string          `json:"provider_payment_type"`
+	VaNumbers           json.RawMessage `json:"va_numbers"`
+	PaidAt              *time.Time      `json:"paid_at"`
+	IsException         bool            `json:"is_exception"`
 }
 
 func (q *Queries) UpdatePaymentFromProvider(ctx context.Context, arg UpdatePaymentFromProviderParams) (Payment, error) {
@@ -1376,12 +1376,12 @@ WHERE id = $1 RETURNING id, booking_id, payment_id, reason_type, amount, include
 `
 
 type UpdateRefundStatusParams struct {
-	ID                uuid.UUID
-	Status            string
-	ProviderRefundKey *string
-	ProofMediaID      *uuid.UUID
-	ApprovedBy        *uuid.UUID
-	Notes             string
+	ID                uuid.UUID  `json:"id"`
+	Status            string     `json:"status"`
+	ProviderRefundKey *string    `json:"provider_refund_key"`
+	ProofMediaID      *uuid.UUID `json:"proof_media_id"`
+	ApprovedBy        *uuid.UUID `json:"approved_by"`
+	Notes             string     `json:"notes"`
 }
 
 func (q *Queries) UpdateRefundStatus(ctx context.Context, arg UpdateRefundStatusParams) (Refund, error) {

@@ -1,0 +1,180 @@
+# Production stack for a single VPS. Images are built on the server:
+#   docker compose build && docker compose up -d
+name: goyacht
+
+x-backend-env: &backend-env
+  APP_ENV: production
+  APP_URL: ${APP_URL}
+  DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+  IDENTITY_ENCRYPTION_KEYS: ${IDENTITY_ENCRYPTION_KEYS}
+  IDENTITY_ENCRYPTION_ACTIVE_KEY: ${IDENTITY_ENCRYPTION_ACTIVE_KEY}
+  S3_ENDPOINT: s3:8333
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+  S3_SECRET_KEY: ${S3_SECRET_KEY}
+  S3_PUBLIC_BUCKET: ${S3_PUBLIC_BUCKET}
+  S3_PRIVATE_BUCKET: ${S3_PRIVATE_BUCKET}
+  MEDIA_PUBLIC_URL: ${APP_URL}/media
+  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+  MIDTRANS_SERVER_KEY: ${MIDTRANS_SERVER_KEY}
+  MIDTRANS_CLIENT_KEY: ${MIDTRANS_CLIENT_KEY}
+  MIDTRANS_MERCHANT_ID: ${MIDTRANS_MERCHANT_ID}
+  MIDTRANS_PRODUCTION: ${MIDTRANS_PRODUCTION}
+  SMTP_HOST: ${SMTP_HOST}
+  SMTP_PORT: ${SMTP_PORT}
+  SMTP_USERNAME: ${SMTP_USERNAME}
+  SMTP_PASSWORD: ${SMTP_PASSWORD}
+  SMTP_TLS_MODE: ${SMTP_TLS_MODE}
+  MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+  MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+  ADMIN_NOTIFY_EMAILS: ${ADMIN_NOTIFY_EMAILS}
+  TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
+  COOKIE_SECURE: "true"
+  TRUST_PROXY: "true"
+
+services:
+  postgres:
+    image: postgres:18.6-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    stop_grace_period: 30s
+
+  s3:
+    image: chrislusf/seaweedfs:4.51
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        sed -e "s|\$${S3_ACCESS_KEY}|$$S3_ACCESS_KEY|" -e "s|\$${S3_SECRET_KEY}|$$S3_SECRET_KEY|" -e "s|\$${S3_PUBLIC_BUCKET}|$$S3_PUBLIC_BUCKET|" /config/s3.json.template > /tmp/s3.json
+        exec weed server -dir=/data -s3 -s3.port=8333 -s3.config=/tmp/s3.json
+    environment:
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_PUBLIC_BUCKET: ${S3_PUBLIC_BUCKET}
+    volumes:
+      - s3data:/data
+      - ./docker/seaweedfs/s3.json.template:/config/s3.json.template:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9333/cluster/status || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build: { context: ./backend, target: runtime }
+    image: goyacht-backend:latest
+    command: ["cli", "migrate", "up"]
+    environment: *backend-env
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  api:
+    image: goyacht-backend:latest
+    restart: unless-stopped
+    command: ["api"]
+    environment: *backend-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      s3: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "cli", "health", "http://127.0.0.1:8080/readyz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    stop_grace_period: 30s
+
+  worker:
+    image: goyacht-backend:latest
+    restart: unless-stopped
+    command: ["worker"]
+    environment: *backend-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      s3: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "cli", "health", "http://127.0.0.1:8081/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    stop_grace_period: 45s
+
+  frontend:
+    build: { context: ./frontend, target: runtime }
+    image: goyacht-frontend:latest
+    restart: unless-stopped
+    environment:
+      API_INTERNAL_URL: http://api:8080
+      PUBLIC_APP_URL: ${APP_URL}
+      TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY}
+    depends_on:
+      api: { condition: service_healthy }
+
+  caddy:
+    image: caddy:2.11.7-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+      S3_PUBLIC_BUCKET: ${S3_PUBLIC_BUCKET}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - api
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  backup:
+    build: ./docker/backup
+    restart: unless-stopped
+    environment:
+      PGHOST: postgres
+      PGDATABASE: ${POSTGRES_DB}
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      S3_SOURCE_ENDPOINT: http://s3:8333
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKETS: "${S3_PUBLIC_BUCKET} ${S3_PRIVATE_BUCKET}"
+      BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT}
+      BACKUP_S3_REGION: ${BACKUP_S3_REGION}
+      BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET}
+      BACKUP_S3_ACCESS_KEY: ${BACKUP_S3_ACCESS_KEY}
+      BACKUP_S3_SECRET_KEY: ${BACKUP_S3_SECRET_KEY}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS}
+    volumes:
+      - backups:/backups
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /backups/last_success && find /backups/last_success -mmin -1560 | grep -q ."]
+      interval: 1h
+      timeout: 10s
+      start_period: 26h
+
+volumes:
+  pgdata:
+  s3data:
+  caddy_data:
+  caddy_config:
+  backups:

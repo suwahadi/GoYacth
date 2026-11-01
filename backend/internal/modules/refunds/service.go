@@ -123,9 +123,10 @@ func (s *Service) Cancel(ctx context.Context, tx pgx.Tx, bookingID uuid.UUID, ca
 	}
 	if principal+fees > 0 {
 		reasonType := "CUSTOMER"
-		if cancelType == bookings.CancelOperator {
+		switch cancelType {
+		case bookings.CancelOperator:
 			reasonType = "OPERATOR"
-		} else if cancelType == bookings.CancelDepartureCancelled {
+		case bookings.CancelDepartureCancelled:
 			reasonType = "DEPARTURE_CANCELLED"
 		}
 		if err := s.createRefunds(ctx, tx, updated, principal, fees, reasonType, actor); err != nil {

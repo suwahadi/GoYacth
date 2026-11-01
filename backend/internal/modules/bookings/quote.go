@@ -320,7 +320,7 @@ func (qt *Quoter) resolveCharter(ctx context.Context, q *dbq.Queries, in QuoteIn
 		minDuration = *br.MinDurationMinutes
 	}
 	r := &resolved{Mode: ModeCharter, Boat: b, RouteID: route.ID, Timezone: port.Timezone, StartsAt: start, MinPax: 1, MaxPax: b.MaxPassengers, CancelPolicyID: b.CancellationPolicyID}
-	unitPrice := rate.Price
+	var unitPrice int64
 	var qty int64 = 1
 	switch p.RateUnit {
 	case catalog.RateHourly:

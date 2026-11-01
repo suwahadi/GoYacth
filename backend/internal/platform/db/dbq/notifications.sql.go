@@ -20,12 +20,12 @@ RETURNING id, kind, dedupe_key, booking_id, user_id, recipient, locale, status, 
 `
 
 type ClaimNotificationParams struct {
-	Kind      string
-	DedupeKey string
-	BookingID *uuid.UUID
-	UserID    *uuid.UUID
-	Recipient string
-	Locale    string
+	Kind      string     `json:"kind"`
+	DedupeKey string     `json:"dedupe_key"`
+	BookingID *uuid.UUID `json:"booking_id"`
+	UserID    *uuid.UUID `json:"user_id"`
+	Recipient string     `json:"recipient"`
+	Locale    string     `json:"locale"`
 }
 
 func (q *Queries) ClaimNotification(ctx context.Context, arg ClaimNotificationParams) (NotificationLog, error) {
@@ -85,8 +85,8 @@ SELECT id, kind, dedupe_key, booking_id, user_id, recipient, locale, status, att
 `
 
 type ListNotificationLogsParams struct {
-	Limit  int32
-	Offset int32
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
 }
 
 func (q *Queries) ListNotificationLogs(ctx context.Context, arg ListNotificationLogsParams) ([]NotificationLog, error) {
@@ -128,8 +128,8 @@ UPDATE notification_logs SET status = 'FAILED', last_error = $2, updated_at = no
 `
 
 type MarkNotificationFailedParams struct {
-	ID        uuid.UUID
-	LastError string
+	ID        uuid.UUID `json:"id"`
+	LastError string    `json:"last_error"`
 }
 
 func (q *Queries) MarkNotificationFailed(ctx context.Context, arg MarkNotificationFailedParams) error {

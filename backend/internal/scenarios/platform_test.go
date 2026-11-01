@@ -75,7 +75,9 @@ func TestScenario23ImageReplaceRollback(t *testing.T) {
 	svc := env.Services.Media
 	entity := uuid.New()
 	oldID, newID := readyMedia(t, env, "old"), readyMedia(t, env, "new")
-	if err := db.InTx(ctx, env.Pool, func(tx pgx.Tx) error { return svc.SetUsages(ctx, tx, "region", entity, "thumbnail", []uuid.UUID{oldID}) }); err != nil {
+	if err := db.InTx(ctx, env.Pool, func(tx pgx.Tx) error {
+		return svc.SetUsages(ctx, tx, "region", entity, "thumbnail", []uuid.UUID{oldID})
+	}); err != nil {
 		t.Fatal(err)
 	}
 	boom := errors.New("later step failed")
@@ -99,7 +101,9 @@ func TestScenario23ImageReplaceRollback(t *testing.T) {
 	if deleteJobs != 0 {
 		t.Fatal("deletion job survived a rolled-back transaction")
 	}
-	if err := db.InTx(ctx, env.Pool, func(tx pgx.Tx) error { return svc.SetUsages(ctx, tx, "region", entity, "thumbnail", []uuid.UUID{newID}) }); err != nil {
+	if err := db.InTx(ctx, env.Pool, func(tx pgx.Tx) error {
+		return svc.SetUsages(ctx, tx, "region", entity, "thumbnail", []uuid.UUID{newID})
+	}); err != nil {
 		t.Fatal(err)
 	}
 	if err := svc.DeleteUnused(ctx, []uuid.UUID{oldID}); err != nil {
@@ -136,7 +140,9 @@ func TestScenario24EmailOnce(t *testing.T) {
 
 type fakeGoogle struct{ ident google.Identity }
 
-func (f fakeGoogle) AuthURL(string, string, string) (string, error) { return "https://accounts.test", nil }
+func (f fakeGoogle) AuthURL(string, string, string) (string, error) {
+	return "https://accounts.test", nil
+}
 func (f fakeGoogle) Exchange(context.Context, string, string, string) (google.Identity, error) {
 	return f.ident, nil
 }

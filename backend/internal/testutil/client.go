@@ -90,7 +90,7 @@ func (c *Client) Do(t testing.TB, method, path string, body any, headers map[str
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	raw, _ := io.ReadAll(res.Body)
 	return Response{Status: res.StatusCode, Body: raw}
 }

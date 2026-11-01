@@ -54,8 +54,8 @@ SELECT page_id FROM page_translations WHERE locale = $1 AND slug = $2
 `
 
 type FindPageBySlugParams struct {
-	Locale string
-	Slug   string
+	Locale string `json:"locale"`
+	Slug   string `json:"slug"`
 }
 
 func (q *Queries) FindPageBySlug(ctx context.Context, arg FindPageBySlugParams) (uuid.UUID, error) {
@@ -71,12 +71,12 @@ FROM pages p WHERE p.id = $1
 `
 
 type GetPageAdminRow struct {
-	ID           uuid.UUID
-	Status       string
-	PublishedAt  *time.Time
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	Status       string          `json:"status"`
+	PublishedAt  *time.Time      `json:"published_at"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) GetPageAdmin(ctx context.Context, id uuid.UUID) (GetPageAdminRow, error) {
@@ -98,8 +98,8 @@ SELECT page_id, locale, title, slug, blocks, seo_title, seo_description FROM pag
 `
 
 type GetPageTranslationParams struct {
-	PageID uuid.UUID
-	Locale string
+	PageID uuid.UUID `json:"page_id"`
+	Locale string    `json:"locale"`
 }
 
 func (q *Queries) GetPageTranslation(ctx context.Context, arg GetPageTranslationParams) (PageTranslation, error) {
@@ -122,11 +122,11 @@ INSERT INTO faqs (category, boat_id, package_id, sort_order, status) VALUES ($1,
 `
 
 type InsertFaqParams struct {
-	Category  string
-	BoatID    *uuid.UUID
-	PackageID *uuid.UUID
-	SortOrder int32
-	Status    string
+	Category  string     `json:"category"`
+	BoatID    *uuid.UUID `json:"boat_id"`
+	PackageID *uuid.UUID `json:"package_id"`
+	SortOrder int32      `json:"sort_order"`
+	Status    string     `json:"status"`
 }
 
 func (q *Queries) InsertFaq(ctx context.Context, arg InsertFaqParams) (Faq, error) {
@@ -156,8 +156,8 @@ INSERT INTO pages (status, published_at) VALUES ($1, $2) RETURNING id, status, p
 `
 
 type InsertPageParams struct {
-	Status      string
-	PublishedAt *time.Time
+	Status      string     `json:"status"`
+	PublishedAt *time.Time `json:"published_at"`
 }
 
 func (q *Queries) InsertPage(ctx context.Context, arg InsertPageParams) (Page, error) {
@@ -178,10 +178,10 @@ INSERT INTO page_sections (type, sort_order, is_active, config) VALUES ($1, $2, 
 `
 
 type InsertSectionParams struct {
-	Type      string
-	SortOrder int32
-	IsActive  bool
-	Config    json.RawMessage
+	Type      string          `json:"type"`
+	SortOrder int32           `json:"sort_order"`
+	IsActive  bool            `json:"is_active"`
+	Config    json.RawMessage `json:"config"`
 }
 
 func (q *Queries) InsertSection(ctx context.Context, arg InsertSectionParams) (PageSection, error) {
@@ -210,15 +210,15 @@ FROM faqs f ORDER BY f.category, f.sort_order, f.created_at
 `
 
 type ListFaqsAdminRow struct {
-	ID           uuid.UUID
-	Category     string
-	BoatID       *uuid.UUID
-	PackageID    *uuid.UUID
-	SortOrder    int32
-	Status       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	Category     string          `json:"category"`
+	BoatID       *uuid.UUID      `json:"boat_id"`
+	PackageID    *uuid.UUID      `json:"package_id"`
+	SortOrder    int32           `json:"sort_order"`
+	Status       string          `json:"status"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) ListFaqsAdmin(ctx context.Context) ([]ListFaqsAdminRow, error) {
@@ -268,21 +268,21 @@ LIMIT 200
 `
 
 type ListFaqsPublicParams struct {
-	Locale      string
-	BoatID      *uuid.UUID
-	PackageID   *uuid.UUID
-	Category    *string
-	GeneralOnly bool
+	Locale      string     `json:"locale"`
+	BoatID      *uuid.UUID `json:"boat_id"`
+	PackageID   *uuid.UUID `json:"package_id"`
+	Category    *string    `json:"category"`
+	GeneralOnly bool       `json:"general_only"`
 }
 
 type ListFaqsPublicRow struct {
-	ID        uuid.UUID
-	Category  string
-	BoatID    *uuid.UUID
-	PackageID *uuid.UUID
-	SortOrder int32
-	Question  string
-	Answer    string
+	ID        uuid.UUID  `json:"id"`
+	Category  string     `json:"category"`
+	BoatID    *uuid.UUID `json:"boat_id"`
+	PackageID *uuid.UUID `json:"package_id"`
+	SortOrder int32      `json:"sort_order"`
+	Question  string     `json:"question"`
+	Answer    string     `json:"answer"`
 }
 
 func (q *Queries) ListFaqsPublic(ctx context.Context, arg ListFaqsPublicParams) ([]ListFaqsPublicRow, error) {
@@ -325,12 +325,12 @@ FROM pages p ORDER BY p.created_at DESC
 `
 
 type ListPagesAdminRow struct {
-	ID           uuid.UUID
-	Status       string
-	PublishedAt  *time.Time
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	Status       string          `json:"status"`
+	PublishedAt  *time.Time      `json:"published_at"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) ListPagesAdmin(ctx context.Context) ([]ListPagesAdminRow, error) {
@@ -366,14 +366,14 @@ FROM page_sections s ORDER BY s.sort_order, s.created_at
 `
 
 type ListSectionsRow struct {
-	ID           uuid.UUID
-	Type         string
-	SortOrder    int32
-	IsActive     bool
-	Config       json.RawMessage
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Translations json.RawMessage
+	ID           uuid.UUID       `json:"id"`
+	Type         string          `json:"type"`
+	SortOrder    int32           `json:"sort_order"`
+	IsActive     bool            `json:"is_active"`
+	Config       json.RawMessage `json:"config"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
+	Translations json.RawMessage `json:"translations"`
 }
 
 func (q *Queries) ListSections(ctx context.Context) ([]ListSectionsRow, error) {
@@ -410,12 +410,12 @@ UPDATE faqs SET category = $2, boat_id = $3, package_id = $4, sort_order = $5, s
 `
 
 type UpdateFaqParams struct {
-	ID        uuid.UUID
-	Category  string
-	BoatID    *uuid.UUID
-	PackageID *uuid.UUID
-	SortOrder int32
-	Status    string
+	ID        uuid.UUID  `json:"id"`
+	Category  string     `json:"category"`
+	BoatID    *uuid.UUID `json:"boat_id"`
+	PackageID *uuid.UUID `json:"package_id"`
+	SortOrder int32      `json:"sort_order"`
+	Status    string     `json:"status"`
 }
 
 func (q *Queries) UpdateFaq(ctx context.Context, arg UpdateFaqParams) (Faq, error) {
@@ -446,9 +446,9 @@ UPDATE pages SET status = $2, published_at = $3, updated_at = now() WHERE id = $
 `
 
 type UpdatePageParams struct {
-	ID          uuid.UUID
-	Status      string
-	PublishedAt *time.Time
+	ID          uuid.UUID  `json:"id"`
+	Status      string     `json:"status"`
+	PublishedAt *time.Time `json:"published_at"`
 }
 
 func (q *Queries) UpdatePage(ctx context.Context, arg UpdatePageParams) (Page, error) {
@@ -469,11 +469,11 @@ UPDATE page_sections SET type = $2, sort_order = $3, is_active = $4, config = $5
 `
 
 type UpdateSectionParams struct {
-	ID        uuid.UUID
-	Type      string
-	SortOrder int32
-	IsActive  bool
-	Config    json.RawMessage
+	ID        uuid.UUID       `json:"id"`
+	Type      string          `json:"type"`
+	SortOrder int32           `json:"sort_order"`
+	IsActive  bool            `json:"is_active"`
+	Config    json.RawMessage `json:"config"`
 }
 
 func (q *Queries) UpdateSection(ctx context.Context, arg UpdateSectionParams) (PageSection, error) {
@@ -503,10 +503,10 @@ ON CONFLICT (faq_id, locale) DO UPDATE SET question = EXCLUDED.question, answer 
 `
 
 type UpsertFaqTranslationParams struct {
-	FaqID    uuid.UUID
-	Locale   string
-	Question string
-	Answer   string
+	FaqID    uuid.UUID `json:"faq_id"`
+	Locale   string    `json:"locale"`
+	Question string    `json:"question"`
+	Answer   string    `json:"answer"`
 }
 
 func (q *Queries) UpsertFaqTranslation(ctx context.Context, arg UpsertFaqTranslationParams) error {
@@ -526,13 +526,13 @@ ON CONFLICT (page_id, locale) DO UPDATE SET title = EXCLUDED.title, slug = EXCLU
 `
 
 type UpsertPageTranslationParams struct {
-	PageID         uuid.UUID
-	Locale         string
-	Title          string
-	Slug           string
-	Blocks         json.RawMessage
-	SeoTitle       string
-	SeoDescription string
+	PageID         uuid.UUID       `json:"page_id"`
+	Locale         string          `json:"locale"`
+	Title          string          `json:"title"`
+	Slug           string          `json:"slug"`
+	Blocks         json.RawMessage `json:"blocks"`
+	SeoTitle       string          `json:"seo_title"`
+	SeoDescription string          `json:"seo_description"`
 }
 
 func (q *Queries) UpsertPageTranslation(ctx context.Context, arg UpsertPageTranslationParams) error {
@@ -554,9 +554,9 @@ ON CONFLICT (section_id, locale) DO UPDATE SET content = EXCLUDED.content
 `
 
 type UpsertSectionTranslationParams struct {
-	SectionID uuid.UUID
-	Locale    string
-	Content   json.RawMessage
+	SectionID uuid.UUID       `json:"section_id"`
+	Locale    string          `json:"locale"`
+	Content   json.RawMessage `json:"content"`
 }
 
 func (q *Queries) UpsertSectionTranslation(ctx context.Context, arg UpsertSectionTranslationParams) error {

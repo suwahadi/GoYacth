@@ -142,7 +142,7 @@ func (c *Client) do(ctx context.Context, method, u string, body any, out any) (i
 	if err != nil {
 		return 0, fmt.Errorf("midtrans request: %w", err)
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	raw, err := io.ReadAll(io.LimitReader(res.Body, 1<<20))
 	if err != nil {
 		return res.StatusCode, err
