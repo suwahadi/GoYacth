@@ -1654,8 +1654,8 @@ func (q *Queries) ListBoatBlocks(ctx context.Context, arg ListBoatBlocksParams) 
 
 const listBoatReservations = `-- name: ListBoatReservations :many
 SELECT r.id, r.area_id, r.kind, r.status, r.booking_id, r.departure_id, r.block_id, r.expires_at,
-    lower(r.period)::timestamptz AS starts_at, upper(r.period)::timestamptz AS ends_at
-FROM area_reservations r
+    lower(r.period)::timestamptz AS starts_at, upper(r.period)::timestamptz AS ends_at, b.public_id AS booking_public_id
+FROM area_reservations r LEFT JOIN bookings b ON b.id = r.booking_id
 WHERE r.boat_id = ANY($1::uuid[])
   AND r.period && tstzrange($2::timestamptz, $3::timestamptz, '[)')
   AND (r.status = 'ACTIVE' OR r.expires_at > now())
@@ -1670,16 +1670,17 @@ type ListBoatReservationsParams struct {
 }
 
 type ListBoatReservationsRow struct {
-	ID          uuid.UUID  `json:"id"`
-	AreaID      uuid.UUID  `json:"area_id"`
-	Kind        string     `json:"kind"`
-	Status      string     `json:"status"`
-	BookingID   *uuid.UUID `json:"booking_id"`
-	DepartureID *uuid.UUID `json:"departure_id"`
-	BlockID     *uuid.UUID `json:"block_id"`
-	ExpiresAt   *time.Time `json:"expires_at"`
-	StartsAt    time.Time  `json:"starts_at"`
-	EndsAt      time.Time  `json:"ends_at"`
+	ID              uuid.UUID  `json:"id"`
+	AreaID          uuid.UUID  `json:"area_id"`
+	Kind            string     `json:"kind"`
+	Status          string     `json:"status"`
+	BookingID       *uuid.UUID `json:"booking_id"`
+	DepartureID     *uuid.UUID `json:"departure_id"`
+	BlockID         *uuid.UUID `json:"block_id"`
+	ExpiresAt       *time.Time `json:"expires_at"`
+	StartsAt        time.Time  `json:"starts_at"`
+	EndsAt          time.Time  `json:"ends_at"`
+	BookingPublicID *uuid.UUID `json:"booking_public_id"`
 }
 
 func (q *Queries) ListBoatReservations(ctx context.Context, arg ListBoatReservationsParams) ([]ListBoatReservationsRow, error) {
@@ -1702,6 +1703,7 @@ func (q *Queries) ListBoatReservations(ctx context.Context, arg ListBoatReservat
 			&i.ExpiresAt,
 			&i.StartsAt,
 			&i.EndsAt,
+			&i.BookingPublicID,
 		); err != nil {
 			return nil, err
 		}

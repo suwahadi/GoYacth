@@ -211,8 +211,8 @@ DELETE FROM boat_blocks WHERE id = $1;
 
 -- name: ListBoatReservations :many
 SELECT r.id, r.area_id, r.kind, r.status, r.booking_id, r.departure_id, r.block_id, r.expires_at,
-    lower(r.period)::timestamptz AS starts_at, upper(r.period)::timestamptz AS ends_at
-FROM area_reservations r
+    lower(r.period)::timestamptz AS starts_at, upper(r.period)::timestamptz AS ends_at, b.public_id AS booking_public_id
+FROM area_reservations r LEFT JOIN bookings b ON b.id = r.booking_id
 WHERE r.boat_id = ANY(sqlc.arg(boat_ids)::uuid[])
   AND r.period && tstzrange(sqlc.arg(from_time)::timestamptz, sqlc.arg(to_time)::timestamptz, '[)')
   AND (r.status = 'ACTIVE' OR r.expires_at > now())

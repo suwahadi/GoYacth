@@ -88,7 +88,7 @@ func (h *Handler) calendar(w http.ResponseWriter, r *http.Request) {
 		ev := calendarEvent{Kind: x.Kind, Status: x.Status, StartsAt: x.StartsAt, EndsAt: x.EndsAt, ExpiresAt: x.ExpiresAt}
 		switch {
 		case x.BookingID != nil:
-			src, ev.BookingID = *x.BookingID, x.BookingID
+			src, ev.BookingID = *x.BookingID, x.BookingPublicID
 		case x.DepartureID != nil:
 			src, ev.DepartureID = *x.DepartureID, x.DepartureID
 		case x.BlockID != nil:
