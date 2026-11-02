@@ -6,8 +6,11 @@ import { useLocale, useT } from "~/lib/i18n";
 
 import { cn } from "./cn";
 
-const control =
-  "w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-fg placeholder:text-muted disabled:opacity-60 aria-[invalid=true]:border-danger";
+// controlBase has no width so compound controls such as PhoneInput can size their parts;
+// cn only joins classes, so a second width utility would not override w-full.
+const controlBase =
+  "rounded-md border border-border bg-surface px-3 py-2 text-sm text-fg placeholder:text-muted disabled:opacity-60 aria-[invalid=true]:border-danger";
+const control = `w-full ${controlBase}`;
 
 export interface FieldProps {
   label: string;
@@ -196,10 +199,10 @@ export function PhoneInput({ id, value, onChange, invalid, describedBy }: { id?:
     onChange(digits ? `${d}${digits}` : "");
   };
   return (
-    <div className="flex gap-2">
+    <div className="flex w-full gap-2">
       <select
         aria-label={t("common.phone.country_code")}
-        className={cn(control, "h-11 lg:h-10 w-28 shrink-0")}
+        className={cn(controlBase, "h-11 lg:h-10 w-28 shrink-0 pr-8")}
         value={dial}
         onChange={(e) => {
           setDial(e.target.value);
@@ -218,7 +221,7 @@ export function PhoneInput({ id, value, onChange, invalid, describedBy }: { id?:
         inputMode="tel"
         autoComplete="tel-national"
         lang={locale}
-        className={cn(control, "h-11 lg:h-10")}
+        className={cn(controlBase, "h-11 lg:h-10 min-w-0 flex-1")}
         aria-invalid={invalid || undefined}
         aria-describedby={describedBy}
         value={local}
