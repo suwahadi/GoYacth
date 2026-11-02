@@ -1,5 +1,5 @@
 import type { Route } from "./+types/page";
-import { Container, ResponsiveImage } from "~/components/ui";
+import { Container, PHONE_IMAGE, ResponsiveImage } from "~/components/ui";
 import { Breadcrumbs, PublicErrorBoundary } from "~/features/public/components";
 import { Blocks } from "~/features/public/content";
 import { alternatePaths, crumbsLd, firstImageUrl, loadBySlug, requestLocale, rootFromMatches } from "~/features/public/loaders";
@@ -77,7 +77,7 @@ export default function ContentPage({ loaderData }: Route.ComponentProps) {
             {t("public.page.updated", { date: formatPlainDate(page.updated_at.slice(0, 10), locale) })}
           </p>
         </header>
-        {page.featured_image && <ResponsiveImage image={page.featured_image} sizes="(min-width: 768px) 720px, 100vw" priority className="mb-4 h-auto w-full rounded-lg" />}
+        {page.featured_image && <ResponsiveImage image={page.featured_image} sizes={`(min-width: 768px) 720px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} priority className="mb-4 h-auto w-full rounded-lg" />}
         <Blocks blocks={page.blocks} />
       </article>
     </Container>

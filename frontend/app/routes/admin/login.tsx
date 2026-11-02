@@ -53,10 +53,10 @@ export default function AdminLogin() {
       >
         <h1 className="text-xl font-bold text-primary">GoYacht {adminT("nav.admin")}</h1>
         <Field label={adminT("ops.people.email")}>
-          {(p) => <Input {...p} className="h-11!" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />}
+          {(p) => <Input {...p} type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />}
         </Field>
         <Field label={adminT("ops.login.password")}>
-          {(p) => <Input {...p} className="h-11!" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />}
+          {(p) => <Input {...p} type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />}
         </Field>
         <OpsError error={login.error} />
         <Button type="submit" size="lg" full pending={login.pending}>

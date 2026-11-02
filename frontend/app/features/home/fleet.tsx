@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { ArrowRightIcon, DisplayHeading, Eyebrow, ResponsiveImage, cn } from "~/components/ui";
+import { ArrowRightIcon, DisplayHeading, Eyebrow, PHONE_IMAGE, ResponsiveImage, cn } from "~/components/ui";
 import { CtaLink } from "~/features/public/content";
 import { localePath } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
@@ -14,7 +14,7 @@ function FleetCard({ boat }: { boat: BoatCard }) {
   return (
     <li>
       <Link to={localePath(locale, boat.slug ? `/boats/${boat.slug}` : "/boats")} className="on-ink group relative block aspect-[4/3] overflow-hidden rounded-xl bg-ink sm:aspect-[20/19]">
-        <ResponsiveImage image={boat.thumbnail} sizes="(min-width: 1024px) 19vw, (min-width: 640px) 31vw, 100vw" className="size-full transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transform-none" />
+        <ResponsiveImage image={boat.thumbnail} sizes={`(min-width: 1024px) 19vw, (min-width: 640px) 31vw, ${PHONE_IMAGE}`} className="size-full transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transform-none" />
         <span className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink via-ink/75 to-transparent" aria-hidden="true" />
         <span className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 text-ink-fg">
           <span className="min-w-0">

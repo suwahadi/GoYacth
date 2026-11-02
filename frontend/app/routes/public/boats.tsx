@@ -89,8 +89,8 @@ export default function Boats({ loaderData }: Route.ComponentProps) {
           <EmptyState title={t("public.boats.empty_title")} body={t("public.boats.empty_body")} />
         ) : (
           <CardGrid>
-            {boats.map((b) => (
-              <BoatCardItem key={b.id} boat={b} search={dateSearch} names={{ category: categoryName.get(b.category_id), class: className.get(b.class_id) }} />
+            {boats.map((b, i) => (
+              <BoatCardItem key={b.id} boat={b} priority={i < 3} search={dateSearch} names={{ category: categoryName.get(b.category_id), class: className.get(b.class_id) }} />
             ))}
           </CardGrid>
         )}

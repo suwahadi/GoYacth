@@ -50,7 +50,7 @@ export function Field({ label, error, hint, required, children, className }: Fie
 }
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input({ className, ...rest }, ref) {
-  return <input ref={ref} className={cn(control, "h-10", className)} {...rest} />;
+  return <input ref={ref} className={cn(control, "h-11 lg:h-10", className)} {...rest} />;
 });
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function Textarea({ className, ...rest }, ref) {
@@ -59,7 +59,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
 
 export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select({ className, children, ...rest }, ref) {
   return (
-    <select ref={ref} className={cn(control, "h-10 pr-8", className)} {...rest}>
+    <select ref={ref} className={cn(control, "h-11 lg:h-10 pr-8", className)} {...rest}>
       {children}
     </select>
   );
@@ -123,7 +123,7 @@ export function SearchableSelect({
         aria-autocomplete="list"
         aria-invalid={invalid || undefined}
         aria-describedby={describedBy}
-        className={cn(control, "h-10")}
+        className={cn(control, "h-11 lg:h-10")}
         placeholder={placeholder}
         value={open ? query : (selected?.label ?? "")}
         onFocus={() => {
@@ -199,7 +199,7 @@ export function PhoneInput({ id, value, onChange, invalid, describedBy }: { id?:
     <div className="flex gap-2">
       <select
         aria-label={t("common.phone.country_code")}
-        className={cn(control, "h-10 w-28 shrink-0")}
+        className={cn(control, "h-11 lg:h-10 w-28 shrink-0")}
         value={dial}
         onChange={(e) => {
           setDial(e.target.value);
@@ -218,7 +218,7 @@ export function PhoneInput({ id, value, onChange, invalid, describedBy }: { id?:
         inputMode="tel"
         autoComplete="tel-national"
         lang={locale}
-        className={cn(control, "h-10")}
+        className={cn(control, "h-11 lg:h-10")}
         aria-invalid={invalid || undefined}
         aria-describedby={describedBy}
         value={local}

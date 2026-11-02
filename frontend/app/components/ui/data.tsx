@@ -91,18 +91,18 @@ export function Pagination({ page }: { page: Page }) {
       <span className="text-muted">{t("common.pagination.page_of", { page: page.page, total: totalPages })}</span>
       <div className="grid grid-cols-2 gap-2">
         {page.page > 1 ? (
-          <Link className="rounded-md border border-border bg-surface px-3 py-1.5 text-center hover:bg-surface-2" to={href(page.page - 1)} rel="prev">
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 py-1.5 hover:bg-surface-2 lg:min-h-0" to={href(page.page - 1)} rel="prev">
             {t("common.actions.previous")}
           </Link>
         ) : (
-          <span className="rounded-md border border-border px-3 py-1.5 text-center opacity-50">{t("common.actions.previous")}</span>
+          <span className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-3 py-1.5 opacity-50 lg:min-h-0">{t("common.actions.previous")}</span>
         )}
         {page.page < totalPages ? (
-          <Link className="rounded-md border border-border bg-surface px-3 py-1.5 text-center hover:bg-surface-2" to={href(page.page + 1)} rel="next">
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 py-1.5 hover:bg-surface-2 lg:min-h-0" to={href(page.page + 1)} rel="next">
             {t("common.actions.next")}
           </Link>
         ) : (
-          <span className="rounded-md border border-border px-3 py-1.5 text-center opacity-50">{t("common.actions.next")}</span>
+          <span className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-3 py-1.5 opacity-50 lg:min-h-0">{t("common.actions.next")}</span>
         )}
       </div>
     </nav>
@@ -160,6 +160,10 @@ export function StatusBadge({ status }: { status: string }) {
 
 // ResponsiveImage renders server-generated WebP variants with explicit dimensions to avoid
 // layout shift.
+// A 3x phone would otherwise pick the 1600w file for a 390px layout; at 266px it picks 800w, which
+// is sharp at that width and about a third of the bytes.
+export const PHONE_IMAGE = "266px";
+
 export function ResponsiveImage({ image, sizes, className, priority }: { image: Img | null | undefined; sizes: string; className?: string; priority?: boolean }) {
   if (!image || image.sources.length === 0) {
     return <div className={cn("bg-surface-2", className)} aria-hidden="true" />;

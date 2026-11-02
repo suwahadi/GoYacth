@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { ArrowRightIcon, Card, ResponsiveImage, buttonClass } from "~/components/ui";
+import { ArrowRightIcon, Card, PHONE_IMAGE, ResponsiveImage, buttonClass } from "~/components/ui";
 import { localePath } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
 import type { Faq, HomeSection, PackageCard, PageBlock } from "~/lib/types";
@@ -66,7 +66,7 @@ export function Blocks({ blocks }: { blocks: PageBlock[] }) {
           case "image":
             return b.image ? (
               <figure key={i} className="my-4">
-                <ResponsiveImage image={b.image} sizes="(min-width: 768px) 720px, 100vw" className="h-auto w-full rounded-lg" />
+                <ResponsiveImage image={b.image} sizes={`(min-width: 768px) 720px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} className="h-auto w-full rounded-lg" />
                 {b.text && <figcaption className="mt-1 text-sm text-muted">{b.text}</figcaption>}
               </figure>
             ) : null;
@@ -140,7 +140,7 @@ export function HomeSectionView({ section }: { section: HomeSection }) {
       return (
         <section className="mt-8">
           <Card className="bg-info-bg">
-            {section.image && <ResponsiveImage image={section.image} sizes="(min-width: 1152px) 1120px, 100vw" className="mb-3 aspect-[16/5] h-auto w-full rounded" />}
+            {section.image && <ResponsiveImage image={section.image} sizes={`(min-width: 1152px) 1120px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} className="mb-3 aspect-[16/5] h-auto w-full rounded" />}
             <h2 className="text-xl font-semibold">{c.title}</h2>
             {c.subtitle && <p className="text-muted">{c.subtitle}</p>}
             {c.body && <p className="mt-2 whitespace-pre-line">{c.body}</p>}

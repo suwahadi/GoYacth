@@ -1,4 +1,4 @@
-import { ArrowRightIcon, ButtonLink, CarouselArrow, CarouselDots, DisplayHeading, Eyebrow, ResponsiveImage, cn, useCarousel } from "~/components/ui";
+import { ArrowRightIcon, ButtonLink, CarouselArrow, CarouselDots, DisplayHeading, Eyebrow, PHONE_IMAGE, ResponsiveImage, cn, useCarousel } from "~/components/ui";
 import { CtaLink } from "~/features/public/content";
 import { localePath } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
@@ -17,7 +17,7 @@ function HeroSlide({ section, active, first }: { section: HomeSection; active: b
       inert={!active}
       className={cn("relative col-start-1 row-start-1 flex items-center pb-28 pt-14 transition-[opacity,visibility] duration-300 motion-reduce:transition-none lg:min-h-[39vw] lg:pb-32 lg:pt-16", active ? "opacity-100" : "invisible opacity-0")}
     >
-      <ResponsiveImage image={section.image} sizes="100vw" priority={first} className="absolute inset-0 -z-10 size-full object-[72%_center] lg:object-center" />
+      <ResponsiveImage image={section.image} sizes={`(min-width: 640px) 100vw, ${PHONE_IMAGE}`} priority={first} className="absolute inset-0 -z-10 size-full object-[72%_center] lg:object-center" />
       {/* Stops measured against all three photos: the weakest that keeps text over bright sky at AA. */}
       <div className="absolute inset-0 -z-10 bg-ink/80 lg:bg-transparent lg:bg-gradient-to-r lg:from-ink/90 lg:from-0% lg:via-ink/75 lg:via-45% lg:to-ink/0 lg:to-72%" aria-hidden="true" />
       <div className={homeWidth}>

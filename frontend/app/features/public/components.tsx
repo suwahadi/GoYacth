@@ -1,7 +1,7 @@
 import type { ReactNode, SVGProps } from "react";
 import { Link, isRouteErrorResponse, useRouteError } from "react-router";
 
-import { BedIcon, ButtonLink, CalendarIcon, ClockIcon, Container, Money, ResponsiveImage, RulerIcon, SealCheckIcon, UsersIcon, cn } from "~/components/ui";
+import { BedIcon, ButtonLink, CalendarIcon, ClockIcon, Container, Money, PHONE_IMAGE, ResponsiveImage, RulerIcon, SealCheckIcon, UsersIcon, cn } from "~/components/ui";
 import { localePath, splitLocale, DEFAULT_LOCALE, type Locale } from "~/lib/config";
 import { countryName, formatBasisPoints, formatDuration, formatIDR, formatNumber, formatPlainDate } from "~/lib/format";
 import { useLocale, useT, useTCode } from "~/lib/i18n";
@@ -33,6 +33,9 @@ export function SmartLink({ href, children, className }: { href: string; childre
   );
 }
 
+// Padding offset by a negative margin makes a text link 44px tall without moving the layout.
+export const tapLink = "-my-3 inline-block py-3 hover:underline";
+
 export function Breadcrumbs({ items }: { items: { name: string; path?: string }[] }) {
   const t = useT();
   const locale = useLocale();
@@ -43,7 +46,7 @@ export function Breadcrumbs({ items }: { items: { name: string; path?: string }[
           <li key={i} className="flex min-w-0 gap-1">
             {i > 0 && <span aria-hidden="true">/</span>}
             {it.path ? (
-              <Link to={localePath(locale, it.path)} className="hover:underline">
+              <Link to={localePath(locale, it.path)} className={tapLink}>
                 {it.name}
               </Link>
             ) : (
@@ -135,15 +138,15 @@ export function RatingLine({ rating, count }: { rating: number; count: number })
   );
 }
 
-function ImageCard({ href, image, title, children }: { href: string; image: Img | null; title: string; children?: ReactNode }) {
+function ImageCard({ href, image, title, priority, children }: { href: string; image: Img | null; title: string; priority?: boolean; children?: ReactNode }) {
   return (
     <li className="group flex h-full flex-col">
       <Link to={href} className="block overflow-hidden rounded-xl">
-        <ResponsiveImage image={image} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="aspect-[3/2] h-auto w-full transition-transform duration-500 motion-safe:group-hover:scale-105" />
+        <ResponsiveImage image={image} sizes={`(min-width: 1024px) 33vw, (min-width: 640px) 50vw, ${PHONE_IMAGE}`} priority={priority} className="aspect-[3/2] h-auto w-full transition-transform duration-500 motion-safe:group-hover:scale-105" />
       </Link>
       <div className="flex flex-1 flex-col gap-2 pt-4">
         <h3 className="font-display text-xl leading-tight">
-          <Link to={href} className="hover:underline">
+          <Link to={href} className={tapLink}>
             {title}
           </Link>
         </h3>
@@ -153,12 +156,12 @@ function ImageCard({ href, image, title, children }: { href: string; image: Img 
   );
 }
 
-export function BoatCardItem({ boat, names, search = "" }: { boat: BoatCard; names?: { category?: string; class?: string }; search?: string }) {
+export function BoatCardItem({ boat, names, search = "", priority }: { boat: BoatCard; names?: { category?: string; class?: string }; search?: string; priority?: boolean }) {
   const t = useT();
   const locale = useLocale();
   const kind = [names?.category, names?.class].filter(Boolean).join(", ");
   return (
-    <ImageCard href={localePath(locale, `/boats/${boat.slug}`) + search} image={boat.thumbnail} title={boat.name}>
+    <ImageCard href={localePath(locale, `/boats/${boat.slug}`) + search} image={boat.thumbnail} title={boat.name} priority={priority}>
       {kind && <p className="text-sm text-accent-text">{kind}</p>}
       {boat.summary && <p className="line-clamp-2 text-sm text-muted">{boat.summary}</p>}
       <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
@@ -186,11 +189,11 @@ export function FromPrice({ amount, unitLabel }: { amount: number; unitLabel?: s
   );
 }
 
-export function PackageCardItem({ pkg }: { pkg: PackageCard }) {
+export function PackageCardItem({ pkg, priority }: { pkg: PackageCard; priority?: boolean }) {
   const t = useT();
   const locale = useLocale();
   return (
-    <ImageCard href={localePath(locale, `/packages/${pkg.slug}`)} image={pkg.thumbnail} title={pkg.name}>
+    <ImageCard href={localePath(locale, `/packages/${pkg.slug}`)} image={pkg.thumbnail} title={pkg.name} priority={priority}>
       <p className="text-sm text-accent-text">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</p>
       {pkg.summary && <p className="line-clamp-2 text-sm text-muted">{pkg.summary}</p>}
       <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
@@ -204,10 +207,10 @@ export function PackageCardItem({ pkg }: { pkg: PackageCard }) {
     </ImageCard>
   );
 }
-export function RegionCardItem({ region }: { region: RegionCard }) {
+export function RegionCardItem({ region, priority }: { region: RegionCard; priority?: boolean }) {
   const locale = useLocale();
   return (
-    <ImageCard href={localePath(locale, `/destinations/${region.slug}`)} image={region.thumbnail} title={region.name}>
+    <ImageCard href={localePath(locale, `/destinations/${region.slug}`)} image={region.thumbnail} title={region.name} priority={priority}>
       {region.description && <p className="line-clamp-3 text-sm text-muted">{region.description}</p>}
     </ImageCard>
   );
@@ -231,7 +234,7 @@ export function Gallery({ images, fallback }: { images: Img[]; fallback?: Img | 
   const [first, ...rest] = list;
   return (
     <section aria-label={t("public.boat.gallery")} className="space-y-2">
-      <ResponsiveImage image={first} sizes="(min-width: 1152px) 1120px, 100vw" priority className="aspect-[16/9] h-auto w-full rounded-lg" />
+      <ResponsiveImage image={first} sizes={`(min-width: 1152px) 1120px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} priority className="aspect-[16/9] h-auto w-full rounded-lg" />
       {rest.length > 0 && (
         <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {rest.slice(0, 8).map((img) => (
@@ -345,8 +348,8 @@ export function FaqList({ faqs }: { faqs: Faq[] }) {
     <div className="divide-y divide-border rounded-lg border border-border bg-surface">
       {faqs.map((f) => (
         <details key={f.id} className="group px-4 py-3">
-          <summary className="cursor-pointer font-medium">{f.question}</summary>
-          <p className="mt-2 whitespace-pre-line text-sm">{f.answer}</p>
+          <summary className="-mx-4 -my-3 cursor-pointer px-4 py-3 font-medium">{f.question}</summary>
+          <p className="mt-3 whitespace-pre-line text-sm">{f.answer}</p>
         </details>
       ))}
     </div>

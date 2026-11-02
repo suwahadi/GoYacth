@@ -1,4 +1,4 @@
-import { DisplayHeading, Eyebrow, HighlightIcon, ResponsiveImage, cn } from "~/components/ui";
+import { DisplayHeading, Eyebrow, HighlightIcon, PHONE_IMAGE, ResponsiveImage, cn } from "~/components/ui";
 import { useT } from "~/lib/i18n";
 import type { HomeSection } from "~/lib/types";
 
@@ -45,7 +45,7 @@ export function WhySection({ section }: { section: HomeSection }) {
       </div>
       <div className="overflow-hidden rounded-2xl lg:rounded-l-none">
         {/* The slanted edge repeats the bow line of the hero yacht. */}
-        <ResponsiveImage image={section.image} sizes="(min-width: 1024px) 45vw, 100vw" className="aspect-[5/2] w-full lg:aspect-[8/3] lg:[clip-path:polygon(6%_0,100%_0,100%_100%,0_100%)]" />
+        <ResponsiveImage image={section.image} sizes={`(min-width: 1024px) 45vw, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} className="aspect-[5/2] w-full lg:aspect-[8/3] lg:[clip-path:polygon(6%_0,100%_0,100%_100%,0_100%)]" />
       </div>
     </section>
   );

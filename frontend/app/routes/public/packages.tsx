@@ -41,8 +41,8 @@ export default function Packages({ loaderData }: Route.ComponentProps) {
         />
       ) : (
         <CardGrid>
-          {loaderData.packages.map((p) => (
-            <PackageCardItem key={p.id} pkg={p} />
+          {loaderData.packages.map((p, i) => (
+            <PackageCardItem key={p.id} pkg={p} priority={i < 3} />
           ))}
         </CardGrid>
       )}

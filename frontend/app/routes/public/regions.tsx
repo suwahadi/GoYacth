@@ -35,8 +35,8 @@ export default function Regions({ loaderData }: Route.ComponentProps) {
         <EmptyState title={t("public.regions.empty_title")} />
       ) : (
         <CardGrid>
-          {loaderData.regions.map((r) => (
-            <RegionCardItem key={r.id} region={r} />
+          {loaderData.regions.map((r, i) => (
+            <RegionCardItem key={r.id} region={r} priority={i < 3} />
           ))}
         </CardGrid>
       )}

@@ -8,7 +8,7 @@ import { useLocale, useT } from "~/lib/i18n";
 import type { Departure, DepartureSlot } from "~/lib/types";
 
 import { checkoutParams, range, type CheckoutTarget } from "./booking-options";
-import { Meta } from "./components";
+import { Meta, tapLink } from "./components";
 
 export function slotPaxLimit(slot: DepartureSlot, extraMax?: number): number {
   return Math.min(slot.max_pax, slot.remaining, extraMax ?? Number.POSITIVE_INFINITY);
@@ -98,7 +98,7 @@ export function DepartureCard({ departure, showBoat = true }: { departure: Depar
           <Meta icon={RouteIcon}>{departure.route_name}</Meta>
           {showBoat && (
             <Meta icon={SailboatIcon}>
-              <Link to={localePath(locale, `/boats/${departure.boat_slug}`)} className="text-primary hover:underline">
+              <Link to={localePath(locale, `/boats/${departure.boat_slug}`)} className={`${tapLink} text-primary`}>
                 {departure.boat_name}
               </Link>
             </Meta>

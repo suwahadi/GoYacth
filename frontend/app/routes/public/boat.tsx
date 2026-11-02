@@ -3,7 +3,7 @@ import { data, Link } from "react-router";
 import type { Route } from "./+types/boat";
 import { AnchorIcon, BathIcon, BeamIcon, BedIcon, CalendarIcon, Card, ClockIcon, Container, CrownIcon, FacilityIcon, GaugeIcon, HelmIcon, MapPinIcon, Money, MoonIcon, RouteIcon, RulerIcon, SailboatIcon, SunIcon, TagIcon, UsersIcon } from "~/components/ui";
 import { CharterWidget } from "~/features/public/charter-widget";
-import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, RatingLine, ReviewList, ReviewSummary, Section, SectionError, unitKey, type ReviewStats } from "~/features/public/components";
+import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, RatingLine, ReviewList, ReviewSummary, Section, SectionError, tapLink, unitKey, type ReviewStats } from "~/features/public/components";
 import { DepartureList } from "~/features/public/departures";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { api } from "~/lib/api";
@@ -140,7 +140,7 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
         <p className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
           {kind && <span className="text-accent-text">{kind}</span>}
           {boat.review_count > 0 && (
-            <a href="#reviews" className="hover:underline">
+            <a href="#reviews" className={tapLink}>
               <RatingLine rating={boat.rating} count={boat.review_count} />
             </a>
           )}
@@ -196,7 +196,7 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
                   <li key={r.id} className="flex items-start gap-3">
                     <RouteIcon className="mt-0.5 size-6 shrink-0 text-accent-icon" />
                     <span>
-                      <Link to={localePath(locale, `/routes/${r.slug}`)} className="font-medium text-primary hover:underline">
+                      <Link to={localePath(locale, `/routes/${r.slug}`)} className={`${tapLink} font-medium text-primary`}>
                         {r.name}
                       </Link>
                       <span className="block text-sm text-muted">{formatDuration(r.min_duration_minutes ?? r.duration_minutes, locale)}</span>
@@ -216,7 +216,7 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
               <ul className="flex flex-wrap gap-x-6 gap-y-2">
                 {boat.regions.map((r) => (
                   <Meta key={r.id} icon={MapPinIcon}>
-                    <Link to={localePath(locale, `/destinations/${r.slug}`)} className="text-primary hover:underline">
+                    <Link to={localePath(locale, `/destinations/${r.slug}`)} className={`${tapLink} text-primary`}>
                       {r.name}
                     </Link>
                   </Meta>
