@@ -10,6 +10,7 @@ import { apiData } from "~/lib/api";
 import { localePath, splitLocale } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
 import type { Tracking } from "~/lib/types";
+import { PageHero } from "~/features/public/components";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const { locale } = splitLocale(new URL(request.url).pathname);
@@ -35,20 +36,22 @@ export default function Order({ loaderData }: Route.ComponentProps) {
   const locale = useLocale();
   const errorText = useApiErrorText();
   return (
-    <Container className="max-w-xl py-8">
-      <h1 className="text-2xl font-bold">{t("booking.track.order_title")}</h1>
-      <div className="mt-4">
-        {loaderData.tracking ? (
-          <TrackingCard tracking={loaderData.tracking} />
-        ) : (
-          <>
-            <ErrorState message={errorText(deserializeError(loaderData.error))} />
-            <ButtonLink to={localePath(locale, "/track")} variant="secondary" className="mt-4">
-              {t("booking.track.title")}
-            </ButtonLink>
-          </>
-        )}
-      </div>
-    </Container>
+    <>
+      <PageHero title={t("booking.track.order_title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.track.order_title") }]} width="max-w-xl" />
+      <Container className="max-w-xl pb-8 pt-6">
+        <div className="mt-4">
+          {loaderData.tracking ? (
+            <TrackingCard tracking={loaderData.tracking} />
+          ) : (
+            <>
+              <ErrorState message={errorText(deserializeError(loaderData.error))} />
+              <ButtonLink to={localePath(locale, "/track")} variant="secondary" className="mt-4">
+                {t("booking.track.title")}
+              </ButtonLink>
+            </>
+          )}
+        </div>
+      </Container>
+    </>
   );
 }

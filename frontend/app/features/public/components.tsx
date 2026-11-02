@@ -38,11 +38,11 @@ export function SmartLink({ href, children, className }: { href: string; childre
 // Padding offset by a negative margin makes a text link 44px tall without moving the layout.
 export const tapLink = "-my-3 inline-block py-3 hover:underline";
 
-export function Breadcrumbs({ items }: { items: { name: string; path?: string }[] }) {
+export function Breadcrumbs({ items, tone = "page" }: { items: { name: string; path?: string }[]; tone?: "page" | "photo" }) {
   const t = useT();
   const locale = useLocale();
   return (
-    <nav aria-label={t("public.breadcrumb.label")} className="py-3 text-sm text-muted">
+    <nav aria-label={t("public.breadcrumb.label")} className={cn("py-3 text-sm", tone === "photo" ? "text-ink-fg/85" : "text-muted")}>
       <ol className="flex flex-wrap gap-1">
         {items.map((it, i) => (
           <li key={i} className="flex min-w-0 gap-1">
@@ -63,11 +63,27 @@ export function Breadcrumbs({ items }: { items: { name: string; path?: string }[
   );
 }
 
-export function PageHeader({ title, intro }: { title: string; intro?: string }) {
+export type Crumb = { name: string; path?: string };
+
+const SEA = "/home/region-islands";
+
+// PageHero is the slim band at the top of every page except home: breadcrumbs and the title on
+// a photo under a navy overlay. Detail pages pass their own cover; the rest show the sea.
+export function PageHero({ title, crumbs, intro, image, children, width }: { title: string; crumbs: Crumb[]; intro?: string; image?: Img | null; children?: ReactNode; width?: string }) {
   return (
-    <header className="py-4">
-      <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{title}</h1>
-      {intro && <p className="mt-1 text-muted">{intro}</p>}
+    <header className="relative isolate overflow-hidden bg-ink text-ink-fg">
+      {image && image.sources.length > 0 ? (
+        <ResponsiveImage image={{ ...image, alt: "" }} sizes="100vw" priority className="absolute inset-0 -z-20 size-full" />
+      ) : (
+        <img src={`${SEA}-1600.webp`} srcSet={`${SEA}-800.webp 800w, ${SEA}-1600.webp 1600w`} sizes="100vw" alt="" className="absolute inset-0 -z-20 size-full object-cover" />
+      )}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/70 to-ink/40" aria-hidden="true" />
+      <Container className={cn("pb-6 pt-1 sm:pb-8", width)}>
+        <Breadcrumbs items={crumbs.map((c, i) => (i === crumbs.length - 1 ? { name: c.name } : c))} tone="photo" />
+        <h1 className="font-display text-[clamp(1.75rem,1.4rem+1.3vw,2.75rem)] font-normal leading-tight">{title}</h1>
+        {intro && <p className="mt-1 max-w-2xl text-ink-fg/85">{intro}</p>}
+        {children}
+      </Container>
     </header>
   );
 }
@@ -416,12 +432,14 @@ export function PublicErrorBoundary() {
     body = t("common.states.gone_body");
   }
   return (
-    <Container className="py-16 text-center">
-      <h1 className="text-2xl font-bold">{title}</h1>
-      <p className="mt-3 text-muted">{body}</p>
-      <ButtonLink to={localePath(locale, "/")} className="mt-6">
-        {t("common.states.go_home")}
-      </ButtonLink>
-    </Container>
+    <>
+      <PageHero title={title} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: title }]} />
+      <Container className="py-12 text-center">
+        <p className="text-muted">{body}</p>
+        <ButtonLink to={localePath(locale, "/")} className="mt-6">
+          {t("common.states.go_home")}
+        </ButtonLink>
+      </Container>
+    </>
   );
 }

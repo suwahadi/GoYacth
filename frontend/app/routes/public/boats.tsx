@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router";
 
 import type { Route } from "./+types/boats";
 import { Container, EmptyState, Field, FilterBar, Pagination, Select } from "~/components/ui";
-import { BoatCardItem, Breadcrumbs, CardGrid, PageHeader, PublicErrorBoundary } from "~/features/public/components";
+import { BoatCardItem, CardGrid, PageHero, PublicErrorBoundary } from "~/features/public/components";
 import { crumbsLd, load, loadPage, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { translate, useT } from "~/lib/i18n";
 import { buildMeta } from "~/lib/seo";
@@ -75,28 +75,29 @@ export default function Boats({ loaderData }: Route.ComponentProps) {
     </Field>
   );
   return (
-    <Container className="pb-8">
-      <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.boats.title") }]} />
-      <PageHeader title={t("public.boats.title")} intro={t("public.boats.intro")} />
-      <FilterBar activeCount={active} onClear={() => setParams(new URLSearchParams(), { preventScrollReset: true })}>
-        {select("region_id", t("public.boats.filter_region"), regions.map((r) => ({ value: r.id, label: r.name })))}
-        {select("category_id", t("public.boats.filter_category"), categories.map((c) => ({ value: c.id, label: c.name })))}
-        {select("class_id", t("public.boats.filter_class"), classes.map((c) => ({ value: c.id, label: c.name })))}
-        {select("pax", t("public.boats.filter_pax"), PAX_PRESETS.map((n) => ({ value: String(n), label: t("public.boats.pax_at_least", { count: n }) })))}
-      </FilterBar>
-      <div className="mt-6">
-        {boats.length === 0 ? (
-          <EmptyState title={t("public.boats.empty_title")} body={t("public.boats.empty_body")} />
-        ) : (
-          <CardGrid>
-            {boats.map((b, i) => (
-              <BoatCardItem key={b.id} boat={b} priority={i < 3} search={dateSearch} names={{ category: categoryName.get(b.category_id), class: className.get(b.class_id) }} />
-            ))}
-          </CardGrid>
-        )}
-        {page && <Pagination page={page} />}
-      </div>
-    </Container>
+    <>
+      <PageHero title={t("public.boats.title")} intro={t("public.boats.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.boats.title") }]} />
+      <Container className="pb-8 pt-6">
+        <FilterBar activeCount={active} onClear={() => setParams(new URLSearchParams(), { preventScrollReset: true })}>
+          {select("region_id", t("public.boats.filter_region"), regions.map((r) => ({ value: r.id, label: r.name })))}
+          {select("category_id", t("public.boats.filter_category"), categories.map((c) => ({ value: c.id, label: c.name })))}
+          {select("class_id", t("public.boats.filter_class"), classes.map((c) => ({ value: c.id, label: c.name })))}
+          {select("pax", t("public.boats.filter_pax"), PAX_PRESETS.map((n) => ({ value: String(n), label: t("public.boats.pax_at_least", { count: n }) })))}
+        </FilterBar>
+        <div className="mt-6">
+          {boats.length === 0 ? (
+            <EmptyState title={t("public.boats.empty_title")} body={t("public.boats.empty_body")} />
+          ) : (
+            <CardGrid>
+              {boats.map((b, i) => (
+                <BoatCardItem key={b.id} boat={b} priority={i < 3} search={dateSearch} names={{ category: categoryName.get(b.category_id), class: className.get(b.class_id) }} />
+              ))}
+            </CardGrid>
+          )}
+          {page && <Pagination page={page} />}
+        </div>
+      </Container>
+    </>
   );
 }
 

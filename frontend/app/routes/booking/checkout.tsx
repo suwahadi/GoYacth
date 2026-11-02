@@ -39,6 +39,7 @@ import { localePath, splitLocale } from "~/lib/config";
 import { COUNTRY_CODES } from "~/lib/countries";
 import { useLocale, useT, useTCode } from "~/lib/i18n";
 import type { BoatDetail, Booking, PaymentMethodOption, Quote } from "~/lib/types";
+import { PageHero } from "~/features/public/components";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -84,28 +85,32 @@ export default function Checkout({ loaderData }: Route.ComponentProps) {
 
   if (!selection) {
     return (
-      <Container className="max-w-2xl py-8">
-        <h1 className="text-2xl font-bold">{t("booking.checkout.title")}</h1>
-        <Alert tone="warning" className="mt-4" title={t("booking.checkout.invalid_title")}>
-          {t("booking.checkout.invalid_body")}
-        </Alert>
-        <ButtonLink to={backHref} variant="secondary" className="mt-4">
-          {t("booking.checkout.back_to_trip")}
-        </ButtonLink>
-      </Container>
+      <>
+        <PageHero title={t("booking.checkout.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.checkout.title") }]} width="max-w-2xl" />
+        <Container className="max-w-2xl pb-8 pt-6">
+          <Alert tone="warning" className="mt-4" title={t("booking.checkout.invalid_title")}>
+            {t("booking.checkout.invalid_body")}
+          </Alert>
+          <ButtonLink to={backHref} variant="secondary" className="mt-4">
+            {t("booking.checkout.back_to_trip")}
+          </ButtonLink>
+        </Container>
+      </>
     );
   }
   if (!quote) {
     return (
-      <Container className="max-w-2xl py-8">
-        <h1 className="text-2xl font-bold">{t("booking.checkout.title")}</h1>
-        <Alert tone="danger" className="mt-4" title={t("booking.checkout.unavailable_title")}>
-          {errorText(deserializeError(quoteError))}
-        </Alert>
-        <ButtonLink to={backHref} variant="secondary" className="mt-4">
-          {t("booking.checkout.back_to_trip")}
-        </ButtonLink>
-      </Container>
+      <>
+        <PageHero title={t("booking.checkout.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.checkout.title") }]} width="max-w-2xl" />
+        <Container className="max-w-2xl pb-8 pt-6">
+          <Alert tone="danger" className="mt-4" title={t("booking.checkout.unavailable_title")}>
+            {errorText(deserializeError(quoteError))}
+          </Alert>
+          <ButtonLink to={backHref} variant="secondary" className="mt-4">
+            {t("booking.checkout.back_to_trip")}
+          </ButtonLink>
+        </Container>
+      </>
     );
   }
   if (!methods) return <MethodsUnavailable />;
@@ -116,12 +121,14 @@ function MethodsUnavailable() {
   const t = useT();
   const revalidator = useRevalidator();
   return (
-    <Container className="max-w-2xl py-8">
-      <h1 className="text-2xl font-bold">{t("booking.checkout.title")}</h1>
-      <div className="mt-4">
-        <ErrorState message={t("booking.checkout.methods_failed")} onRetry={() => revalidator.revalidate()} />
-      </div>
-    </Container>
+    <>
+      <PageHero title={t("booking.checkout.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.checkout.title") }]} width="max-w-2xl" />
+      <Container className="max-w-2xl pb-8 pt-6">
+        <div className="mt-4">
+          <ErrorState message={t("booking.checkout.methods_failed")} onRetry={() => revalidator.revalidate()} />
+        </div>
+      </Container>
+    </>
   );
 }
 
@@ -242,178 +249,180 @@ function CheckoutForm({
   );
 
   return (
-    <Container className="py-6">
-      <h1 className="text-2xl font-bold">{t("booking.checkout.title")}</h1>
-      <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <aside className="lg:order-2">
-          <div className="lg:sticky lg:top-20">
-            <QuoteSummary quote={quote} boatName={boatName} loading={live.loading} error={live.error ? errorText(live.error) : null} />
-          </div>
-        </aside>
-        <form onSubmit={submit} noValidate className="min-w-0 space-y-6 lg:order-1">
-          {created && (
-            <Alert tone="info" title={t("booking.checkout.created_title", { number: created.booking_number })}>
-              {t("booking.checkout.created_body")}{" "}
-              <Link to={localePath(locale, `/account/bookings/${created.id}`)} className="text-primary underline">
-                {t("booking.checkout.view_booking")}
-              </Link>
-            </Alert>
-          )}
-          <fieldset disabled={!!created || pending} className="space-y-6">
-            <Card>
-              <h2 className="text-lg font-semibold">{t("booking.lead.title")}</h2>
-              <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                <Field label={t("booking.lead.full_name")} required error={fe["lead.full_name"]} className="sm:col-span-2">
-                  {(p) => <Input {...p} autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={120} />}
-                </Field>
-                <Field label={t("booking.lead.email")} hint={t("booking.lead.email_hint")}>
-                  {(p) => <Input {...p} type="email" value={me.email} readOnly />}
-                </Field>
-                <Field label={t("booking.lead.phone")} required error={fe["lead.phone"]}>
-                  {(p) => <PhoneInput id={p.id} value={phone} onChange={setPhone} invalid={p["aria-invalid"]} describedBy={p["aria-describedby"]} />}
-                </Field>
-                <Field label={t("booking.lead.nationality")} required error={fe["lead.nationality"]}>
-                  {(p) => (
-                    <SearchableSelect
-                      id={p.id}
-                      value={nationality}
-                      options={countries}
-                      invalid={p["aria-invalid"]}
-                      describedBy={p["aria-describedby"]}
-                      onChange={(v) => {
-                        setNationality(v);
-                        setIdType((cur) => coerceIdType(v, cur));
-                      }}
-                    />
-                  )}
-                </Field>
-                <Field label={t("booking.lead.id_type")} required error={fe["lead.id_type"]}>
-                  {(p) => (
-                    <Select {...p} value={idType} onChange={(e) => setIdType(e.target.value)}>
-                      {idTypeOptions(nationality).map((o) => (
-                        <option key={o} value={o}>
-                          {tc("booking.id_types", o)}
-                        </option>
-                      ))}
-                    </Select>
-                  )}
-                </Field>
-                <Field label={t("booking.lead.id_number")} required error={fe["lead.id_number"]} hint={idType === "KTP" ? t("booking.lead.id_hint_ktp") : t("booking.lead.id_hint")} className="sm:col-span-2">
-                  {(p) => <Input {...p} value={idNumber} onChange={(e) => setIdNumber(e.target.value)} required autoComplete="off" inputMode={idType === "KTP" || idType === "SIM" ? "numeric" : "text"} maxLength={40} />}
-                </Field>
-                <Field label={t("booking.lead.special_request")} error={fe["lead.special_request"]} className="sm:col-span-2">
-                  {(p) => <Textarea {...p} value={specialRequest} onChange={(e) => setSpecialRequest(e.target.value)} maxLength={1000} />}
-                </Field>
-              </div>
-            </Card>
-
-            {guests.length > 0 && (
+    <>
+      <PageHero title={t("booking.checkout.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.checkout.title") }]} />
+      <Container className="pb-8 pt-6">
+        <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <aside className="lg:order-2">
+            <div className="lg:sticky lg:top-20">
+              <QuoteSummary quote={quote} boatName={boatName} loading={live.loading} error={live.error ? errorText(live.error) : null} />
+            </div>
+          </aside>
+          <form onSubmit={submit} noValidate className="min-w-0 space-y-6 lg:order-1">
+            {created && (
+              <Alert tone="info" title={t("booking.checkout.created_title", { number: created.booking_number })}>
+                {t("booking.checkout.created_body")}{" "}
+                <Link to={localePath(locale, `/account/bookings/${created.id}`)} className="text-primary underline">
+                  {t("booking.checkout.view_booking")}
+                </Link>
+              </Alert>
+            )}
+            <fieldset disabled={!!created || pending} className="space-y-6">
               <Card>
-                <h2 className="text-lg font-semibold">{t("booking.guests.title")}</h2>
-                <p className="mt-1 text-sm text-muted">{t("booking.guests.hint", { count: guests.length })}</p>
-                {fe["guests"] && (
-                  <Alert tone="danger" className="mt-3">
-                    {fe["guests"]}
-                  </Alert>
-                )}
-                <ol className="mt-3 space-y-4">
-                  {guests.map((g, i) => (
-                    <li key={i}>
-                      <fieldset className="grid gap-3 sm:grid-cols-2">
-                        <legend className="mb-2 text-sm font-medium">{t("booking.guests.guest", { number: i + 2 })}</legend>
-                        <Field label={t("booking.guests.full_name")} required error={fe[`guests.${i}.full_name`]}>
-                          {(p) => <Input {...p} value={g.full_name} onChange={(e) => setGuest(i, { full_name: e.target.value })} required maxLength={120} />}
-                        </Field>
-                        <Field label={t("booking.guests.phone")} error={fe[`guests.${i}.phone`]}>
-                          {(p) => <PhoneInput id={p.id} value={g.phone} onChange={(v) => setGuest(i, { phone: v })} invalid={p["aria-invalid"]} describedBy={p["aria-describedby"]} />}
-                        </Field>
-                      </fieldset>
-                    </li>
-                  ))}
-                </ol>
+                <h2 className="text-lg font-semibold">{t("booking.lead.title")}</h2>
+                <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                  <Field label={t("booking.lead.full_name")} required error={fe["lead.full_name"]} className="sm:col-span-2">
+                    {(p) => <Input {...p} autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required maxLength={120} />}
+                  </Field>
+                  <Field label={t("booking.lead.email")} hint={t("booking.lead.email_hint")}>
+                    {(p) => <Input {...p} type="email" value={me.email} readOnly />}
+                  </Field>
+                  <Field label={t("booking.lead.phone")} required error={fe["lead.phone"]}>
+                    {(p) => <PhoneInput id={p.id} value={phone} onChange={setPhone} invalid={p["aria-invalid"]} describedBy={p["aria-describedby"]} />}
+                  </Field>
+                  <Field label={t("booking.lead.nationality")} required error={fe["lead.nationality"]}>
+                    {(p) => (
+                      <SearchableSelect
+                        id={p.id}
+                        value={nationality}
+                        options={countries}
+                        invalid={p["aria-invalid"]}
+                        describedBy={p["aria-describedby"]}
+                        onChange={(v) => {
+                          setNationality(v);
+                          setIdType((cur) => coerceIdType(v, cur));
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <Field label={t("booking.lead.id_type")} required error={fe["lead.id_type"]}>
+                    {(p) => (
+                      <Select {...p} value={idType} onChange={(e) => setIdType(e.target.value)}>
+                        {idTypeOptions(nationality).map((o) => (
+                          <option key={o} value={o}>
+                            {tc("booking.id_types", o)}
+                          </option>
+                        ))}
+                      </Select>
+                    )}
+                  </Field>
+                  <Field label={t("booking.lead.id_number")} required error={fe["lead.id_number"]} hint={idType === "KTP" ? t("booking.lead.id_hint_ktp") : t("booking.lead.id_hint")} className="sm:col-span-2">
+                    {(p) => <Input {...p} value={idNumber} onChange={(e) => setIdNumber(e.target.value)} required autoComplete="off" inputMode={idType === "KTP" || idType === "SIM" ? "numeric" : "text"} maxLength={40} />}
+                  </Field>
+                  <Field label={t("booking.lead.special_request")} error={fe["lead.special_request"]} className="sm:col-span-2">
+                    {(p) => <Textarea {...p} value={specialRequest} onChange={(e) => setSpecialRequest(e.target.value)} maxLength={1000} />}
+                  </Field>
+                </div>
               </Card>
+
+              {guests.length > 0 && (
+                <Card>
+                  <h2 className="text-lg font-semibold">{t("booking.guests.title")}</h2>
+                  <p className="mt-1 text-sm text-muted">{t("booking.guests.hint", { count: guests.length })}</p>
+                  {fe["guests"] && (
+                    <Alert tone="danger" className="mt-3">
+                      {fe["guests"]}
+                    </Alert>
+                  )}
+                  <ol className="mt-3 space-y-4">
+                    {guests.map((g, i) => (
+                      <li key={i}>
+                        <fieldset className="grid gap-3 sm:grid-cols-2">
+                          <legend className="mb-2 text-sm font-medium">{t("booking.guests.guest", { number: i + 2 })}</legend>
+                          <Field label={t("booking.guests.full_name")} required error={fe[`guests.${i}.full_name`]}>
+                            {(p) => <Input {...p} value={g.full_name} onChange={(e) => setGuest(i, { full_name: e.target.value })} required maxLength={120} />}
+                          </Field>
+                          <Field label={t("booking.guests.phone")} error={fe[`guests.${i}.phone`]}>
+                            {(p) => <PhoneInput id={p.id} value={g.phone} onChange={(v) => setGuest(i, { phone: v })} invalid={p["aria-invalid"]} describedBy={p["aria-describedby"]} />}
+                          </Field>
+                        </fieldset>
+                      </li>
+                    ))}
+                  </ol>
+                </Card>
+              )}
+
+              <Card className="space-y-5">
+                <h2 className="text-lg font-semibold">{t("booking.payment.title")}</h2>
+                <PaymentMethodPicker methods={methods} value={method} onChange={setMethod} error={methodMissing ? t("booking.payment.choose_method") : fe["payment_method"]} />
+                {depositAvailable && (
+                  <fieldset>
+                    <legend className="text-sm font-medium">{t("booking.payment.scheme")}</legend>
+                    <div className="mt-2 space-y-2 text-sm">
+                      <label className="flex items-start gap-2">
+                        <input type="radio" name="payment_scheme" checked={scheme === "FULL"} onChange={() => setScheme("FULL")} className="mt-0.5" />
+                        <span>
+                          {t("booking.payment.full")} · <Money amount={quote.grand_total} />
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-2">
+                        <input type="radio" name="payment_scheme" checked={scheme === "DEPOSIT"} onChange={() => setScheme("DEPOSIT")} className="mt-0.5" />
+                        <span>
+                          {t("booking.payment.deposit")} · <Money amount={quote.payment.deposit_amount} />
+                        </span>
+                      </label>
+                    </div>
+                    {fe["payment_scheme"] && <p className="mt-1 text-xs text-danger">{fe["payment_scheme"]}</p>}
+                  </fieldset>
+                )}
+                <PromoCode applied={promo} onApplied={setPromo} request={quoteRequest} />
+              </Card>
+
+              <Card>
+                <h2 className="text-lg font-semibold">{t("booking.consents.title")}</h2>
+                <div className="mt-3 space-y-3">
+                  <ConsentBox checked={consents.terms} onChange={(v) => setConsents((c) => ({ ...c, terms: v }))} error={fe["consents.terms"]} label={<>{t("booking.consents.terms")} {link("/terms", t("booking.consents.read"))}</>} />
+                  <ConsentBox
+                    checked={consents.cancellation}
+                    onChange={(v) => setConsents((c) => ({ ...c, cancellation: v }))}
+                    error={fe["consents.cancellation"]}
+                    label={<>{t("booking.consents.cancellation")} {link("/cancellation-policy", t("booking.consents.read"))}</>}
+                  />
+                  <ConsentBox
+                    checked={consents.data_processing}
+                    onChange={(v) => setConsents((c) => ({ ...c, data_processing: v }))}
+                    error={fe["consents.data_processing"]}
+                    label={<>{t("booking.consents.data_processing")} {link("/privacy", t("booking.consents.read"))}</>}
+                  />
+                  {scheme === "DEPOSIT" && (
+                    <ConsentBox checked={consents.deposit_forfeit} onChange={(v) => setConsents((c) => ({ ...c, deposit_forfeit: v }))} error={fe["consents.deposit_forfeit"]} label={t("booking.consents.deposit_forfeit")} />
+                  )}
+                </div>
+              </Card>
+            </fieldset>
+
+            {submitError !== null && (
+              <div className="space-y-2">
+                <ApiErrorMessage error={submitError} />
+                {unmapped.length > 0 && (
+                  <ul className="list-inside list-disc text-sm text-danger">
+                    {unmapped.map(([k, msg]) => (
+                      <li key={k}>{msg}</li>
+                    ))}
+                  </ul>
+                )}
+                {submitError instanceof ApiError && ["BOOKING_SLOT_TAKEN", "BOOKING_CAPACITY_EXCEEDED", "BOOKING_CLOSED", "PRODUCT_NOT_FOUND"].includes(submitError.code) && (
+                  <Link to={localePath(locale, selection.boatSlug ? `/boats/${selection.boatSlug}` : "/boats")} className="text-sm text-primary underline">
+                    {t("booking.checkout.back_to_trip")}
+                  </Link>
+                )}
+              </div>
             )}
 
-            <Card className="space-y-5">
-              <h2 className="text-lg font-semibold">{t("booking.payment.title")}</h2>
-              <PaymentMethodPicker methods={methods} value={method} onChange={setMethod} error={methodMissing ? t("booking.payment.choose_method") : fe["payment_method"]} />
-              {depositAvailable && (
-                <fieldset>
-                  <legend className="text-sm font-medium">{t("booking.payment.scheme")}</legend>
-                  <div className="mt-2 space-y-2 text-sm">
-                    <label className="flex items-start gap-2">
-                      <input type="radio" name="payment_scheme" checked={scheme === "FULL"} onChange={() => setScheme("FULL")} className="mt-0.5" />
-                      <span>
-                        {t("booking.payment.full")} · <Money amount={quote.grand_total} />
-                      </span>
-                    </label>
-                    <label className="flex items-start gap-2">
-                      <input type="radio" name="payment_scheme" checked={scheme === "DEPOSIT"} onChange={() => setScheme("DEPOSIT")} className="mt-0.5" />
-                      <span>
-                        {t("booking.payment.deposit")} · <Money amount={quote.payment.deposit_amount} />
-                      </span>
-                    </label>
-                  </div>
-                  {fe["payment_scheme"] && <p className="mt-1 text-xs text-danger">{fe["payment_scheme"]}</p>}
-                </fieldset>
-              )}
-              <PromoCode applied={promo} onApplied={setPromo} request={quoteRequest} />
-            </Card>
-
-            <Card>
-              <h2 className="text-lg font-semibold">{t("booking.consents.title")}</h2>
-              <div className="mt-3 space-y-3">
-                <ConsentBox checked={consents.terms} onChange={(v) => setConsents((c) => ({ ...c, terms: v }))} error={fe["consents.terms"]} label={<>{t("booking.consents.terms")} {link("/terms", t("booking.consents.read"))}</>} />
-                <ConsentBox
-                  checked={consents.cancellation}
-                  onChange={(v) => setConsents((c) => ({ ...c, cancellation: v }))}
-                  error={fe["consents.cancellation"]}
-                  label={<>{t("booking.consents.cancellation")} {link("/cancellation-policy", t("booking.consents.read"))}</>}
-                />
-                <ConsentBox
-                  checked={consents.data_processing}
-                  onChange={(v) => setConsents((c) => ({ ...c, data_processing: v }))}
-                  error={fe["consents.data_processing"]}
-                  label={<>{t("booking.consents.data_processing")} {link("/privacy", t("booking.consents.read"))}</>}
-                />
-                {scheme === "DEPOSIT" && (
-                  <ConsentBox checked={consents.deposit_forfeit} onChange={(v) => setConsents((c) => ({ ...c, deposit_forfeit: v }))} error={fe["consents.deposit_forfeit"]} label={t("booking.consents.deposit_forfeit")} />
-                )}
-              </div>
-            </Card>
-          </fieldset>
-
-          {submitError !== null && (
             <div className="space-y-2">
-              <ApiErrorMessage error={submitError} />
-              {unmapped.length > 0 && (
-                <ul className="list-inside list-disc text-sm text-danger">
-                  {unmapped.map(([k, msg]) => (
-                    <li key={k}>{msg}</li>
-                  ))}
-                </ul>
-              )}
-              {submitError instanceof ApiError && ["BOOKING_SLOT_TAKEN", "BOOKING_CAPACITY_EXCEEDED", "BOOKING_CLOSED", "PRODUCT_NOT_FOUND"].includes(submitError.code) && (
-                <Link to={localePath(locale, selection.boatSlug ? `/boats/${selection.boatSlug}` : "/boats")} className="text-sm text-primary underline">
-                  {t("booking.checkout.back_to_trip")}
-                </Link>
-              )}
+              <p className="flex justify-between text-sm font-semibold">
+                <span>{t("booking.summary.due_now")}</span>
+                <Money amount={quote.payment.total_due_now} />
+              </p>
+              <Button type="submit" size="lg" full pending={pending}>
+                {created ? t("booking.checkout.retry_payment") : t("booking.checkout.submit")}
+              </Button>
+              <p className="text-xs text-muted">{t("booking.checkout.submit_note")}</p>
             </div>
-          )}
-
-          <div className="space-y-2">
-            <p className="flex justify-between text-sm font-semibold">
-              <span>{t("booking.summary.due_now")}</span>
-              <Money amount={quote.payment.total_due_now} />
-            </p>
-            <Button type="submit" size="lg" full pending={pending}>
-              {created ? t("booking.checkout.retry_payment") : t("booking.checkout.submit")}
-            </Button>
-            <p className="text-xs text-muted">{t("booking.checkout.submit_note")}</p>
-          </div>
-        </form>
-      </div>
-    </Container>
+          </form>
+        </div>
+      </Container>
+    </>
   );
 }
 

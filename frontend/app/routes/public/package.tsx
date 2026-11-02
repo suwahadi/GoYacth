@@ -2,7 +2,7 @@ import { data } from "react-router";
 
 import type { Route } from "./+types/package";
 import { CalendarIcon, CheckIcon, ClockIcon, CloseIcon, Container, RouteIcon, TagIcon, UsersIcon } from "~/components/ui";
-import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, Section } from "~/features/public/components";
+import { PageHero, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, Section } from "~/features/public/components";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { CharterPackageBooking, DeparturePackageBooking } from "~/features/public/package-booking";
 import { formatDuration, formatPlainDate } from "~/lib/format";
@@ -80,50 +80,50 @@ export default function PackagePage({ loaderData }: Route.ComponentProps) {
   const locale = useLocale();
   const { pkg, boats, departure, route, faqs } = loaderData;
   return (
-    <Container className="pb-8">
-      <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.packages.title"), path: "/packages" }, { name: pkg.name }]} />
-      <header className="pb-4">
-        <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{pkg.name}</h1>
-        <p className="mt-2 text-sm text-accent-text">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</p>
-        {pkg.summary && <p className="mt-2 text-muted">{pkg.summary}</p>}
-      </header>
-      <Gallery images={pkg.gallery} fallback={pkg.thumbnail} />
-      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="min-w-0">
-          <Section title={t("public.packages.details")} id="details">
-            <ul className="grid gap-2">
-              <Meta icon={CalendarIcon}>{t("public.packages.valid", { from: formatPlainDate(pkg.valid_from, locale), until: formatPlainDate(pkg.valid_until, locale) })}</Meta>
-              <Meta icon={UsersIcon}>{t("public.packages.pax_range", { min: pkg.min_pax, max: pkg.max_pax })}</Meta>
-              {pkg.duration_minutes ? <Meta icon={ClockIcon}>{t("public.packages.duration", { duration: formatDuration(pkg.duration_minutes, locale) })}</Meta> : null}
-              {route && <Meta icon={RouteIcon}>{t("public.packages.route", { name: route.name })}</Meta>}
-              {pkg.booking_cutoff_hours > 0 && <Meta icon={TagIcon}>{t("public.packages.cutoff", { hours: pkg.booking_cutoff_hours })}</Meta>}
-            </ul>
-            {pkg.description && <p className="mt-3 whitespace-pre-line">{pkg.description}</p>}
-          </Section>
-          {pkg.inclusions.length > 0 && (
-            <Section title={t("public.packages.inclusions")} id="inclusions">
-              <TextList items={pkg.inclusions} icon={CheckIcon} />
+    <>
+      <PageHero title={pkg.name} image={pkg.thumbnail ?? pkg.gallery[0]} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.packages.title"), path: "/packages" }, { name: pkg.name }]}>
+        <p className="mt-2 text-sm text-accent">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</p>
+        {pkg.summary && <p className="mt-1 max-w-2xl text-ink-fg/85">{pkg.summary}</p>}
+      </PageHero>
+      <Container className="pb-8 pt-6">
+        <Gallery images={pkg.gallery} fallback={pkg.thumbnail} />
+        <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="min-w-0">
+            <Section title={t("public.packages.details")} id="details">
+              <ul className="grid gap-2">
+                <Meta icon={CalendarIcon}>{t("public.packages.valid", { from: formatPlainDate(pkg.valid_from, locale), until: formatPlainDate(pkg.valid_until, locale) })}</Meta>
+                <Meta icon={UsersIcon}>{t("public.packages.pax_range", { min: pkg.min_pax, max: pkg.max_pax })}</Meta>
+                {pkg.duration_minutes ? <Meta icon={ClockIcon}>{t("public.packages.duration", { duration: formatDuration(pkg.duration_minutes, locale) })}</Meta> : null}
+                {route && <Meta icon={RouteIcon}>{t("public.packages.route", { name: route.name })}</Meta>}
+                {pkg.booking_cutoff_hours > 0 && <Meta icon={TagIcon}>{t("public.packages.cutoff", { hours: pkg.booking_cutoff_hours })}</Meta>}
+              </ul>
+              {pkg.description && <p className="mt-3 whitespace-pre-line">{pkg.description}</p>}
             </Section>
-          )}
-          {pkg.exclusions.length > 0 && (
-            <Section title={t("public.packages.exclusions")} id="exclusions">
-              <TextList items={pkg.exclusions} icon={CloseIcon} />
+            {pkg.inclusions.length > 0 && (
+              <Section title={t("public.packages.inclusions")} id="inclusions">
+                <TextList items={pkg.inclusions} icon={CheckIcon} />
+              </Section>
+            )}
+            {pkg.exclusions.length > 0 && (
+              <Section title={t("public.packages.exclusions")} id="exclusions">
+                <TextList items={pkg.exclusions} icon={CloseIcon} />
+              </Section>
+            )}
+            <Section title={t("public.policy.title")} id="policy">
+              <PolicyView policy={pkg.policy} />
             </Section>
-          )}
-          <Section title={t("public.policy.title")} id="policy">
-            <PolicyView policy={pkg.policy} />
-          </Section>
-          {faqs && faqs.length > 0 && (
-            <Section title={t("public.packages.faqs")} id="faqs">
-              <FaqList faqs={faqs} />
-            </Section>
-          )}
+            {faqs && faqs.length > 0 && (
+              <Section title={t("public.packages.faqs")} id="faqs">
+                <FaqList faqs={faqs} />
+              </Section>
+            )}
+          </div>
+          <aside className="order-first lg:sticky lg:top-20 lg:order-none lg:self-start" id="book">
+            {pkg.mode === "PRIVATE_CHARTER" ? <CharterPackageBooking pkg={pkg} boats={boats} /> : <DeparturePackageBooking pkg={pkg} departure={departure} />}
+          </aside>
         </div>
-        <aside className="order-first lg:sticky lg:top-20 lg:order-none lg:self-start" id="book">
-          {pkg.mode === "PRIVATE_CHARTER" ? <CharterPackageBooking pkg={pkg} boats={boats} /> : <DeparturePackageBooking pkg={pkg} departure={departure} />}
-        </aside>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 }
 

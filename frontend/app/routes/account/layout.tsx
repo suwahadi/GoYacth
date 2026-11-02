@@ -6,6 +6,7 @@ import { privateHeaders, requireUser } from "~/features/account/session";
 import { privateMeta } from "~/features/booking/meta";
 import { localePath, splitLocale } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
+import { PageHero } from "~/features/public/components";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const me = await requireUser(request);
@@ -31,25 +32,26 @@ export default function AccountLayout({ loaderData }: Route.ComponentProps) {
     { to: localePath(locale, "/account/profile"), label: t("account.tabs.profile"), active: onProfile },
   ];
   return (
-    <Container className="py-6">
-      <h1 className="text-2xl font-bold">{t("account.title")}</h1>
-      <p className="mt-1 text-sm text-muted">{t("account.signed_in_as", { email: loaderData.me.email })}</p>
-      <nav aria-label={t("account.tabs.label")} className="mt-4 flex gap-1 border-b border-border">
-        {tabs.map((tab) => (
-          <NavLink
-            key={tab.to}
-            to={tab.to}
-            end
-            aria-current={tab.active ? "page" : undefined}
-            className={cn("whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium", tab.active ? "border-primary text-primary" : "border-transparent text-muted hover:text-fg")}
-          >
-            {tab.label}
-          </NavLink>
-        ))}
-      </nav>
-      <div className="mt-6" aria-busy={navigation.state === "loading" || undefined}>
-        <Outlet />
-      </div>
-    </Container>
+    <>
+      <PageHero title={t("account.title")} intro={t("account.signed_in_as", { email: loaderData.me.email })} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("account.title"), path: "/account" }, { name: onProfile ? t("account.tabs.profile") : t("account.tabs.bookings") }]} />
+      <Container className="pb-8 pt-6">
+        <nav aria-label={t("account.tabs.label")} className="flex gap-1 border-b border-border">
+          {tabs.map((tab) => (
+            <NavLink
+              key={tab.to}
+              to={tab.to}
+              end
+              aria-current={tab.active ? "page" : undefined}
+              className={cn("whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium", tab.active ? "border-primary text-primary" : "border-transparent text-muted hover:text-fg")}
+            >
+              {tab.label}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="mt-6" aria-busy={navigation.state === "loading" || undefined}>
+          <Outlet />
+        </div>
+      </Container>
+    </>
   );
 }

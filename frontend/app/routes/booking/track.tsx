@@ -10,6 +10,7 @@ import { Turnstile, type TurnstileHandle } from "~/features/booking/Turnstile";
 import { apiData } from "~/lib/api";
 import { useLocale, useT } from "~/lib/i18n";
 import type { Tracking } from "~/lib/types";
+import { PageHero } from "~/features/public/components";
 
 export function loader() {
   return data({ siteKey: process.env.TURNSTILE_SITE_KEY ?? "" }, { headers: privateHeaders });
@@ -59,29 +60,30 @@ export default function Track({ loaderData }: Route.ComponentProps) {
   }
 
   return (
-    <Container className="max-w-xl py-8">
-      <h1 className="text-2xl font-bold">{t("booking.track.title")}</h1>
-      <p className="mt-2 text-sm text-muted">{t("booking.track.intro")}</p>
-      <Card className="mt-4">
-        <form onSubmit={submit} className="space-y-4">
-          <Field label={t("booking.track.number_label")} required error={fe["booking_number"]} hint={t("booking.track.number_hint")}>
-            {(p) => <Input {...p} value={bookingNumber} onChange={(e) => setBookingNumber(e.target.value)} required autoCapitalize="characters" autoComplete="off" maxLength={40} />}
-          </Field>
-          <Field label={t("booking.track.email_label")} required error={fe["email"]}>
-            {(p) => <Input {...p} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" maxLength={254} />}
-          </Field>
-          {siteKey && <Turnstile ref={turnstile} siteKey={siteKey} onToken={setToken} />}
-          <ApiErrorMessage error={error} />
-          <Button type="submit" full pending={pending} disabled={!bookingNumber.trim() || !email.trim() || (!!siteKey && !token)}>
-            {t("booking.track.submit")}
-          </Button>
-        </form>
-      </Card>
-      {result && (
-        <section className="mt-6" aria-live="polite">
-          <TrackingCard tracking={result} />
-        </section>
-      )}
-    </Container>
+    <>
+      <PageHero title={t("booking.track.title")} intro={t("booking.track.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.track.title") }]} width="max-w-xl" />
+      <Container className="max-w-xl pb-8 pt-6">
+        <Card className="mt-4">
+          <form onSubmit={submit} className="space-y-4">
+            <Field label={t("booking.track.number_label")} required error={fe["booking_number"]} hint={t("booking.track.number_hint")}>
+              {(p) => <Input {...p} value={bookingNumber} onChange={(e) => setBookingNumber(e.target.value)} required autoCapitalize="characters" autoComplete="off" maxLength={40} />}
+            </Field>
+            <Field label={t("booking.track.email_label")} required error={fe["email"]}>
+              {(p) => <Input {...p} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" maxLength={254} />}
+            </Field>
+            {siteKey && <Turnstile ref={turnstile} siteKey={siteKey} onToken={setToken} />}
+            <ApiErrorMessage error={error} />
+            <Button type="submit" full pending={pending} disabled={!bookingNumber.trim() || !email.trim() || (!!siteKey && !token)}>
+              {t("booking.track.submit")}
+            </Button>
+          </form>
+        </Card>
+        {result && (
+          <section className="mt-6" aria-live="polite">
+            <TrackingCard tracking={result} />
+          </section>
+        )}
+      </Container>
+    </>
   );
 }

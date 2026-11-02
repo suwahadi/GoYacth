@@ -13,6 +13,7 @@ import { localePath, splitLocale } from "~/lib/config";
 import { formatDateTime } from "~/lib/format";
 import { useLocale, useT, useTCode, type TKey } from "~/lib/i18n";
 import type { Payment } from "~/lib/types";
+import { PageHero } from "~/features/public/components";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const { locale } = splitLocale(new URL(request.url).pathname);
@@ -69,16 +70,18 @@ export default function PaymentStatusPage({ loaderData, params }: Route.Componen
   const s = state.data;
   if (!s) {
     return (
-      <Container className="max-w-2xl py-8">
-        <h1 className="text-2xl font-bold">{t("booking.status.title")}</h1>
-        <div className="mt-4">
-          {state.phase === "polling" && !state.error ? (
-            <p role="status">{t("booking.status.checking")}</p>
-          ) : (
-            <ErrorState message={loaderData.error?.code === "BOOKING_NOT_FOUND" ? t("booking.status.not_found") : errorText(state.error)} onRetry={() => dispatch({ type: "restart", now: Date.now() })} />
-          )}
-        </div>
-      </Container>
+      <>
+        <PageHero title={t("booking.status.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.status.title") }]} width="max-w-2xl" />
+        <Container className="max-w-2xl pb-8 pt-6">
+          <div className="mt-4">
+            {state.phase === "polling" && !state.error ? (
+              <p role="status">{t("booking.status.checking")}</p>
+            ) : (
+              <ErrorState message={loaderData.error?.code === "BOOKING_NOT_FOUND" ? t("booking.status.not_found") : errorText(state.error)} onRetry={() => dispatch({ type: "restart", now: Date.now() })} />
+            )}
+          </div>
+        </Container>
+      </>
     );
   }
 
@@ -86,72 +89,74 @@ export default function PaymentStatusPage({ loaderData, params }: Route.Componen
   const text = outcomeText[outcome];
   const accountHref = localePath(locale, `/account/bookings/${s.id}`);
   return (
-    <Container className="max-w-2xl py-8">
-      <h1 className="text-2xl font-bold">{t("booking.status.title")}</h1>
-      <Alert tone={text.tone} title={t(text.title)} className="mt-4">
-        {t(text.body)}
-      </Alert>
-
-      <Card className="mt-4">
-        <dl className="grid gap-3 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-muted">{t("booking.status.booking_number")}</dt>
-            <dd className="font-medium">{s.booking_number}</dd>
-          </div>
-          <div>
-            <dt className="text-muted">{t("booking.track.date")}</dt>
-            <dd>{formatDateTime(s.starts_at, s.timezone, locale)}</dd>
-          </div>
-          <div>
-            <dt className="text-muted">{t("booking.track.status")}</dt>
-            <dd>
-              <StatusBadge status={s.status} />
-            </dd>
-          </div>
-          <div>
-            <dt className="text-muted">{t("booking.track.payment_status")}</dt>
-            <dd>
-              <StatusBadge status={s.payment_status} />
-            </dd>
-          </div>
-          <div>
-            <dt className="text-muted">{t("booking.track.boat")}</dt>
-            <dd>{s.boat_name}</dd>
-          </div>
-          <div>
-            <dt className="text-muted">{t("booking.track.route")}</dt>
-            <dd>{s.route_name}</dd>
-          </div>
-        </dl>
-      </Card>
-
-      {outcome === "pending" && s.payment && <PendingInstructions payment={s.payment} timezone={s.timezone} />}
-      {outcome === "pending" && s.hold_expires_at && <p className="mt-3 text-sm">{t("booking.status.hold_until", { time: formatDateTime(s.hold_expires_at, s.timezone, locale) })}</p>}
-
-      {state.phase === "polling" && (
-        <p role="status" className="mt-4 text-sm text-muted">
-          {t("booking.status.auto_refresh")}
-        </p>
-      )}
-      {state.phase === "timed_out" && (
-        <Alert tone="info" title={t("booking.status.timeout_title")} className="mt-4">
-          <p>{t("booking.status.timeout_body")}</p>
-          <Button className="mt-3" variant="secondary" onClick={() => dispatch({ type: "restart", now: Date.now() })}>
-            {t("booking.status.check_again")}
-          </Button>
+    <>
+      <PageHero title={t("booking.status.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.status.title") }]} width="max-w-2xl" />
+      <Container className="max-w-2xl pb-8 pt-6">
+        <Alert tone={text.tone} title={t(text.title)} className="mt-4">
+          {t(text.body)}
         </Alert>
-      )}
-      {state.error !== null && state.phase === "polling" && <p className="mt-2 text-xs text-muted">{t("booking.status.retrying")}</p>}
 
-      <ButtonPair className="mt-6">
-        <ButtonLink to={accountHref} variant="primary">
-          {t("booking.status.view_booking")}
-        </ButtonLink>
-        <ButtonLink to={localePath(locale, "/")} variant="secondary">
-          {t("common.states.go_home")}
-        </ButtonLink>
-      </ButtonPair>
-    </Container>
+        <Card className="mt-4">
+          <dl className="grid gap-3 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="text-muted">{t("booking.status.booking_number")}</dt>
+              <dd className="font-medium">{s.booking_number}</dd>
+            </div>
+            <div>
+              <dt className="text-muted">{t("booking.track.date")}</dt>
+              <dd>{formatDateTime(s.starts_at, s.timezone, locale)}</dd>
+            </div>
+            <div>
+              <dt className="text-muted">{t("booking.track.status")}</dt>
+              <dd>
+                <StatusBadge status={s.status} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted">{t("booking.track.payment_status")}</dt>
+              <dd>
+                <StatusBadge status={s.payment_status} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted">{t("booking.track.boat")}</dt>
+              <dd>{s.boat_name}</dd>
+            </div>
+            <div>
+              <dt className="text-muted">{t("booking.track.route")}</dt>
+              <dd>{s.route_name}</dd>
+            </div>
+          </dl>
+        </Card>
+
+        {outcome === "pending" && s.payment && <PendingInstructions payment={s.payment} timezone={s.timezone} />}
+        {outcome === "pending" && s.hold_expires_at && <p className="mt-3 text-sm">{t("booking.status.hold_until", { time: formatDateTime(s.hold_expires_at, s.timezone, locale) })}</p>}
+
+        {state.phase === "polling" && (
+          <p role="status" className="mt-4 text-sm text-muted">
+            {t("booking.status.auto_refresh")}
+          </p>
+        )}
+        {state.phase === "timed_out" && (
+          <Alert tone="info" title={t("booking.status.timeout_title")} className="mt-4">
+            <p>{t("booking.status.timeout_body")}</p>
+            <Button className="mt-3" variant="secondary" onClick={() => dispatch({ type: "restart", now: Date.now() })}>
+              {t("booking.status.check_again")}
+            </Button>
+          </Alert>
+        )}
+        {state.error !== null && state.phase === "polling" && <p className="mt-2 text-xs text-muted">{t("booking.status.retrying")}</p>}
+
+        <ButtonPair className="mt-6">
+          <ButtonLink to={accountHref} variant="primary">
+            {t("booking.status.view_booking")}
+          </ButtonLink>
+          <ButtonLink to={localePath(locale, "/")} variant="secondary">
+            {t("common.states.go_home")}
+          </ButtonLink>
+        </ButtonPair>
+      </Container>
+    </>
   );
 }
 

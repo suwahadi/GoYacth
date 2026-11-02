@@ -4,6 +4,7 @@ import { ButtonLink, Container } from "~/components/ui";
 import { localePath } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
 import { noindexMeta } from "~/lib/seo";
+import { PageHero } from "~/features/public/components";
 
 export function loader() {
   return data(null, { status: 404 });
@@ -17,12 +18,14 @@ export default function NotFound() {
   const t = useT();
   const locale = useLocale();
   return (
-    <Container className="py-24 text-center">
-      <h1 className="text-2xl font-bold">{t("common.states.not_found_title")}</h1>
-      <p className="mt-3 text-muted">{t("common.states.not_found_body")}</p>
-      <ButtonLink to={localePath(locale, "/")} className="mt-6">
-        {t("common.states.go_home")}
-      </ButtonLink>
-    </Container>
+    <>
+      <PageHero title={t("common.states.not_found_title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("common.states.not_found_title") }]} />
+      <Container className="py-12 text-center">
+        <p className="text-muted">{t("common.states.not_found_body")}</p>
+        <ButtonLink to={localePath(locale, "/")} className="mt-6">
+          {t("common.states.go_home")}
+        </ButtonLink>
+      </Container>
+    </>
   );
 }

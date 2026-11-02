@@ -4,7 +4,7 @@ import type { Route } from "./+types/boat";
 import { AnchorIcon, BathIcon, BeamIcon, BedIcon, CalendarIcon, Card, ClockIcon, Container, CrownIcon, FacilityIcon, GaugeIcon, HelmIcon, MapPinIcon, Money, MoonIcon, RouteIcon, RulerIcon, SailboatIcon, SunIcon, TagIcon, UsersIcon } from "~/components/ui";
 import { CharterWidget } from "~/features/public/charter-widget";
 import { BoatReviews } from "~/features/public/boat-reviews";
-import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, RatingLine, Section, SectionError, tapLink, unitKey, type ReviewStats } from "~/features/public/components";
+import { PageHero, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, RatingLine, Section, SectionError, tapLink, unitKey, type ReviewStats } from "~/features/public/components";
 import { ExpandableText } from "~/features/public/expandable-text";
 import { DepartureList } from "~/features/public/departures";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
@@ -128,129 +128,129 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
   const { boat, reviews, reviewStats, faqs, departures } = loaderData;
   const kind = [boat.category, boat.class].filter(Boolean).join(", ");
   return (
-    <Container className="pb-8">
-      <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.boats.title"), path: "/boats" }, { name: boat.name }]} />
-      <header className="pb-4">
-        <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{boat.name}</h1>
+    <>
+      <PageHero title={boat.name} image={boat.thumbnail ?? boat.gallery[0]} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.boats.title"), path: "/boats" }, { name: boat.name }]}>
         <p className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
-          {kind && <span className="text-accent-text">{kind}</span>}
+          {kind && <span className="text-accent">{kind}</span>}
           {boat.review_count > 0 && (
             <a href="#reviews" className={tapLink}>
               <RatingLine rating={boat.rating} count={boat.review_count} />
             </a>
           )}
         </p>
-        {boat.summary && <p className="mt-2 text-muted">{boat.summary}</p>}
-      </header>
-      <Gallery images={boat.gallery} fallback={boat.thumbnail} />
-      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className="min-w-0">
-          {boat.description && (
-            <Section title={t("public.boat.overview")} id="overview">
-              <ExpandableText text={boat.description} />
+        {boat.summary && <p className="mt-1 max-w-2xl text-ink-fg/85">{boat.summary}</p>}
+      </PageHero>
+      <Container className="pb-8 pt-6">
+        <Gallery images={boat.gallery} fallback={boat.thumbnail} />
+        <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="min-w-0">
+            {boat.description && (
+              <Section title={t("public.boat.overview")} id="overview">
+                <ExpandableText text={boat.description} />
+              </Section>
+            )}
+            <Section title={t("public.boat.specs")} id="specs">
+              <Specs boat={boat} />
             </Section>
-          )}
-          <Section title={t("public.boat.specs")} id="specs">
-            <Specs boat={boat} />
-          </Section>
-          {boat.rates.length > 0 && (
-            <Section title={t("public.boat.rates")} id="rates">
-              <ul className="space-y-2">
-                {boat.rates.map((r) => (
-                  <li key={r.rate_unit} className="flex items-center gap-3">
-                    <RateIcon unit={r.rate_unit} />
-                    <span>
-                      <Money amount={r.price} className="font-semibold" /> <span className="text-muted">{t(unitKey(r.rate_unit))}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          )}
-          {boat.facilities.length > 0 && (
-            <Section title={t("public.boat.facilities")} id="facilities">
-              <ul className="grid grid-cols-2 gap-x-6 gap-y-3 xl:grid-cols-3">
-                {boat.facilities.map((f) => (
-                  <li key={f.id} className="flex items-center gap-3">
-                    <FacilityIcon name={f.icon} className="size-6 shrink-0 text-accent-icon" />
-                    {f.name}
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          )}
-          {boat.areas.length > 0 && (
-            <Section title={t("public.boat.areas")} id="areas">
-              <Areas areas={boat.areas} />
-            </Section>
-          )}
-          {boat.routes.length > 0 && (
-            <Section title={t("public.boat.routes")} id="routes">
-              <ul className="space-y-3">
-                {boat.routes.map((r) => (
-                  <li key={r.id} className="flex items-start gap-3">
-                    <RouteIcon className="mt-0.5 size-6 shrink-0 text-accent-icon" />
-                    <span>
-                      <Link to={localePath(locale, `/routes/${r.slug}`)} className={`${tapLink} font-medium text-primary`}>
+            {boat.rates.length > 0 && (
+              <Section title={t("public.boat.rates")} id="rates">
+                <ul className="space-y-2">
+                  {boat.rates.map((r) => (
+                    <li key={r.rate_unit} className="flex items-center gap-3">
+                      <RateIcon unit={r.rate_unit} />
+                      <span>
+                        <Money amount={r.price} className="font-semibold" /> <span className="text-muted">{t(unitKey(r.rate_unit))}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
+            {boat.facilities.length > 0 && (
+              <Section title={t("public.boat.facilities")} id="facilities">
+                <ul className="grid grid-cols-2 gap-x-6 gap-y-3 xl:grid-cols-3">
+                  {boat.facilities.map((f) => (
+                    <li key={f.id} className="flex items-center gap-3">
+                      <FacilityIcon name={f.icon} className="size-6 shrink-0 text-accent-icon" />
+                      {f.name}
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
+            {boat.areas.length > 0 && (
+              <Section title={t("public.boat.areas")} id="areas">
+                <Areas areas={boat.areas} />
+              </Section>
+            )}
+            {boat.routes.length > 0 && (
+              <Section title={t("public.boat.routes")} id="routes">
+                <ul className="space-y-3">
+                  {boat.routes.map((r) => (
+                    <li key={r.id} className="flex items-start gap-3">
+                      <RouteIcon className="mt-0.5 size-6 shrink-0 text-accent-icon" />
+                      <span>
+                        <Link to={localePath(locale, `/routes/${r.slug}`)} className={`${tapLink} font-medium text-primary`}>
+                          {r.name}
+                        </Link>
+                        <span className="block text-sm text-muted">{formatDuration(r.min_duration_minutes ?? r.duration_minutes, locale)}</span>
+                        {r.fixed_price !== null && (
+                          <span className="block text-sm">
+                            {t("public.boat.route_fixed_price")}: <Money amount={r.fixed_price} />
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
+            {boat.regions.length > 0 && (
+              <Section title={t("public.boat.regions")} id="regions">
+                <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                  {boat.regions.map((r) => (
+                    <Meta key={r.id} icon={MapPinIcon}>
+                      <Link to={localePath(locale, `/destinations/${r.slug}`)} className={`${tapLink} text-primary`}>
                         {r.name}
                       </Link>
-                      <span className="block text-sm text-muted">{formatDuration(r.min_duration_minutes ?? r.duration_minutes, locale)}</span>
-                      {r.fixed_price !== null && (
-                        <span className="block text-sm">
-                          {t("public.boat.route_fixed_price")}: <Money amount={r.fixed_price} />
-                        </span>
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          )}
-          {boat.regions.length > 0 && (
-            <Section title={t("public.boat.regions")} id="regions">
-              <ul className="flex flex-wrap gap-x-6 gap-y-2">
-                {boat.regions.map((r) => (
-                  <Meta key={r.id} icon={MapPinIcon}>
-                    <Link to={localePath(locale, `/destinations/${r.slug}`)} className={`${tapLink} text-primary`}>
-                      {r.name}
-                    </Link>
-                  </Meta>
-                ))}
-              </ul>
-            </Section>
-          )}
-          <Section title={t("public.policy.title")} id="policy">
-            <PolicyView policy={boat.policy} />
-          </Section>
-          <Section title={t("public.boat.departures")} id="departures">
-            {departures === null ? (
-              <SectionError />
-            ) : departures.length === 0 ? (
-              <p className="text-sm text-muted">{t("public.boat.departures_empty")}</p>
-            ) : (
-              <DepartureList departures={departures} showBoat={false} />
-            )}
-          </Section>
-          <Section title={t("public.boat.reviews")} id="reviews">
-            <BoatReviews boatId={boat.id} stats={reviewStats} initial={reviews} />
-          </Section>
-          {faqs === null ? (
-            <Section title={t("public.boat.faqs")} id="faqs">
-              <SectionError />
-            </Section>
-          ) : (
-            faqs.length > 0 && (
-              <Section title={t("public.boat.faqs")} id="faqs">
-                <FaqList faqs={faqs} />
+                    </Meta>
+                  ))}
+                </ul>
               </Section>
-            )
-          )}
+            )}
+            <Section title={t("public.policy.title")} id="policy">
+              <PolicyView policy={boat.policy} />
+            </Section>
+            <Section title={t("public.boat.departures")} id="departures">
+              {departures === null ? (
+                <SectionError />
+              ) : departures.length === 0 ? (
+                <p className="text-sm text-muted">{t("public.boat.departures_empty")}</p>
+              ) : (
+                <DepartureList departures={departures} showBoat={false} />
+              )}
+            </Section>
+            <Section title={t("public.boat.reviews")} id="reviews">
+              <BoatReviews boatId={boat.id} stats={reviewStats} initial={reviews} />
+            </Section>
+            {faqs === null ? (
+              <Section title={t("public.boat.faqs")} id="faqs">
+                <SectionError />
+              </Section>
+            ) : (
+              faqs.length > 0 && (
+                <Section title={t("public.boat.faqs")} id="faqs">
+                  <FaqList faqs={faqs} />
+                </Section>
+              )
+            )}
+          </div>
+          <aside className="order-first lg:sticky lg:top-20 lg:order-none lg:self-start" id="book">
+            <CharterWidget boat={boat} />
+          </aside>
         </div>
-        <aside className="order-first lg:sticky lg:top-20 lg:order-none lg:self-start" id="book">
-          <CharterWidget boat={boat} />
-        </aside>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 }
 

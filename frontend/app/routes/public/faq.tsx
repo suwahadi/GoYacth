@@ -1,6 +1,6 @@
 import type { Route } from "./+types/faq";
 import { Container, EmptyState } from "~/components/ui";
-import { Breadcrumbs, FaqList, PageHeader, PublicErrorBoundary, Section, useFaqCategory } from "~/features/public/components";
+import { FaqList, PageHero, PublicErrorBoundary, Section, useFaqCategory } from "~/features/public/components";
 import { crumbsLd, load, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { translate, useT } from "~/lib/i18n";
 import { buildMeta } from "~/lib/seo";
@@ -45,19 +45,20 @@ export default function FaqPage({ loaderData }: Route.ComponentProps) {
   const category = useFaqCategory();
   const groups = groupByCategory(loaderData.faqs);
   return (
-    <Container className="max-w-3xl pb-8">
-      <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.faq.title") }]} />
-      <PageHeader title={t("public.faq.title")} />
-      {groups.length === 0 ? (
-        <EmptyState title={t("public.faq.empty_title")} />
-      ) : (
-        groups.map(([cat, list]) => (
-          <Section key={cat} title={category(cat)} id={`faq-${cat.toLowerCase()}`}>
-            <FaqList faqs={list} />
-          </Section>
-        ))
-      )}
-    </Container>
+    <>
+      <PageHero title={t("public.faq.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.faq.title") }]} width="max-w-3xl" />
+      <Container className="max-w-3xl pb-8 pt-6">
+        {groups.length === 0 ? (
+          <EmptyState title={t("public.faq.empty_title")} />
+        ) : (
+          groups.map(([cat, list]) => (
+            <Section key={cat} title={category(cat)} id={`faq-${cat.toLowerCase()}`}>
+              <FaqList faqs={list} />
+            </Section>
+          ))
+        )}
+      </Container>
+    </>
   );
 }
 

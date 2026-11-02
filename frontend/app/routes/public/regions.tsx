@@ -1,6 +1,6 @@
 import type { Route } from "./+types/regions";
 import { Container, EmptyState } from "~/components/ui";
-import { Breadcrumbs, CardGrid, PageHeader, PublicErrorBoundary, RegionCardItem } from "~/features/public/components";
+import { CardGrid, PageHero, PublicErrorBoundary, RegionCardItem } from "~/features/public/components";
 import { crumbsLd, load, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { translate, useT } from "~/lib/i18n";
 import { buildMeta } from "~/lib/seo";
@@ -28,19 +28,20 @@ export function meta({ loaderData, matches }: Route.MetaArgs) {
 export default function Regions({ loaderData }: Route.ComponentProps) {
   const t = useT();
   return (
-    <Container className="pb-8">
-      <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.regions.title") }]} />
-      <PageHeader title={t("public.regions.title")} intro={t("public.regions.intro")} />
-      {loaderData.regions.length === 0 ? (
-        <EmptyState title={t("public.regions.empty_title")} />
-      ) : (
-        <CardGrid>
-          {loaderData.regions.map((r, i) => (
-            <RegionCardItem key={r.id} region={r} priority={i < 3} />
-          ))}
-        </CardGrid>
-      )}
-    </Container>
+    <>
+      <PageHero title={t("public.regions.title")} intro={t("public.regions.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.regions.title") }]} />
+      <Container className="pb-8 pt-6">
+        {loaderData.regions.length === 0 ? (
+          <EmptyState title={t("public.regions.empty_title")} />
+        ) : (
+          <CardGrid>
+            {loaderData.regions.map((r, i) => (
+              <RegionCardItem key={r.id} region={r} priority={i < 3} />
+            ))}
+          </CardGrid>
+        )}
+      </Container>
+    </>
   );
 }
 

@@ -2,7 +2,7 @@ import { data } from "react-router";
 
 import type { Route } from "./+types/route";
 import { AnchorIcon, ClockIcon, Container, MapPinIcon } from "~/components/ui";
-import { BoatCardItem, Breadcrumbs, CardGrid, Gallery, Meta, PublicErrorBoundary, Section, SectionError } from "~/features/public/components";
+import { BoatCardItem, PageHero, CardGrid, Gallery, Meta, PublicErrorBoundary, Section, SectionError } from "~/features/public/components";
 import { DepartureList } from "~/features/public/departures";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import type { Locale } from "~/lib/config";
@@ -92,60 +92,62 @@ export default function RoutePage({ loaderData }: Route.ComponentProps) {
   const { route, region, boats, departures } = loaderData;
   const items = crumbs(locale, route, region);
   return (
-    <Container className="pb-8">
-      <Breadcrumbs items={items.map((c, i) => (i === items.length - 1 ? { name: c.name } : c))} />
-      <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{route.name}</h1>
-      <ul className="pb-4 pt-1 text-muted">
-        <Meta icon={ClockIcon}>{t("public.route.duration", { duration: formatDuration(route.duration_minutes, locale) })}</Meta>
-      </ul>
-      <Gallery images={route.gallery} fallback={route.thumbnail} />
-      {route.description && <p className="mt-4 whitespace-pre-line">{route.description}</p>}
-      <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-        {route.departure_port.name && <Port label={t("public.route.departure_port")} port={route.departure_port} />}
-        {route.return_port.name && <Port label={t("public.route.return_port")} port={route.return_port} />}
-      </dl>
-      <Section title={t("public.route.stops")} id="stops">
-        {route.stops.length === 0 ? (
-          <p className="text-sm text-muted">{t("public.route.stops_empty")}</p>
-        ) : (
-          <ol className="space-y-3">
-            {route.stops.map((s) => (
-              <li key={s.id} className="flex items-start gap-3">
-                <MapPinIcon className="mt-0.5 size-5 shrink-0 text-accent-icon" />
-                <span>
-                  <span className="font-medium">{s.name}</span>
-                  {s.activity && <span className="block text-sm text-muted">{s.activity}</span>}
-                </span>
-              </li>
-            ))}
-          </ol>
-        )}
-      </Section>
-      <Section title={t("public.route.boats")} id="boats">
-        {boats === null ? (
-          <SectionError />
-        ) : boats.length === 0 ? (
-          <p className="text-sm text-muted">{t("public.route.boats_empty")}</p>
-        ) : (
-          <CardGrid>
-            {boats.map((b) => (
-              <BoatCardItem key={b.id} boat={b} />
-            ))}
-          </CardGrid>
-        )}
-      </Section>
-      {departures === null ? (
-        <Section title={t("public.route.departures")} id="departures">
-          <SectionError />
+    <>
+      <PageHero title={route.name} image={route.thumbnail ?? route.gallery[0]} crumbs={items}>
+        <ul className="pt-2 text-ink-fg/85 [&_svg]:text-accent">
+          <Meta icon={ClockIcon}>{t("public.route.duration", { duration: formatDuration(route.duration_minutes, locale) })}</Meta>
+        </ul>
+      </PageHero>
+      <Container className="pb-8 pt-6">
+        <Gallery images={route.gallery} fallback={route.thumbnail} />
+        {route.description && <p className="mt-4 whitespace-pre-line">{route.description}</p>}
+        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+          {route.departure_port.name && <Port label={t("public.route.departure_port")} port={route.departure_port} />}
+          {route.return_port.name && <Port label={t("public.route.return_port")} port={route.return_port} />}
+        </dl>
+        <Section title={t("public.route.stops")} id="stops">
+          {route.stops.length === 0 ? (
+            <p className="text-sm text-muted">{t("public.route.stops_empty")}</p>
+          ) : (
+            <ol className="space-y-3">
+              {route.stops.map((s) => (
+                <li key={s.id} className="flex items-start gap-3">
+                  <MapPinIcon className="mt-0.5 size-5 shrink-0 text-accent-icon" />
+                  <span>
+                    <span className="font-medium">{s.name}</span>
+                    {s.activity && <span className="block text-sm text-muted">{s.activity}</span>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
         </Section>
-      ) : (
-        departures.length > 0 && (
+        <Section title={t("public.route.boats")} id="boats">
+          {boats === null ? (
+            <SectionError />
+          ) : boats.length === 0 ? (
+            <p className="text-sm text-muted">{t("public.route.boats_empty")}</p>
+          ) : (
+            <CardGrid>
+              {boats.map((b) => (
+                <BoatCardItem key={b.id} boat={b} />
+              ))}
+            </CardGrid>
+          )}
+        </Section>
+        {departures === null ? (
           <Section title={t("public.route.departures")} id="departures">
-            <DepartureList departures={departures} />
+            <SectionError />
           </Section>
-        )
-      )}
-    </Container>
+        ) : (
+          departures.length > 0 && (
+            <Section title={t("public.route.departures")} id="departures">
+              <DepartureList departures={departures} />
+            </Section>
+          )
+        )}
+      </Container>
+    </>
   );
 }
 

@@ -6,6 +6,7 @@ import { localePath, splitLocale } from "~/lib/config";
 import { translate, useT, useTCode } from "~/lib/i18n";
 import { noindexMeta } from "~/lib/seo";
 import { useRootData } from "~/root";
+import { PageHero } from "~/features/public/components";
 
 export async function loader({ request }: Route.LoaderArgs) {
   return { locale: splitLocale(new URL(request.url).pathname).locale };
@@ -27,18 +28,19 @@ export default function Login() {
     window.location.replace(returnTo);
   }
   return (
-    <Container className="max-w-md py-16">
-      <h1 className="text-2xl font-bold">{t("common.auth.login_title")}</h1>
-      <p className="mt-2 text-muted">{t("common.auth.login_subtitle")}</p>
-      {error && (
-        <Alert tone="danger" className="mt-6">
-          {tc("validation.errors", error)}
-        </Alert>
-      )}
-      <a href={`/api/v1/auth/google?return_to=${encodeURIComponent(returnTo)}`} className={buttonClass("primary", "lg", true) + " mt-8"}>
-        {t("common.auth.sign_in_google")}
-      </a>
-    </Container>
+    <>
+      <PageHero title={t("common.auth.login_title")} intro={t("common.auth.login_subtitle")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("common.auth.login_title") }]} width="max-w-md" />
+      <Container className="max-w-md pb-8 pt-6">
+        {error && (
+          <Alert tone="danger" className="mt-6">
+            {tc("validation.errors", error)}
+          </Alert>
+        )}
+        <a href={`/api/v1/auth/google?return_to=${encodeURIComponent(returnTo)}`} className={buttonClass("primary", "lg", true) + " mt-8"}>
+          {t("common.auth.sign_in_google")}
+        </a>
+      </Container>
+    </>
   );
 }
 

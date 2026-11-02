@@ -1,6 +1,6 @@
 import type { Route } from "./+types/page";
 import { Container, PHONE_IMAGE, ResponsiveImage } from "~/components/ui";
-import { Breadcrumbs, PublicErrorBoundary } from "~/features/public/components";
+import { PageHero, PublicErrorBoundary } from "~/features/public/components";
 import { Blocks } from "~/features/public/content";
 import { alternatePaths, crumbsLd, firstImageUrl, loadBySlug, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { SITE_NAME, localePath } from "~/lib/config";
@@ -68,19 +68,17 @@ export default function ContentPage({ loaderData }: Route.ComponentProps) {
   const locale = useLocale();
   const { page } = loaderData;
   return (
-    <Container className="max-w-3xl pb-8">
-      <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: page.title }]} />
-      <article>
-        <header className="pb-4">
-          <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{page.title}</h1>
-          <p className="mt-1 text-sm text-muted">
-            {t("public.page.updated", { date: formatPlainDate(page.updated_at.slice(0, 10), locale) })}
-          </p>
-        </header>
-        {page.featured_image && <ResponsiveImage image={page.featured_image} sizes={`(min-width: 768px) 720px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} priority className="mb-4 h-auto w-full rounded-lg" />}
-        <Blocks blocks={page.blocks} />
-      </article>
-    </Container>
+    <>
+      <PageHero title={page.title} width="max-w-3xl" crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: page.title }]}>
+        <p className="mt-1 text-sm text-ink-fg/85">{t("public.page.updated", { date: formatPlainDate(page.updated_at.slice(0, 10), locale) })}</p>
+      </PageHero>
+      <Container className="max-w-3xl pb-8 pt-6">
+        <article>
+          {page.featured_image && <ResponsiveImage image={page.featured_image} sizes={`(min-width: 768px) 720px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} priority className="mb-4 h-auto w-full rounded-lg" />}
+          <Blocks blocks={page.blocks} />
+        </article>
+      </Container>
+    </>
   );
 }
 
