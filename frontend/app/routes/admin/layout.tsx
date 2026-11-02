@@ -59,7 +59,7 @@ function Nav() {
   return (
     <nav aria-label="Admin" className="flex flex-col gap-0.5 text-sm">
       {adminNav.map((n) => (
-        <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => cn("rounded px-3 py-1.5", isActive ? "bg-primary text-primary-fg" : "hover:bg-surface-2")}>
+        <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => cn("rounded px-3 py-3 lg:py-1.5", isActive ? "bg-primary text-primary-fg" : "hover:bg-surface-2")}>
           {adminT(n.key)}
         </NavLink>
       ))}
@@ -75,20 +75,20 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
     <ToastProvider>
       <div data-theme="light" className="min-h-screen bg-bg text-fg">
         <header className="sticky top-0 z-30 flex h-12 items-center gap-3 border-b border-border bg-surface px-4">
-          <button type="button" className="rounded border border-border px-2 py-1 text-sm lg:hidden" onClick={() => setOpen(true)}>
+          <button type="button" className="min-h-11 rounded border border-border px-3 text-sm lg:hidden" onClick={() => setOpen(true)}>
             {adminT("nav.menu")}
           </button>
           <a href="/admin" className="font-bold text-primary">
             GoYacht {adminT("nav.admin")}
           </a>
           <div className="ml-auto flex items-center gap-3 text-sm">
-            <a href="/" className="text-muted hover:text-fg">
+            <a href="/" className="inline-flex min-h-11 items-center text-muted hover:text-fg lg:min-h-0">
               {adminT("nav.view_site")}
             </a>
             <span className="hidden text-muted sm:inline">{loaderData.me.email}</span>
             <button
               type="button"
-              className="rounded border border-border px-2 py-1 hover:bg-surface-2"
+              className="min-h-11 rounded border border-border px-3 hover:bg-surface-2 lg:min-h-0 lg:px-2 lg:py-1"
               onClick={async () => {
                 await fetch("/api/v1/auth/logout", { method: "POST", headers: { "X-CSRF-Token": readCookie("gy_csrf") ?? "" }, credentials: "same-origin" });
                 window.location.href = "/";
