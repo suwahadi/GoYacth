@@ -147,7 +147,7 @@ export default function RefundsPage({ loaderData }: Route.ComponentProps) {
                     key: "bank",
                     header: adminT("ops.refunds.bank"),
                     cell: (r) =>
-                      r.channel !== "MANUAL" ? (
+                      r.channel !== "MANUAL" || (!r.bank_account_number && (r.status === "COMPLETED" || r.status === "REJECTED")) ? (
                         "—"
                       ) : r.bank_account_number ? (
                         <span className="block">

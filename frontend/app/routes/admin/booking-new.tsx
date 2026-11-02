@@ -109,6 +109,11 @@ export default function NewBookingPage({ loaderData }: Route.ComponentProps) {
     setRateUnit("");
     setSlotId("");
   }, [boatId, mode]);
+  useEffect(() => {
+    // Without a fixed price for this route the boat can only be booked by hour or day.
+    const route = boat.data?.routes.find((r) => r.route_id === routeId);
+    setRateUnit(route?.fixed_price === null ? (boat.data?.rates[0]?.rate_unit ?? "") : "");
+  }, [routeId, boat.data]);
 
   if (loaderData.error) return <LoadFailure error={loaderData.error} />;
   const { boats, routes, ports } = loaderData.data;
@@ -197,7 +202,7 @@ export default function NewBookingPage({ loaderData }: Route.ComponentProps) {
                 <Field label={adminT("ops.new_booking.rate")} error={fields["product.rate_unit"]} hint={adminT("ops.new_booking.rate_hint")}>
                   {(p) => (
                     <Select {...p} value={rateUnit} onChange={(e) => setRateUnit(e.target.value)}>
-                      <option value="">{adminT("ops.new_booking.rate_route")}</option>
+                      {(!routeId || boatRoutes.find((r) => r.route_id === routeId)?.fixed_price != null) && <option value="">{adminT("ops.new_booking.rate_route")}</option>}
                       {boat.data!.rates.map((r) => (
                         <option key={r.rate_unit} value={r.rate_unit}>
                           {opsCode("rate_unit", r.rate_unit)} · {idr(r.price)} ({r.min_units}–{r.max_units})
