@@ -363,18 +363,18 @@ function CheckoutForm({
             <Card>
               <h2 className="text-lg font-semibold">{t("booking.consents.title")}</h2>
               <div className="mt-3 space-y-3">
-                <ConsentBox checked={consents.terms} onChange={(v) => setConsents((c) => ({ ...c, terms: v }))} error={fe["consents.terms"]} label={<>{t("booking.consents.terms")} {link("/p/terms", t("booking.consents.read"))}</>} />
+                <ConsentBox checked={consents.terms} onChange={(v) => setConsents((c) => ({ ...c, terms: v }))} error={fe["consents.terms"]} label={<>{t("booking.consents.terms")} {link("/terms", t("booking.consents.read"))}</>} />
                 <ConsentBox
                   checked={consents.cancellation}
                   onChange={(v) => setConsents((c) => ({ ...c, cancellation: v }))}
                   error={fe["consents.cancellation"]}
-                  label={<>{t("booking.consents.cancellation")} {link("/p/cancellation-policy", t("booking.consents.read"))}</>}
+                  label={<>{t("booking.consents.cancellation")} {link("/cancellation-policy", t("booking.consents.read"))}</>}
                 />
                 <ConsentBox
                   checked={consents.data_processing}
                   onChange={(v) => setConsents((c) => ({ ...c, data_processing: v }))}
                   error={fe["consents.data_processing"]}
-                  label={<>{t("booking.consents.data_processing")} {link("/p/privacy", t("booking.consents.read"))}</>}
+                  label={<>{t("booking.consents.data_processing")} {link("/privacy", t("booking.consents.read"))}</>}
                 />
                 {scheme === "DEPOSIT" && (
                   <ConsentBox checked={consents.deposit_forfeit} onChange={(v) => setConsents((c) => ({ ...c, deposit_forfeit: v }))} error={fe["consents.deposit_forfeit"]} label={t("booking.consents.deposit_forfeit")} />

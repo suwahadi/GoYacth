@@ -17,7 +17,7 @@ function localized(locale: string) {
     route("destinations/:slug", "routes/public/region.tsx", { id: id("region") }),
     route("routes/:slug", "routes/public/route.tsx", { id: id("route") }),
     route("faq", "routes/public/faq.tsx", { id: id("faq") }),
-    route("p/:slug", "routes/public/page.tsx", { id: id("page") }),
+    route(":slug", "routes/public/page.tsx", { id: id("page") }),
     route("login", "routes/public/login.tsx", { id: id("login") }),
     route("track", "routes/booking/track.tsx", { id: id("track") }),
     route("verify/:token", "routes/booking/verify.tsx", { id: id("verify") }),
@@ -38,7 +38,7 @@ function localized(locale: string) {
 export default [
   route("robots.txt", "routes/seo/robots.ts"),
   route("sitemap.xml", "routes/seo/sitemap-index.ts"),
-  route("sitemap-:locale.xml", "routes/seo/sitemap.ts"),
+  ...LOCALES.map((l) => route(`sitemap-${l}.xml`, "routes/seo/sitemap.ts", { id: `sitemap-${l}` })),
   route("admin/login", "routes/admin/login.tsx"),
   route("admin", "routes/admin/layout.tsx", [
     index("routes/admin/overview.tsx"),

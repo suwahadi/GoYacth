@@ -77,7 +77,7 @@ export default function Content({ loaderData }: Route.ComponentProps) {
 function Pages({ rows }: { rows: AdminPage[] }) {
   const columns: Column<AdminPage>[] = [
     { key: "title", header: adminT("catalog.content.page_title"), primary: true, cell: (p) => nameOf(p.translations, "title") || p.id },
-    { key: "slug", header: adminT("catalog.fields.slug"), cell: (p) => `/p/${nameOf(p.translations, "slug")}` },
+    { key: "slug", header: adminT("catalog.fields.slug"), cell: (p) => `/${nameOf(p.translations, "slug")}` },
     { key: "status", header: adminT("catalog.fields.status"), cell: (p) => <StatusPill status={p.status} /> },
   ];
   return (

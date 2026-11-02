@@ -1,5 +1,5 @@
 import { apiData } from "~/lib/api";
-import { isLocale, localePath, type Locale } from "~/lib/config";
+import { isLocale, localePath } from "~/lib/config";
 
 interface Entry {
   kind: "boat" | "region" | "route" | "package" | "page";
@@ -8,7 +8,7 @@ interface Entry {
   updated_at: string;
 }
 
-const prefixes: Record<Entry["kind"], string> = { boat: "/boats/", region: "/destinations/", route: "/routes/", package: "/packages/", page: "/p/" };
+const prefixes: Record<Entry["kind"], string> = { boat: "/boats/", region: "/destinations/", route: "/routes/", package: "/packages/", page: "/" };
 const staticPaths = ["/", "/boats", "/departures", "/packages", "/destinations", "/faq"];
 
 function esc(s: string) {
@@ -16,9 +16,10 @@ function esc(s: string) {
 }
 
 // One sitemap per locale (PRD 14.3), generated from published content.
-export async function loader({ request, params }: { request: Request; params: { locale?: string } }) {
-  if (!isLocale(params.locale)) throw new Response("Not found", { status: 404 });
-  const locale: Locale = params.locale;
+export async function loader({ request }: { request: Request }) {
+  // One route per locale, because React Router has no params inside a path segment.
+  const locale = new URL(request.url).pathname.replace(/^\/sitemap-|\.xml$/g, "");
+  if (!isLocale(locale)) throw new Response("Not found", { status: 404 });
   const origin = process.env.PUBLIC_APP_URL ?? new URL(request.url).origin;
   const entries = await apiData<Entry[]>("/sitemap");
   const urls = [

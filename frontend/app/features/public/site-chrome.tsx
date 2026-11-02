@@ -236,7 +236,7 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
             <p className="font-semibold">{t("common.footer.company")}</p>
             <ul className="mt-2 text-sm">
               <li>
-                <Link className={footerLink} to={link("/p/about")}>
+                <Link className={footerLink} to={link("/about")}>
                   {t("common.footer.about")}
                 </Link>
               </li>
@@ -246,12 +246,12 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
                 </Link>
               </li>
               <li>
-                <Link className={footerLink} to={link("/p/contact")}>
+                <Link className={footerLink} to={link("/contact")}>
                   {t("common.footer.contact_us")}
                 </Link>
               </li>
               <li>
-                <Link className={footerLink} to={link("/p/how-to-book")}>
+                <Link className={footerLink} to={link("/how-to-book")}>
                   {t("common.footer.how_to_book")}
                 </Link>
               </li>
@@ -271,7 +271,7 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
                 </Link>
               </li>
               <li>
-                <Link className={footerLink} to={link("/p/cancellation-policy")}>
+                <Link className={footerLink} to={link("/cancellation-policy")}>
                   {t("common.footer.cancellation")}
                 </Link>
               </li>
@@ -320,11 +320,11 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
         <div className="mt-8 flex flex-col gap-2 border-t border-ink-line py-5 text-sm sm:flex-row sm:items-center sm:justify-between">
           <p>{t("common.footer.rights", { year: new Date().getFullYear() })}</p>
           <p className="flex items-center gap-3">
-            <Link className={footerLink} to={link("/p/privacy")}>
+            <Link className={footerLink} to={link("/privacy")}>
               {t("common.footer.privacy")}
             </Link>
             <span aria-hidden="true">|</span>
-            <Link className={footerLink} to={link("/p/terms")}>
+            <Link className={footerLink} to={link("/terms")}>
               {t("common.footer.terms")}
             </Link>
           </p>

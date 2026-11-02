@@ -24,8 +24,8 @@ interface PublicPage {
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const locale = requestLocale(request);
-  const page = await loadBySlug<PublicPage>(request, "/pages", "/p", params.slug);
-  return { locale, page, alternatePaths: alternatePaths("/p", page.alternates) };
+  const page = await loadBySlug<PublicPage>(request, "/pages", "", params.slug);
+  return { locale, page, alternatePaths: alternatePaths("", page.alternates) };
 }
 
 function firstParagraph(blocks: PageBlock[]): string {
@@ -37,7 +37,7 @@ export function meta({ loaderData, matches }: Route.MetaArgs) {
   if (!loaderData) return [];
   const { locale, page } = loaderData;
   const origin = root?.origin ?? "";
-  const path = `/p/${page.slug}`;
+  const path = `/${page.slug}`;
   const image = firstImageUrl(page.featured_image);
   const article = {
     "@context": "https://schema.org",

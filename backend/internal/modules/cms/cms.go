@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -112,6 +113,20 @@ func validateBlocks(blocks []Block, f httpx.FieldErrors, prefix string) {
 
 func safeURL(u string) bool {
 	return strings.HasPrefix(u, "/") && !strings.HasPrefix(u, "//") || strings.HasPrefix(u, "https://")
+}
+
+// reservedSlugs are the first path segments the site already serves. Pages live at the root, so a
+// page with one of these slugs could never be reached. TestReservedSlugsCoverRoutes keeps the list
+// in step with routes.ts; api, media and metrics come from the Caddyfile, assets and home are
+// folders of static files.
+var reservedSlugs = []string{
+	"account", "admin", "api", "assets", "boats", "checkout", "departures", "destinations", "faq", "home",
+	"login", "media", "metrics", "orders", "packages", "routes", "track", "verify",
+}
+
+// IsReservedSlug also covers locale codes, which prefix every localized URL.
+func IsReservedSlug(slug string) bool {
+	return slices.Contains(reservedSlugs, slug) || i18n.Valid(slug)
 }
 
 type PageTranslation struct {
@@ -249,6 +264,9 @@ func (h *Handler) savePage(w http.ResponseWriter, r *http.Request) {
 		}
 		saved = p.ID
 		finder := func(ctx context.Context, locale, slug string) (uuid.UUID, error) {
+			if IsReservedSlug(slug) {
+				return uuid.Max, nil // no page has this ID, so UniqueSlug treats the slug as taken
+			}
 			id, err := q.FindPageBySlug(ctx, dbq.FindPageBySlugParams{Locale: locale, Slug: slug})
 			if db.IsNoRows(err) {
 				return uuid.Nil, nil
@@ -256,9 +274,14 @@ func (h *Handler) savePage(w http.ResponseWriter, r *http.Request) {
 			return id, err
 		}
 		for loc, t := range in.Translations {
+			taken := httpx.Validation(map[string]string{"translations." + loc + ".slug": "SLUG_TAKEN"})
 			slug, err := catalog.UniqueSlug(ctx, finder, p.ID, loc, t.Slug, t.Title)
 			if err != nil {
 				return err
+			}
+			// Only a slug derived from the title may get a number; a typed one means exactly that URL.
+			if t.Slug != "" && slug != media.Slugify(t.Slug) {
+				return taken
 			}
 			old, err := q.GetPageTranslation(ctx, dbq.GetPageTranslationParams{PageID: p.ID, Locale: loc})
 			if err != nil && !db.IsNoRows(err) {
@@ -269,7 +292,9 @@ func (h *Handler) savePage(w http.ResponseWriter, r *http.Request) {
 			}
 			blocks, _ := json.Marshal(t.Blocks)
 			if err := q.UpsertPageTranslation(ctx, dbq.UpsertPageTranslationParams{PageID: p.ID, Locale: loc, Title: strings.TrimSpace(t.Title), Slug: slug,
-				Blocks: blocks, SeoTitle: t.SEOTitle, SeoDescription: t.SEODescription}); err != nil {
+				Blocks: blocks, SeoTitle: t.SEOTitle, SeoDescription: t.SEODescription}); db.IsUniqueViolation(err) {
+				return taken // a concurrent save took the slug after the check above
+			} else if err != nil {
 				return err
 			}
 			if err := catalog.RecordSlugChange(ctx, q, EntityPage, loc, old.Slug, slug, p.ID); err != nil {

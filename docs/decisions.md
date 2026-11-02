@@ -51,6 +51,12 @@ Clarifications agreed with the product owner on 2026-11-01. They amend or resolv
 - **Admin login** is email and password at `/admin/login`, decided by the owner on 2026-11-02. This replaces Google login and the admin allowlist from PRD 12.2 for admins only; customers keep Google.
 - Admins are created by other admins under Customers, or with `cli admin create` for the first one. A forgotten password is reset with `cli admin password`.
 
+## Static page URLs
+
+- **Pages live at the site root** (`/about`, `/id/about`), decided by the owner on 2026-11-02. They replace `/p/{slug}`, which has no redirect because the site is not live yet.
+- A page slug cannot be a first path segment the site already serves, a locale code, or a slug another page uses in that locale. `reservedSlugs` in `backend/internal/modules/cms/cms.go` holds the list and `TestReservedSlugsCoverRoutes` fails when a new route in `routes.ts` is missing from it.
+- Typing a slug that is taken is refused with `SLUG_TAKEN`. Leaving the slug empty derives one from the title and adds a number when needed.
+
 ## Money
 
 - **Operator-initiated cancellations** (weather, cancelled Departure, operator decision) refund 100% of the amount paid **including** payment method fees. Customer cancellations follow the policy snapshot and exclude method fees.

@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"goyacht/internal/modules/cms"
 	"goyacht/internal/modules/seed"
 	"goyacht/internal/testutil"
 )
@@ -111,6 +112,9 @@ func TestDemoSeedServesTheWholeSite(t *testing.T) {
 		t.Fatalf("faqs = %d", n)
 	}
 	for _, slug := range []string{"about", "contact", "how-to-book", "terms", "privacy", "cancellation-policy"} {
+		if cms.IsReservedSlug(slug) {
+			t.Fatalf("demo page %s can never be reached at the site root", slug)
+		}
 		for _, locale := range []string{"en", "id"} {
 			if r := api.Get(t, "/api/v1/pages/"+slug+"?locale="+locale); r.Status != http.StatusOK {
 				t.Fatalf("page %s (%s): %d", slug, locale, r.Status)
