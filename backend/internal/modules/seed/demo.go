@@ -141,7 +141,7 @@ func mustJSON(v any) string {
 }
 
 // Demo fills an empty development database with a complete browsable catalog. It reports false
-// when demo data already exists, so running it twice changes nothing.
+// when there was nothing to add, so running it twice changes nothing.
 func Demo(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, store storage.Store, photos PhotoSource) (bool, error) {
 	if cfg.IsProduction() {
 		return false, ErrDemoInProduction
@@ -154,7 +154,13 @@ func Demo(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, store sto
 		return false, err
 	}
 	if exists {
-		return false, nil
+		added := false
+		err := db.InTx(ctx, pool, func(tx pgx.Tx) error {
+			s := &seeder{ctx: ctx, tx: tx, now: time.Now()}
+			added = s.addGuestReviews()
+			return s.err
+		})
+		return added, err
 	}
 	if err := Reference(ctx, pool); err != nil {
 		return false, err
@@ -185,6 +191,7 @@ func Demo(ctx context.Context, cfg *config.Config, pool *pgxpool.Pool, store sto
 		s.pages()
 		s.faqs()
 		s.testimonials()
+		s.guestReviews()
 		s.homepage()
 		s.settings()
 		return s.err
@@ -310,10 +317,8 @@ func (s *seeder) fleet() {
 			s.exec(`INSERT INTO boat_rates (boat_id, rate_unit, price, min_units, max_units) VALUES ($1, $2, $3, $4, $5)`, id, r.unit, r.price, r.minUnits, r.maxUnits)
 		}
 		s.exec(`INSERT INTO boat_regions (boat_id, region_id) VALUES ($1, $2)`, id, s.regions[port.region])
-		for _, r := range demoRoutes {
-			if r.region == port.region && (r.minutes <= 12*60 || b.daily > 0) {
-				s.exec(`INSERT INTO boat_routes (boat_id, route_id) VALUES ($1, $2)`, id, s.routes[r.slug])
-			}
+		for _, r := range b.routes() {
+			s.exec(`INSERT INTO boat_routes (boat_id, route_id) VALUES ($1, $2)`, id, s.routes[r])
 		}
 		for _, f := range facilitiesFor(b) {
 			s.exec(`INSERT INTO boat_facilities (boat_id, facility_id) VALUES ($1, $2)`, id, s.facilities[f])

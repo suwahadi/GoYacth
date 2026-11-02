@@ -98,12 +98,14 @@ func (s *seeder) departures() {
 
 // Invented guests for the development database only: Demo refuses to run in production, so these
 // never appear as real reviews.
-var demoReviews = []struct {
+type demoReview struct {
 	name, country, locale, boat, route string
 	pax, daysAgo                       int
 	overall, boatScore, service, crew  int
 	title, body                        string
-}{
+}
+
+var demoReviews = []demoReview{
 	{"Sophie Laurent", "FR", "en", "Ocean Majesty", "benoa-sunset-cruise", 6, 32, 5, 5, 5, 5, "A perfect evening off Uluwatu",
 		"An incredible experience! The yacht was perfect, and the crew made our trip unforgettable."},
 	{"Daniel Hartmann", "DE", "en", "Komodo Dream", "komodo-highlights", 8, 48, 5, 5, 5, 4, "Best day of our Indonesia trip",
@@ -124,29 +126,31 @@ var demoReviews = []struct {
 
 func (s *seeder) testimonials() {
 	for i, r := range demoReviews {
-		user := s.insert(`INSERT INTO users (provider, provider_subject, email, full_name, nationality, preferred_locale) VALUES ('demo', $1, $2, $3, $4, $5) RETURNING id`,
-			fmt.Sprintf("guest-%d", i+1), fmt.Sprintf("guest-%d@example.com", i+1), r.name, r.country, r.locale)
-		spec := specOf(r.boat)
-		starts := s.now.AddDate(0, 0, -r.daysAgo).Truncate(24 * time.Hour).Add(time.Hour)
-		total := max(spec.daily, spec.fixed)
-		snapshot := map[string]any{
-			"boat_name":  map[string]string{"en": r.boat, "id": r.boat},
-			"route_name": map[string]string{"en": routeOf(r.route).name.en, "id": routeOf(r.route).name.id},
-			"port_name":  map[string]string{"en": portOf(spec.port).name, "id": portOf(spec.port).name},
-			"commission": map[string]any{"ownership": "OWNED", "value": 0, "amount": 0},
-		}
-		number := secure.BookingNumber()
-		booking := s.insert(`INSERT INTO bookings (booking_number, user_id, mode, boat_id, route_id, starts_at, ends_at, timezone, pax, status, payment_status,
-				payment_scheme, subtotal, grand_total, amount_paid, snapshot, consents, lead_full_name, lead_email, lead_phone, lead_nationality, locale, verify_token, created_at)
-			VALUES ($1, $2, 'PRIVATE_CHARTER', $3, $4, $5, $6, $7, $8, 'COMPLETED', 'PAID', 'FULL', $9, $9, $9, $10::jsonb, '{}'::jsonb, $11, $12, '+620000000000', $13, $14, $15, $16) RETURNING id`,
-			number, user, s.boats[r.boat].id, s.routes[r.route], starts, starts.Add(time.Duration(routeOf(r.route).minutes)*time.Minute), portOf(spec.port).timezone,
-			r.pax, total, mustJSON(snapshot), r.name, fmt.Sprintf("guest-%d@example.com", i+1), r.country, r.locale, secure.RandomToken(16), starts.AddDate(0, 0, -14))
-		s.exec(`INSERT INTO payments (booking_id, kind, provider, method, order_id, principal_amount, gross_amount, status, paid_at, manual_paid_on, notes)
-			VALUES ($1, 'FULL', 'MANUAL', 'BANK_TRANSFER', $2, $3, $3, 'SUCCEEDED', $4::timestamptz, ($4::timestamptz)::date, 'Demo payment')`, booking, "DEMO-"+number, total, starts.AddDate(0, 0, -14))
-		s.exec(`INSERT INTO reviews (booking_id, user_id, boat_id, rating_overall, rating_boat, rating_service, rating_crew, title, body, locale, status, is_featured, moderated_at, created_at)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'PUBLISHED', true, $11, $11)`,
-			booking, user, s.boats[r.boat].id, r.overall, r.boatScore, r.service, r.crew, r.title, r.body, r.locale, starts.AddDate(0, 0, 2))
+		s.review(r, s.guest(i+1, r.name, r.country, r.locale), guestEmail(i+1), true)
 	}
+}
+
+func (s *seeder) review(r demoReview, user uuid.UUID, email string, featured bool) {
+	spec := specOf(r.boat)
+	starts := s.now.AddDate(0, 0, -r.daysAgo).Truncate(24 * time.Hour).Add(time.Hour)
+	total := max(spec.daily, spec.fixed)
+	snapshot := map[string]any{
+		"boat_name":  map[string]string{"en": r.boat, "id": r.boat},
+		"route_name": map[string]string{"en": routeOf(r.route).name.en, "id": routeOf(r.route).name.id},
+		"port_name":  map[string]string{"en": portOf(spec.port).name, "id": portOf(spec.port).name},
+		"commission": map[string]any{"ownership": "OWNED", "value": 0, "amount": 0},
+	}
+	number := secure.BookingNumber()
+	booking := s.insert(`INSERT INTO bookings (booking_number, user_id, mode, boat_id, route_id, starts_at, ends_at, timezone, pax, status, payment_status,
+			payment_scheme, subtotal, grand_total, amount_paid, snapshot, consents, lead_full_name, lead_email, lead_phone, lead_nationality, locale, verify_token, created_at)
+		VALUES ($1, $2, 'PRIVATE_CHARTER', $3, $4, $5, $6, $7, $8, 'COMPLETED', 'PAID', 'FULL', $9, $9, $9, $10::jsonb, '{}'::jsonb, $11, $12, '+620000000000', $13, $14, $15, $16) RETURNING id`,
+		number, user, s.boats[r.boat].id, s.routes[r.route], starts, starts.Add(time.Duration(routeOf(r.route).minutes)*time.Minute), portOf(spec.port).timezone,
+		r.pax, total, mustJSON(snapshot), r.name, email, r.country, r.locale, secure.RandomToken(16), starts.AddDate(0, 0, -14))
+	s.exec(`INSERT INTO payments (booking_id, kind, provider, method, order_id, principal_amount, gross_amount, status, paid_at, manual_paid_on, notes)
+		VALUES ($1, 'FULL', 'MANUAL', 'BANK_TRANSFER', $2, $3, $3, 'SUCCEEDED', $4::timestamptz, ($4::timestamptz)::date, 'Demo payment')`, booking, "DEMO-"+number, total, starts.AddDate(0, 0, -14))
+	s.exec(`INSERT INTO reviews (booking_id, user_id, boat_id, rating_overall, rating_boat, rating_service, rating_crew, title, body, locale, status, is_featured, moderated_at, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'PUBLISHED', $12, $11, $11)`,
+		booking, user, s.boats[r.boat].id, r.overall, r.boatScore, r.service, r.crew, r.title, r.body, r.locale, starts.AddDate(0, 0, 2), featured)
 }
 
 func routeOf(slug string) (r struct {

@@ -111,6 +111,21 @@ func TestDemoSeedServesTheWholeSite(t *testing.T) {
 	if n := count("/api/v1/faqs"); n < 10 {
 		t.Fatalf("faqs = %d", n)
 	}
+	var reviewedBoats, fewest, averages int
+	if err := env.Pool.QueryRow(ctx, `SELECT count(*), min(n), count(DISTINCT score) FROM (
+		SELECT count(*) AS n, round(avg(rating_overall), 1) AS score FROM reviews WHERE status = 'PUBLISHED' GROUP BY boat_id) r`).Scan(&reviewedBoats, &fewest, &averages); err != nil {
+		t.Fatal(err)
+	}
+	if reviewedBoats != 30 || fewest < 3 || averages < 4 {
+		t.Fatalf("reviewed boats = %d, fewest reviews = %d, distinct averages = %d", reviewedBoats, fewest, averages)
+	}
+	var featured int
+	if err := env.Pool.QueryRow(ctx, `SELECT count(*) FROM reviews WHERE is_featured`).Scan(&featured); err != nil {
+		t.Fatal(err)
+	}
+	if featured != 8 {
+		t.Fatalf("featured reviews = %d, the homepage carousel shows eight", featured)
+	}
 	for _, slug := range []string{"about", "contact", "how-to-book", "terms", "privacy", "cancellation-policy"} {
 		if cms.IsReservedSlug(slug) {
 			t.Fatalf("demo page %s can never be reached at the site root", slug)

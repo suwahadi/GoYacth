@@ -305,6 +305,16 @@ func (b demoBoat) soldAreas() []demoArea {
 	}
 }
 
+func (b demoBoat) routes() []string {
+	var out []string
+	for _, r := range demoRoutes {
+		if r.region == portOf(b.port).region && (r.minutes <= 12*60 || b.daily > 0) {
+			out = append(out, r.slug)
+		}
+	}
+	return out
+}
+
 func facilitiesFor(b demoBoat) []string {
 	out := []string{"life-jackets", "snorkeling"}
 	if b.category != "speedboat" {
