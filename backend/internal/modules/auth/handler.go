@@ -22,6 +22,8 @@ func NewHandler(svc *Service, appURL *url.URL) *Handler {
 }
 
 func (h *Handler) Routes(r chi.Router) {
+	r.Post("/auth/admin/login", h.adminLogin)
+	r.Post("/auth/password", h.changePassword)
 	r.Get("/auth/google", h.begin)
 	r.Get("/auth/google/callback", h.callback)
 	r.Post("/auth/logout", h.logout)
@@ -78,6 +80,51 @@ func (h *Handler) redirectError(w http.ResponseWriter, r *http.Request, code str
 
 func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
 	if err := h.svc.Logout(r.Context(), w, FromContext(r.Context())); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	httpx.NoContent(w)
+}
+
+type adminLoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (h *Handler) adminLogin(w http.ResponseWriter, r *http.Request) {
+	var in adminLoginInput
+	if err := httpx.Decode(w, r, &in); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	if err := h.svc.AdminLogin(r.Context(), w, r, in.Email, in.Password); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	httpx.JSON(w, http.StatusOK, map[string]bool{"ok": true})
+}
+
+type changePasswordInput struct {
+	CurrentPassword string `json:"current_password"`
+	NewPassword     string `json:"new_password"`
+}
+
+func (h *Handler) changePassword(w http.ResponseWriter, r *http.Request) {
+	p := FromContext(r.Context())
+	if p == nil {
+		httpx.WriteError(w, r, httpx.ErrUnauthenticated)
+		return
+	}
+	if !p.IsAdmin() {
+		httpx.WriteError(w, r, httpx.ErrForbidden)
+		return
+	}
+	var in changePasswordInput
+	if err := httpx.Decode(w, r, &in); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	if err := h.svc.ChangePassword(r.Context(), w, r, p, in.CurrentPassword, in.NewPassword); err != nil {
 		httpx.WriteError(w, r, err)
 		return
 	}

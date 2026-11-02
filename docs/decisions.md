@@ -36,6 +36,21 @@ Clarifications agreed with the product owner on 2026-11-01. They amend or resolv
 - **Unsold areas** in a Departure stay reserved (the whole boat is locked). A seat pool may combine several areas.
 - **Booking cut-off**: when a Departure or Package cut-off and the global minimum lead time differ, the stricter one applies.
 
+## Homepage
+
+- **Design source**: `docs/UI-Reference.png` is the visual direction for the public site. Brand name stays GoYacht. Colors were measured from it (navy `#04203C`, gold `#E0B46C`); gold text on light surfaces uses a darker token to reach WCAG AA. Headings use Newsreader and body text uses Figtree, both self-hosted because the CSP allows fonts from `'self'` only.
+- **Static fallback**: while `GET /home` returns no sections, the homepage renders `frontend/app/features/home/data/home.{en,id}.json`, which has the same shape as the API, so CMS content replaces it with no code change. Real boats and regions are used when they exist. This is a temporary owner-approved exception to the "no mock data" rule; remove it once the CMS sections are live.
+- **Sample reviews** exist only in development builds. Production shows the reviews block only when real reviews exist.
+- **Trust claims** on the homepage ("24/7 Support", "Trusted & Safe", "World-Class Fleet", "Premium Selection") are confirmed by the owner and stay editable in the CMS.
+- **Photos** in `frontend/public/home/` and the demo seed come from the free Unsplash library, whose license allows commercial use without attribution. Replace them with the operator's own photos through the CMS media library before launch.
+- **Deviations from the reference**: "Watch Video" became a link to departures (no video exists), the newsletter field is disabled and labelled "Coming soon" (no endpoint exists), social icons stay hidden until URLs exist, and the header shows Departures instead of "About" and "Reviews", which moved to the footer.
+- **Demo data**: `cli seed demo` fills a development database with 30 boats, 8 routes, packages, departures, static pages, FAQs and 8 invented testimonials. It refuses to run when `APP_ENV=production`, and its legal pages are marked as sample text. Before launch, create real content for `/p/about`, `/p/contact`, `/p/how-to-book`, `/p/terms`, `/p/privacy` and `/p/cancellation-policy`.
+
+## Admin access
+
+- **Admin login** is email and password at `/admin/login`, decided by the owner on 2026-11-02. This replaces Google login and the admin allowlist from PRD 12.2 for admins only; customers keep Google.
+- Admins are created by other admins under Customers, or with `cli admin create` for the first one. A forgotten password is reset with `cli admin password`.
+
 ## Money
 
 - **Operator-initiated cancellations** (weather, cancelled Departure, operator decision) refund 100% of the amount paid **including** payment method fees. Customer cancellations follow the policy snapshot and exclude method fees.

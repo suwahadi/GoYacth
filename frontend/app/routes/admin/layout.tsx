@@ -17,7 +17,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     return { me };
   } catch (e) {
     if (e instanceof ApiError && e.status === 401) {
-      throw redirect(`/login?return_to=${encodeURIComponent(url.pathname + url.search)}`);
+      throw redirect(`/admin/login?return_to=${encodeURIComponent(url.pathname + url.search)}`);
     }
     throw e;
   }
@@ -52,6 +52,7 @@ export const adminNav: { to: string; key: AdminKey; end?: boolean }[] = [
   { to: "/admin/reports", key: "nav.reports" },
   { to: "/admin/settings", key: "nav.settings" },
   { to: "/admin/audit", key: "nav.audit" },
+  { to: "/admin/account", key: "nav.account" },
 ];
 
 function Nav() {

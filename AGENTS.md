@@ -75,10 +75,10 @@ backend/
   internal/
     platform/         config, db, http middleware, logging, errors, i18n
     modules/
-      auth/  users/  partners/  catalog/  locations/  departures/
-      packages/  pricing/  inventory/  bookings/  payments/  refunds/
-      settlements/  tickets/  media/  cms/  reviews/  notifications/
-      reports/  settings/  audit/
+      auth/  users/  catalog/  departures/  packages/  pricing/
+      bookings/  bookingadmin/  payments/  refunds/  settlements/
+      tickets/  media/  cms/  reviews/  notifications/  reports/
+      settings/  audit/  scheduler/  seed/
     integrations/     midtrans/, google/, smtp/, storage/
   db/
     migrations/
@@ -98,6 +98,8 @@ docs/
 ```
 
 Each module may contain `handler.go`, `service.go`, `repository.go`, `types.go`, and `dto.go`. Create only the files the module needs.
+
+`catalog` owns partners and locations, and `bookings` owns inventory. `bookingadmin` (admin booking operations, public tracking and QR verification) and `scheduler` (periodic job bodies) depend on both `bookings` and `refunds`, so they stay separate to keep imports acyclic. `seed` holds the reference data inserted by `cli seed reference`.
 
 ## 4. Backend Architecture
 
@@ -198,13 +200,13 @@ Refunds are complete only after provider confirmation or recorded transfer proof
 
 ## 8. Authentication and Authorization
 
-- Google OIDC only, using the authorization code flow with PKCE, completed in the Go backend.
-- Identify users by provider plus Google `sub`. Reject accounts whose email is not verified.
+- Customers sign in with Google OIDC only, using the authorization code flow with PKCE, completed in the Go backend. Identify them by provider plus Google `sub`, and reject accounts whose email is not verified.
+- Admins sign in with email and password at `/admin/login`. Hash with bcrypt, require at least 12 characters, lock an account for 15 minutes after 5 failures, and answer every failure identically.
 - Server-side sessions in PostgreSQL, referenced by an HttpOnly, Secure, SameSite=Lax cookie. Sessions can be revoked.
 - Do not store tokens in localStorage or sessionStorage.
 - CSRF protection on all cookie-authenticated mutations.
 - Roles: `ADMIN`, `CUSTOMER`. All admins have equal access.
-- The first admin is created by a CLI command. Further admins come from an allowlist managed by existing admins. Never grant admin from an email match alone without that allowlist, and never trust a role sent by the client.
+- The first admin is created by a CLI command. Further admins are created by existing admins. Google login never grants admin, and a role sent by the client is never trusted.
 - The last active admin cannot be deactivated.
 - Every customer resource checks ownership. A booking belonging to another user returns 404.
 - SSR must never render one user's data into a cacheable response.

@@ -240,13 +240,6 @@ export interface AdminUser {
   booking_count?: number;
 }
 
-export interface AdminInvite {
-  id: string;
-  email: string;
-  accepted_at: string | null;
-  created_at: string;
-}
-
 export interface AuditEntry {
   id: number;
   actor_email: string | null;

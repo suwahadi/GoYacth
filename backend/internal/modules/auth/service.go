@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -13,7 +12,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"goyacht/internal/integrations/google"
-	"goyacht/internal/modules/audit"
 	"goyacht/internal/platform/db"
 	"goyacht/internal/platform/db/dbq"
 	"goyacht/internal/platform/httpx"
@@ -109,14 +107,6 @@ func (s *Service) loginIdentity(ctx context.Context, w http.ResponseWriter, r *h
 		if found {
 			role = user.Role
 		}
-		invite, err := q.GetPendingAdminInvite(ctx, ident.Email)
-		hasInvite := err == nil
-		if err != nil && !db.IsNoRows(err) {
-			return err
-		}
-		if hasInvite {
-			role = RoleAdmin
-		}
 		if found {
 			user, err = q.UpdateUserLogin(ctx, dbq.UpdateUserLoginParams{ID: user.ID, Email: ident.Email, AvatarUrl: ident.Picture, Role: role, FullName: ident.Name})
 		} else {
@@ -128,14 +118,6 @@ func (s *Service) loginIdentity(ctx context.Context, w http.ResponseWriter, r *h
 		}
 		if err != nil {
 			return fmt.Errorf("upsert user: %w", err)
-		}
-		if hasInvite {
-			if err := q.AcceptAdminInvite(ctx, dbq.AcceptAdminInviteParams{ID: invite.ID, AcceptedBy: &user.ID}); err != nil {
-				return err
-			}
-			if err := audit.Record(ctx, q, audit.Entry{ActorID: &user.ID, Action: "admin.invite_accepted", EntityType: "user", EntityID: user.ID.String(), After: map[string]string{"role": RoleAdmin}}); err != nil {
-				return err
-			}
 		}
 		if res.Created && s.enqueue != nil {
 			if err := s.enqueue.EnqueueTx(ctx, tx, jobs.SendWelcome{UserID: user.ID}); err != nil {
@@ -154,28 +136,6 @@ func (s *Service) Logout(ctx context.Context, w http.ResponseWriter, p *Principa
 		return nil
 	}
 	return dbq.New(s.pool).RevokeSession(ctx, p.SessionID)
-}
-
-// GrantBootstrapAdmin is used by the CLI: it allowlists the email and promotes the user if they
-// have already signed in.
-func GrantBootstrapAdmin(ctx context.Context, pool *pgxpool.Pool, email string) (promoted bool, err error) {
-	email = strings.TrimSpace(email)
-	if !strings.Contains(email, "@") {
-		return false, errors.New("invalid email")
-	}
-	err = db.InTx(ctx, pool, func(tx pgx.Tx) error {
-		q := dbq.New(tx)
-		if _, err := q.InsertBootstrapAdmin(ctx, email); err != nil {
-			return err
-		}
-		n, err := q.SetUserRoleByEmail(ctx, email)
-		if err != nil {
-			return err
-		}
-		promoted = n > 0
-		return audit.Record(ctx, q, audit.Entry{Action: "admin.bootstrap", EntityType: "admin_invite", EntityID: strings.ToLower(email)})
-	})
-	return promoted, err
 }
 
 func UserIDPtr(p *Principal) *uuid.UUID {

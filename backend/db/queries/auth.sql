@@ -47,31 +47,25 @@ DELETE FROM oauth_states WHERE state = $1 AND expires_at > now() RETURNING *;
 -- name: DeleteExpiredOAuthStates :execrows
 DELETE FROM oauth_states WHERE expires_at < now();
 
--- name: GetPendingAdminInvite :one
-SELECT * FROM admin_invites WHERE lower(email) = lower(sqlc.arg(email)::text) AND accepted_at IS NULL;
-
--- name: AcceptAdminInvite :exec
-UPDATE admin_invites SET accepted_at = now(), accepted_by = $2 WHERE id = $1;
-
 -- name: CountActiveAdmins :one
 SELECT count(*) FROM users WHERE role = 'ADMIN' AND status = 'ACTIVE';
 
 -- name: LockActiveAdmins :many
 SELECT id FROM users WHERE role = 'ADMIN' AND status = 'ACTIVE' ORDER BY id FOR UPDATE;
 
--- name: ListAdminInvites :many
-SELECT * FROM admin_invites ORDER BY created_at DESC LIMIT 500;
-
--- name: InsertAdminInvite :one
-INSERT INTO admin_invites (email, invited_by) VALUES ($1, $2) RETURNING *;
-
--- name: DeleteAdminInvite :execrows
-DELETE FROM admin_invites WHERE id = $1 AND accepted_at IS NULL;
-
--- name: InsertBootstrapAdmin :one
-INSERT INTO admin_invites (email, invited_by) VALUES ($1, NULL)
-ON CONFLICT ((lower(email))) DO UPDATE SET accepted_at = NULL
+-- name: InsertAdminAccount :one
+INSERT INTO users (provider, provider_subject, email, full_name, role, password_hash, last_login_at)
+VALUES ('password', sqlc.arg(email)::text, sqlc.arg(email)::text, sqlc.arg(full_name), 'ADMIN', sqlc.arg(password_hash), NULL)
 RETURNING *;
 
--- name: SetUserRoleByEmail :execrows
-UPDATE users SET role = 'ADMIN', updated_at = now() WHERE lower(email) = lower(sqlc.arg(email)::text) AND status = 'ACTIVE';
+-- name: SetUserPassword :exec
+UPDATE users SET password_hash = $2, failed_logins = 0, locked_until = NULL, updated_at = now() WHERE id = $1;
+
+-- name: RecordFailedLogin :exec
+UPDATE users
+SET failed_logins = CASE WHEN failed_logins >= 4 THEN 0 ELSE failed_logins + 1 END,
+    locked_until = CASE WHEN failed_logins >= 4 THEN now() + interval '15 minutes' ELSE locked_until END
+WHERE id = $1;
+
+-- name: ResetFailedLogins :exec
+UPDATE users SET failed_logins = 0, locked_until = NULL, last_login_at = now() WHERE id = $1;

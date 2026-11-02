@@ -106,7 +106,8 @@ func Convert(data []byte, baseName string) (width, height int, out []encoded, er
 			}
 		}
 		params := vips.NewWebpExportParams()
-		params.Quality = 80
+		params.Quality = 75
+		params.ReductionEffort = 6
 		params.StripMetadata = true
 		buf, _, err := img.ExportWebp(params)
 		actualW, actualH := img.Width(), img.Height()

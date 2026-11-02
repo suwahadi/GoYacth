@@ -169,9 +169,7 @@
     "empty": "No users match these filters.",
     "last_login": "Last sign-in",
     "role": "Role",
-    "search": "Search name or email",
-    "tab_invites": "Admin allowlist",
-    "tab_users": "Users"
+    "search": "Search name or email"
   },
   "departure": {
     "title": "Departure",
@@ -241,18 +239,6 @@
     "confirm_body": "The full identity number will be shown and this access is recorded in the audit log. Only reveal it when you need it.",
     "hide": "Hide",
     "reveal": "Reveal"
-  },
-  "invites": {
-    "intro": "Only emails on this allowlist become admins when they sign in with Google.",
-    "accepted": "Accepted",
-    "add": "Add to allowlist",
-    "added": "Email added to the allowlist.",
-    "empty": "The allowlist is empty.",
-    "list": "Allowlisted emails",
-    "pending": "Not used yet",
-    "remove_body": "Remove {{email}} from the allowlist? Existing admin accounts are not affected.",
-    "remove_title": "Remove from allowlist",
-    "removed": "Email removed from the allowlist."
   },
   "manifest": {
     "title": "Passenger manifest",
@@ -589,8 +575,6 @@
     "CANNOT_MODIFY_SELF": "Admin accounts cannot be anonymized. Remove admin access first.",
     "USER_ANONYMIZED": "This account is anonymized and cannot be changed.",
     "USER_NOT_FOUND": "User not found.",
-    "INVITE_EXISTS": "This email is already on the allowlist.",
-    "INVITE_NOT_FOUND": "This allowlist entry no longer exists.",
     "BLOCK_CONFLICT": "The boat already has reservations in this period.",
     "DEPARTURE_SCHEDULE_CONFLICT": "The boat is already reserved for part of this time.",
     "DEPARTURE_NOT_SCHEDULED": "This departure is already cancelled.",
@@ -605,6 +589,26 @@
     "SETTLEMENT_LINE_UNAVAILABLE": "A selected booking is not payable in this period or is already paid. Reload the settlement.",
     "SETTLEMENT_ALREADY_PAID": "A selected booking was already paid out.",
     "REPORT_NOT_FOUND": "Unknown report.",
-    "MULTIPART_INVALID": "The file could not be uploaded."
+    "MULTIPART_INVALID": "The file could not be uploaded.",
+    "INVALID_CREDENTIALS": "The email or password is incorrect.",
+    "ADMIN_EXISTS": "An admin with this email already exists."
+  },
+  "admins": {
+    "new": "New admin",
+    "create": "Create admin",
+    "added": "Admin created. They can sign in with this email and password.",
+    "password": "Password"
+  },
+  "login": {
+    "password": "Password",
+    "submit": "Sign in"
+  },
+  "account": {
+    "title": "Change password",
+    "current": "Current password",
+    "next": "New password",
+    "hint": "At least 12 characters.",
+    "submit": "Change password",
+    "changed": "Password changed. Other devices were signed out."
   }
 }

@@ -21,12 +21,10 @@ import (
 )
 
 var (
-	ErrUserNotFound   = httpx.NotFound("USER_NOT_FOUND")
-	ErrLastAdmin      = httpx.Conflict("LAST_ADMIN", "the last active admin cannot be deactivated")
-	ErrOpenBookings   = httpx.Conflict("ACCOUNT_HAS_OPEN_BOOKINGS", "account has bookings that are not finished")
-	ErrInviteExists   = httpx.Conflict("INVITE_EXISTS", "email is already invited")
-	ErrInviteNotFound = httpx.NotFound("INVITE_NOT_FOUND")
-	ErrCannotSelf     = httpx.Conflict("CANNOT_MODIFY_SELF", "use another admin account for this action")
+	ErrUserNotFound = httpx.NotFound("USER_NOT_FOUND")
+	ErrLastAdmin    = httpx.Conflict("LAST_ADMIN", "the last active admin cannot be deactivated")
+	ErrOpenBookings = httpx.Conflict("ACCOUNT_HAS_OPEN_BOOKINGS", "account has bookings that are not finished")
+	ErrCannotSelf   = httpx.Conflict("CANNOT_MODIFY_SELF", "use another admin account for this action")
 )
 
 type Handler struct {
@@ -48,9 +46,7 @@ func (h *Handler) AdminRoutes(r chi.Router) {
 	r.Post("/users/{id}/status", h.setStatus)
 	r.Post("/users/{id}/demote", h.demote)
 	r.Post("/users/{id}/anonymize", h.anonymize)
-	r.Get("/admin-invites", h.listInvites)
-	r.Post("/admin-invites", h.createInvite)
-	r.Delete("/admin-invites/{id}", h.deleteInvite)
+	r.Post("/admins", h.createAdmin)
 }
 
 type ProfileDTO struct {
@@ -368,83 +364,22 @@ func (h *Handler) anonymize(w http.ResponseWriter, r *http.Request) {
 	httpx.NoContent(w)
 }
 
-type inviteDTO struct {
-	ID         uuid.UUID  `json:"id"`
-	Email      string     `json:"email"`
-	AcceptedAt *time.Time `json:"accepted_at"`
-	CreatedAt  time.Time  `json:"created_at"`
+type adminInput struct {
+	Email    string `json:"email"`
+	FullName string `json:"full_name"`
+	Password string `json:"password"`
 }
 
-func (h *Handler) listInvites(w http.ResponseWriter, r *http.Request) {
-	rows, err := dbq.New(h.pool).ListAdminInvites(r.Context())
-	if err != nil {
-		httpx.WriteError(w, r, err)
-		return
-	}
-	out := make([]inviteDTO, 0, len(rows))
-	for _, i := range rows {
-		out = append(out, inviteDTO{ID: i.ID, Email: i.Email, AcceptedAt: i.AcceptedAt, CreatedAt: i.CreatedAt})
-	}
-	httpx.JSON(w, http.StatusOK, out)
-}
-
-type inviteInput struct {
-	Email string `json:"email"`
-}
-
-func (h *Handler) createInvite(w http.ResponseWriter, r *http.Request) {
-	var in inviteInput
+func (h *Handler) createAdmin(w http.ResponseWriter, r *http.Request) {
+	var in adminInput
 	if err := httpx.Decode(w, r, &in); err != nil {
 		httpx.WriteError(w, r, err)
 		return
 	}
-	in.Email = strings.ToLower(strings.TrimSpace(in.Email))
-	if !validate.Email(in.Email) {
-		httpx.WriteError(w, r, httpx.Validation(map[string]string{"email": "INVALID_EMAIL"}))
-		return
-	}
 	actor := auth.FromContext(r.Context())
-	var inv dbq.AdminInvite
-	err := db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
-		q := dbq.New(tx)
-		var err error
-		inv, err = q.InsertAdminInvite(r.Context(), dbq.InsertAdminInviteParams{Email: in.Email, InvitedBy: &actor.UserID})
-		if db.IsUniqueViolation(err) {
-			return ErrInviteExists
-		}
-		if err != nil {
-			return err
-		}
-		return audit.Record(r.Context(), q, audit.Entry{ActorID: &actor.UserID, Action: "admin_invite.created", EntityType: "admin_invite", EntityID: inv.ID.String(), After: map[string]string{"email": in.Email}})
-	})
-	if err != nil {
+	if err := auth.CreateAdmin(r.Context(), h.pool, in.Email, in.FullName, in.Password, &actor.UserID); err != nil {
 		httpx.WriteError(w, r, err)
 		return
 	}
-	httpx.JSON(w, http.StatusCreated, inviteDTO{ID: inv.ID, Email: inv.Email, CreatedAt: inv.CreatedAt})
-}
-
-func (h *Handler) deleteInvite(w http.ResponseWriter, r *http.Request) {
-	id, err := uuid.Parse(chi.URLParam(r, "id"))
-	if err != nil {
-		httpx.WriteError(w, r, ErrInviteNotFound)
-		return
-	}
-	actor := auth.FromContext(r.Context())
-	err = db.InTx(r.Context(), h.pool, func(tx pgx.Tx) error {
-		q := dbq.New(tx)
-		n, err := q.DeleteAdminInvite(r.Context(), id)
-		if err != nil {
-			return err
-		}
-		if n == 0 {
-			return ErrInviteNotFound
-		}
-		return audit.Record(r.Context(), q, audit.Entry{ActorID: &actor.UserID, Action: "admin_invite.deleted", EntityType: "admin_invite", EntityID: id.String()})
-	})
-	if err != nil {
-		httpx.WriteError(w, r, err)
-		return
-	}
-	httpx.NoContent(w)
+	httpx.JSON(w, http.StatusCreated, map[string]string{"email": strings.ToLower(strings.TrimSpace(in.Email))})
 }

@@ -85,37 +85,18 @@ paths:
       responses:
         "200": {$ref: "#/components/responses/Ok"}
         default: {$ref: "#/components/responses/Error"}
-  /api/v1/admin/admin-invites:
-    get:
-      tags: [users]
-      operationId: get_admin_admin_invites
-      security: [{session: []}]
-      description: Requires role ADMIN.
-      responses:
-        "200": {$ref: "#/components/responses/Ok"}
-        default: {$ref: "#/components/responses/Error"}
+  /api/v1/admin/admins:
     post:
       tags: [users]
-      operationId: post_admin_admin_invites
+      operationId: post_admin_admins
       security: [{session: []}]
-      description: Requires role ADMIN.
+      description: Requires role ADMIN. Creates an admin who signs in with email and password.
       requestBody:
         content:
           application/json:
             schema: {type: object}
       responses:
-        "200": {$ref: "#/components/responses/Ok"}
-        default: {$ref: "#/components/responses/Error"}
-  /api/v1/admin/admin-invites/{id}:
-    delete:
-      tags: [users]
-      operationId: delete_admin_admin_invites_id_
-      security: [{session: []}]
-      description: Requires role ADMIN.
-      parameters:
-        - {name: id, in: path, required: true, schema: {type: string}}
-      responses:
-        "204": {description: Done}
+        "201": {$ref: "#/components/responses/Ok"}
         default: {$ref: "#/components/responses/Error"}
   /api/v1/admin/audit-logs:
     get:
@@ -1620,6 +1601,31 @@ paths:
       operationId: get_auth_google_callback
       responses:
         "302": {description: Redirect}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/auth/admin/login:
+    post:
+      tags: [auth]
+      operationId: post_auth_admin_login
+      description: Admin email and password login. Every failure answers INVALID_CREDENTIALS.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "200": {$ref: "#/components/responses/Ok"}
+        default: {$ref: "#/components/responses/Error"}
+  /api/v1/auth/password:
+    post:
+      tags: [auth]
+      operationId: post_auth_password
+      security: [{session: []}]
+      description: Requires role ADMIN. Changes the password and ends other sessions.
+      requestBody:
+        content:
+          application/json:
+            schema: {type: object}
+      responses:
+        "204": {description: Done}
         default: {$ref: "#/components/responses/Error"}
   /api/v1/auth/logout:
     post:

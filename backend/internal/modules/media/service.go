@@ -57,6 +57,14 @@ func Slugify(s string) string {
 
 func incomingKey(baseName string) string { return "incoming/" + baseName }
 
+func newBaseName(raw string) (slug, baseName string) {
+	slug = Slugify(raw)
+	if slug == "" {
+		slug = "image"
+	}
+	return slug, slug + "-" + strings.ToLower(secure.RandomCode(6, "0123456789abcdefghjkmnpqrstvwxyz"))
+}
+
 type UploadInput struct {
 	Data     []byte
 	Slug     string
@@ -94,12 +102,7 @@ func (s *Service) Upload(ctx context.Context, in UploadInput) (dbq.Medium, error
 	case err != nil:
 		return dbq.Medium{}, err
 	}
-	slug := Slugify(in.Slug)
-	if slug == "" {
-		slug = "image"
-	}
-	baseName := slug + "-" + strings.ToLower(secure.RandomCode(6, "0123456789abcdefghjkmnpqrstvwxyz"))
-
+	slug, baseName := newBaseName(in.Slug)
 	if err := s.store.Put(ctx, storage.Private, incomingKey(baseName), in.Data, contentType); err != nil {
 		return dbq.Medium{}, fmt.Errorf("store upload: %w", err)
 	}
@@ -132,6 +135,49 @@ func (s *Service) Upload(ctx context.Context, in UploadInput) (dbq.Medium, error
 		return dbq.Medium{}, err
 	}
 	return m, nil
+}
+
+// Import converts a trusted image synchronously and stores it ready to use. It serves maintenance
+// commands that run without a worker; files from people go through Upload. The row stays eligible
+// for orphan cleanup until something attaches it through SetUsages.
+func (s *Service) Import(ctx context.Context, data []byte, rawSlug string, alts map[string]string) (uuid.UUID, error) {
+	if _, _, _, err := Inspect(data); err != nil {
+		return uuid.Nil, err
+	}
+	_, baseName := newBaseName(rawSlug)
+	w, h, variants, err := Convert(data, baseName)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	meta := make([]Variant, 0, len(variants))
+	for _, v := range variants {
+		if err := s.store.Put(ctx, storage.Public, v.Key, v.data, "image/webp"); err != nil {
+			return uuid.Nil, fmt.Errorf("store variant: %w", err)
+		}
+		meta = append(meta, v.Variant)
+	}
+	raw, err := json.Marshal(meta)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	var id uuid.UUID
+	deleteAfter := time.Now().Add(24 * time.Hour)
+	err = db.InTx(ctx, s.pool, func(tx pgx.Tx) error {
+		q := dbq.New(tx)
+		m, err := q.InsertMedia(ctx, dbq.InsertMediaParams{Bucket: string(storage.Public), BaseName: baseName, ContentType: "image/webp", ByteSize: int64(len(data)), DeleteAfter: &deleteAfter})
+		if err != nil {
+			return err
+		}
+		id = m.ID
+		for loc, alt := range alts {
+			if err := q.UpsertMediaTranslation(ctx, dbq.UpsertMediaTranslationParams{MediaID: m.ID, Locale: loc, AltText: alt}); err != nil {
+				return err
+			}
+		}
+		w32, h32 := int32(w), int32(h)
+		return q.MarkMediaReady(ctx, dbq.MarkMediaReadyParams{ID: m.ID, Width: &w32, Height: &h32, Variants: raw})
+	})
+	return id, err
 }
 
 // Process converts an uploaded image. Variants are written before the row is marked READY, and

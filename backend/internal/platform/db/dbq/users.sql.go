@@ -79,7 +79,7 @@ func (q *Queries) CountUsers(ctx context.Context, arg CountUsersParams) (int64, 
 }
 
 const getUserForUpdate = `-- name: GetUserForUpdate :one
-SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at FROM users WHERE id = $1 FOR UPDATE
+SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until FROM users WHERE id = $1 FOR UPDATE
 `
 
 func (q *Queries) GetUserForUpdate(ctx context.Context, id uuid.UUID) (User, error) {
@@ -100,12 +100,15 @@ func (q *Queries) GetUserForUpdate(ctx context.Context, id uuid.UUID) (User, err
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT u.id, u.provider, u.provider_subject, u.email, u.full_name, u.avatar_url, u.phone, u.nationality, u.preferred_locale, u.role, u.status, u.last_login_at, u.created_at, u.updated_at, (SELECT count(*) FROM bookings b WHERE b.user_id = u.id) AS booking_count
+SELECT u.id, u.provider, u.provider_subject, u.email, u.full_name, u.avatar_url, u.phone, u.nationality, u.preferred_locale, u.role, u.status, u.last_login_at, u.created_at, u.updated_at, u.password_hash, u.failed_logins, u.locked_until, (SELECT count(*) FROM bookings b WHERE b.user_id = u.id) AS booking_count
 FROM users u
 WHERE ($3::text IS NULL OR u.role = $3)
   AND ($4::text IS NULL OR u.status = $4)
@@ -137,6 +140,9 @@ type ListUsersRow struct {
 	LastLoginAt     *time.Time `json:"last_login_at"`
 	CreatedAt       time.Time  `json:"created_at"`
 	UpdatedAt       time.Time  `json:"updated_at"`
+	PasswordHash    string     `json:"password_hash"`
+	FailedLogins    int32      `json:"failed_logins"`
+	LockedUntil     *time.Time `json:"locked_until"`
 	BookingCount    int64      `json:"booking_count"`
 }
 
@@ -170,6 +176,9 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]ListUse
 			&i.LastLoginAt,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.PasswordHash,
+			&i.FailedLogins,
+			&i.LockedUntil,
 			&i.BookingCount,
 		); err != nil {
 			return nil, err
@@ -193,7 +202,7 @@ func (q *Queries) PurgeUserIdentities(ctx context.Context, userID uuid.UUID) err
 }
 
 const searchActiveCustomers = `-- name: SearchActiveCustomers :many
-SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at FROM users
+SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until FROM users
 WHERE status = 'ACTIVE' AND (email ILIKE '%' || $1::text || '%' OR full_name ILIKE '%' || $1::text || '%')
 ORDER BY email LIMIT 20
 `
@@ -222,6 +231,9 @@ func (q *Queries) SearchActiveCustomers(ctx context.Context, search string) ([]U
 			&i.LastLoginAt,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.PasswordHash,
+			&i.FailedLogins,
+			&i.LockedUntil,
 		); err != nil {
 			return nil, err
 		}
@@ -234,7 +246,7 @@ func (q *Queries) SearchActiveCustomers(ctx context.Context, search string) ([]U
 }
 
 const setUserRole = `-- name: SetUserRole :one
-UPDATE users SET role = $2, updated_at = now() WHERE id = $1 RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at
+UPDATE users SET role = $2, updated_at = now() WHERE id = $1 RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
 `
 
 type SetUserRoleParams struct {
@@ -260,12 +272,15 @@ func (q *Queries) SetUserRole(ctx context.Context, arg SetUserRoleParams) (User,
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }
 
 const setUserStatus = `-- name: SetUserStatus :one
-UPDATE users SET status = $2, updated_at = now() WHERE id = $1 RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at
+UPDATE users SET status = $2, updated_at = now() WHERE id = $1 RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
 `
 
 type SetUserStatusParams struct {
@@ -291,13 +306,16 @@ func (q *Queries) SetUserStatus(ctx context.Context, arg SetUserStatusParams) (U
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }
 
 const updateProfile = `-- name: UpdateProfile :one
 UPDATE users SET full_name = $2, phone = $3, nationality = $4, preferred_locale = $5, updated_at = now()
-WHERE id = $1 RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at
+WHERE id = $1 RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
 `
 
 type UpdateProfileParams struct {
@@ -332,6 +350,9 @@ func (q *Queries) UpdateProfile(ctx context.Context, arg UpdateProfileParams) (U
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }

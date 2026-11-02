@@ -120,6 +120,8 @@
     "NOT_FOUND": "Not found.",
     "NOT_AVAILABLE": "Not available.",
     "ARCHIVED": "This item is archived.",
-    "USER_NOT_FOUND": "Customer not found."
+    "USER_NOT_FOUND": "Customer not found.",
+    "PASSWORD_TOO_SHORT": "Use at least 12 characters.",
+    "PASSWORD_TOO_LONG": "Use at most 72 bytes."
   }
 }

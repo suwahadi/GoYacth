@@ -12,20 +12,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const acceptAdminInvite = `-- name: AcceptAdminInvite :exec
-UPDATE admin_invites SET accepted_at = now(), accepted_by = $2 WHERE id = $1
-`
-
-type AcceptAdminInviteParams struct {
-	ID         uuid.UUID  `json:"id"`
-	AcceptedBy *uuid.UUID `json:"accepted_by"`
-}
-
-func (q *Queries) AcceptAdminInvite(ctx context.Context, arg AcceptAdminInviteParams) error {
-	_, err := q.db.Exec(ctx, acceptAdminInvite, arg.ID, arg.AcceptedBy)
-	return err
-}
-
 const consumeOAuthState = `-- name: ConsumeOAuthState :one
 DELETE FROM oauth_states WHERE state = $1 AND expires_at > now() RETURNING state, code_verifier, nonce, return_to, expires_at, created_at
 `
@@ -55,18 +41,6 @@ func (q *Queries) CountActiveAdmins(ctx context.Context) (int64, error) {
 	return count, err
 }
 
-const deleteAdminInvite = `-- name: DeleteAdminInvite :execrows
-DELETE FROM admin_invites WHERE id = $1 AND accepted_at IS NULL
-`
-
-func (q *Queries) DeleteAdminInvite(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteAdminInvite, id)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected(), nil
-}
-
 const deleteExpiredOAuthStates = `-- name: DeleteExpiredOAuthStates :execrows
 DELETE FROM oauth_states WHERE expires_at < now()
 `
@@ -91,26 +65,8 @@ func (q *Queries) DeleteExpiredSessions(ctx context.Context) (int64, error) {
 	return result.RowsAffected(), nil
 }
 
-const getPendingAdminInvite = `-- name: GetPendingAdminInvite :one
-SELECT id, email, invited_by, accepted_at, accepted_by, created_at FROM admin_invites WHERE lower(email) = lower($1::text) AND accepted_at IS NULL
-`
-
-func (q *Queries) GetPendingAdminInvite(ctx context.Context, email string) (AdminInvite, error) {
-	row := q.db.QueryRow(ctx, getPendingAdminInvite, email)
-	var i AdminInvite
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.InvitedBy,
-		&i.AcceptedAt,
-		&i.AcceptedBy,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
 const getSessionWithUser = `-- name: GetSessionWithUser :one
-SELECT s.id, s.token_hash, s.user_id, s.csrf_token, s.user_agent, s.ip_address, s.expires_at, s.revoked_at, s.last_seen_at, s.created_at, u.id, u.provider, u.provider_subject, u.email, u.full_name, u.avatar_url, u.phone, u.nationality, u.preferred_locale, u.role, u.status, u.last_login_at, u.created_at, u.updated_at
+SELECT s.id, s.token_hash, s.user_id, s.csrf_token, s.user_agent, s.ip_address, s.expires_at, s.revoked_at, s.last_seen_at, s.created_at, u.id, u.provider, u.provider_subject, u.email, u.full_name, u.avatar_url, u.phone, u.nationality, u.preferred_locale, u.role, u.status, u.last_login_at, u.created_at, u.updated_at, u.password_hash, u.failed_logins, u.locked_until
 FROM sessions s JOIN users u ON u.id = s.user_id
 WHERE s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > now()
 `
@@ -148,12 +104,15 @@ func (q *Queries) GetSessionWithUser(ctx context.Context, tokenHash []byte) (Get
 		&i.User.LastLoginAt,
 		&i.User.CreatedAt,
 		&i.User.UpdatedAt,
+		&i.User.PasswordHash,
+		&i.User.FailedLogins,
+		&i.User.LockedUntil,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at FROM users WHERE id = $1
+SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
@@ -174,12 +133,15 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }
 
 const getUserByProvider = `-- name: GetUserByProvider :one
-SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at FROM users WHERE provider = $1 AND provider_subject = $2
+SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until FROM users WHERE provider = $1 AND provider_subject = $2
 `
 
 type GetUserByProviderParams struct {
@@ -205,49 +167,46 @@ func (q *Queries) GetUserByProvider(ctx context.Context, arg GetUserByProviderPa
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }
 
-const insertAdminInvite = `-- name: InsertAdminInvite :one
-INSERT INTO admin_invites (email, invited_by) VALUES ($1, $2) RETURNING id, email, invited_by, accepted_at, accepted_by, created_at
+const insertAdminAccount = `-- name: InsertAdminAccount :one
+INSERT INTO users (provider, provider_subject, email, full_name, role, password_hash, last_login_at)
+VALUES ('password', $1::text, $1::text, $2, 'ADMIN', $3, NULL)
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
 `
 
-type InsertAdminInviteParams struct {
-	Email     string     `json:"email"`
-	InvitedBy *uuid.UUID `json:"invited_by"`
+type InsertAdminAccountParams struct {
+	Email        string `json:"email"`
+	FullName     string `json:"full_name"`
+	PasswordHash string `json:"password_hash"`
 }
 
-func (q *Queries) InsertAdminInvite(ctx context.Context, arg InsertAdminInviteParams) (AdminInvite, error) {
-	row := q.db.QueryRow(ctx, insertAdminInvite, arg.Email, arg.InvitedBy)
-	var i AdminInvite
+func (q *Queries) InsertAdminAccount(ctx context.Context, arg InsertAdminAccountParams) (User, error) {
+	row := q.db.QueryRow(ctx, insertAdminAccount, arg.Email, arg.FullName, arg.PasswordHash)
+	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Provider,
+		&i.ProviderSubject,
 		&i.Email,
-		&i.InvitedBy,
-		&i.AcceptedAt,
-		&i.AcceptedBy,
+		&i.FullName,
+		&i.AvatarUrl,
+		&i.Phone,
+		&i.Nationality,
+		&i.PreferredLocale,
+		&i.Role,
+		&i.Status,
+		&i.LastLoginAt,
 		&i.CreatedAt,
-	)
-	return i, err
-}
-
-const insertBootstrapAdmin = `-- name: InsertBootstrapAdmin :one
-INSERT INTO admin_invites (email, invited_by) VALUES ($1, NULL)
-ON CONFLICT ((lower(email))) DO UPDATE SET accepted_at = NULL
-RETURNING id, email, invited_by, accepted_at, accepted_by, created_at
-`
-
-func (q *Queries) InsertBootstrapAdmin(ctx context.Context, email string) (AdminInvite, error) {
-	row := q.db.QueryRow(ctx, insertBootstrapAdmin, email)
-	var i AdminInvite
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.InvitedBy,
-		&i.AcceptedAt,
-		&i.AcceptedBy,
-		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }
@@ -318,7 +277,7 @@ func (q *Queries) InsertSession(ctx context.Context, arg InsertSessionParams) (S
 const insertUser = `-- name: InsertUser :one
 INSERT INTO users (provider, provider_subject, email, full_name, avatar_url, role, preferred_locale, last_login_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, now())
-RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
 `
 
 type InsertUserParams struct {
@@ -357,39 +316,11 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, e
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
-}
-
-const listAdminInvites = `-- name: ListAdminInvites :many
-SELECT id, email, invited_by, accepted_at, accepted_by, created_at FROM admin_invites ORDER BY created_at DESC LIMIT 500
-`
-
-func (q *Queries) ListAdminInvites(ctx context.Context) ([]AdminInvite, error) {
-	rows, err := q.db.Query(ctx, listAdminInvites)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []AdminInvite{}
-	for rows.Next() {
-		var i AdminInvite
-		if err := rows.Scan(
-			&i.ID,
-			&i.Email,
-			&i.InvitedBy,
-			&i.AcceptedAt,
-			&i.AcceptedBy,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const lockActiveAdmins = `-- name: LockActiveAdmins :many
@@ -416,6 +347,27 @@ func (q *Queries) LockActiveAdmins(ctx context.Context) ([]uuid.UUID, error) {
 	return items, nil
 }
 
+const recordFailedLogin = `-- name: RecordFailedLogin :exec
+UPDATE users
+SET failed_logins = CASE WHEN failed_logins >= 4 THEN 0 ELSE failed_logins + 1 END,
+    locked_until = CASE WHEN failed_logins >= 4 THEN now() + interval '15 minutes' ELSE locked_until END
+WHERE id = $1
+`
+
+func (q *Queries) RecordFailedLogin(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, recordFailedLogin, id)
+	return err
+}
+
+const resetFailedLogins = `-- name: ResetFailedLogins :exec
+UPDATE users SET failed_logins = 0, locked_until = NULL, last_login_at = now() WHERE id = $1
+`
+
+func (q *Queries) ResetFailedLogins(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, resetFailedLogins, id)
+	return err
+}
+
 const revokeSession = `-- name: RevokeSession :exec
 UPDATE sessions SET revoked_at = now() WHERE id = $1 AND revoked_at IS NULL
 `
@@ -434,16 +386,18 @@ func (q *Queries) RevokeUserSessions(ctx context.Context, userID uuid.UUID) erro
 	return err
 }
 
-const setUserRoleByEmail = `-- name: SetUserRoleByEmail :execrows
-UPDATE users SET role = 'ADMIN', updated_at = now() WHERE lower(email) = lower($1::text) AND status = 'ACTIVE'
+const setUserPassword = `-- name: SetUserPassword :exec
+UPDATE users SET password_hash = $2, failed_logins = 0, locked_until = NULL, updated_at = now() WHERE id = $1
 `
 
-func (q *Queries) SetUserRoleByEmail(ctx context.Context, email string) (int64, error) {
-	result, err := q.db.Exec(ctx, setUserRoleByEmail, email)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected(), nil
+type SetUserPasswordParams struct {
+	ID           uuid.UUID `json:"id"`
+	PasswordHash string    `json:"password_hash"`
+}
+
+func (q *Queries) SetUserPassword(ctx context.Context, arg SetUserPasswordParams) error {
+	_, err := q.db.Exec(ctx, setUserPassword, arg.ID, arg.PasswordHash)
+	return err
 }
 
 const touchSession = `-- name: TouchSession :exec
@@ -465,7 +419,7 @@ UPDATE users
 SET email = $2, avatar_url = $3, role = $4, last_login_at = now(), updated_at = now(),
     full_name = CASE WHEN full_name = '' THEN $5::text ELSE full_name END
 WHERE id = $1
-RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
 `
 
 type UpdateUserLoginParams struct {
@@ -500,6 +454,9 @@ func (q *Queries) UpdateUserLogin(ctx context.Context, arg UpdateUserLoginParams
 		&i.LastLoginAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
 	)
 	return i, err
 }

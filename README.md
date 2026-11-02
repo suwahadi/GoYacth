@@ -37,10 +37,18 @@ First-time data setup:
 
 ```sh
 docker compose -f compose.dev.yml exec api go run ./cmd/cli seed reference        # payment methods, default policies, settings
-docker compose -f compose.dev.yml exec api go run ./cmd/cli admin grant you@example.com
+echo 'choose-a-long-password' | docker compose -f compose.dev.yml exec -T api go run ./cmd/cli admin create you@example.com "Your Name"
 ```
 
-`admin grant` allowlists the email; the account becomes ADMIN on its first Google login (or immediately if it already exists). Further admins are invited from the admin dashboard.
+Admins sign in with email and password at `/admin/login`. Further admins are created with New admin on the Customers page. `cli admin password <email>` resets a forgotten password. Customers sign in with Google.
+
+Sample catalog for local browsing (development only, refused when `APP_ENV=production`):
+
+```sh
+docker compose -f compose.dev.yml exec api go run ./cmd/cli seed demo
+```
+
+It downloads about 60 photos from the Unsplash CDN, so it needs internet access and takes a few minutes. It also creates the demo admin it prints at the end. Running it again changes nothing; `docker compose -f compose.dev.yml down -v` resets everything.
 
 ### Running without Docker
 
@@ -57,7 +65,7 @@ All variables are listed with placeholders in [`.env.example`](.env.example). Th
 | `DATABASE_URL` / `POSTGRES_*` | api, worker | database |
 | `IDENTITY_ENCRYPTION_KEYS`, `IDENTITY_ENCRYPTION_ACTIVE_KEY` | api, worker | AES-256-GCM keys `id:base64(32 bytes)`, comma-separated for rotation |
 | `S3_*`, `MEDIA_PUBLIC_URL` | api, worker | object storage |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | api | Google OIDC login |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | api | Google OIDC login for customers |
 | `MIDTRANS_*` | api, worker | Snap, Status API, refunds; `MIDTRANS_PRODUCTION=false` uses the sandbox |
 | `SMTP_*`, `MAIL_FROM_*`, `ADMIN_NOTIFY_EMAILS` | worker | email through any SMTP provider |
 | `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | frontend, api | bot protection on public booking tracking |
@@ -100,7 +108,7 @@ cd frontend && npm run typecheck && npm run check:i18n && npm test && npm run bu
    docker compose build
    docker compose up -d
    docker compose exec api cli seed reference
-   docker compose exec api cli admin grant owner@example.com
+   echo 'choose-a-long-password' | docker compose exec -T api cli admin create owner@example.com "Owner"
    ```
 
 4. Configure the Midtrans dashboard notification URL to `https://APP_DOMAIN/api/v1/webhooks/midtrans` and the finish redirect to `https://APP_DOMAIN`.
@@ -139,7 +147,7 @@ Restore media by syncing the off-site `media/<bucket>` folders back into the sto
 ## Repository layout
 
 ```
-backend/   Go modules (cmd/, internal/modules/*, internal/platform/*, db/, locales/)
+backend/   Go modules (cmd/, internal/modules/*, internal/platform/*, db/, locales/, templates/email/)
 frontend/  React Router app (app/routes, app/components/ui, app/features, app/locales)
 docker/    Caddy, SeaweedFS and backup configuration
 docs/      PRD, decisions, OpenAPI

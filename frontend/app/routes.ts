@@ -39,8 +39,10 @@ export default [
   route("robots.txt", "routes/seo/robots.ts"),
   route("sitemap.xml", "routes/seo/sitemap-index.ts"),
   route("sitemap-:locale.xml", "routes/seo/sitemap.ts"),
+  route("admin/login", "routes/admin/login.tsx"),
   route("admin", "routes/admin/layout.tsx", [
     index("routes/admin/overview.tsx"),
+    route("account", "routes/admin/account.tsx"),
     route("calendar", "routes/admin/calendar.tsx"),
     route("bookings", "routes/admin/bookings.tsx"),
     route("bookings/new", "routes/admin/booking-new.tsx"),

@@ -23,6 +23,7 @@
     "media": "Media",
     "reports": "Reports",
     "settings": "Settings",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "account": "Change password"
   }
 }

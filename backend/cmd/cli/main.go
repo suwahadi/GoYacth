@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"crypto/rand"
 	"database/sql"
@@ -13,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
@@ -20,8 +22,10 @@ import (
 	"github.com/riverqueue/river/rivermigrate"
 
 	"goyacht/db"
+	"goyacht/internal/integrations/storage"
 	"goyacht/internal/modules/auth"
 	"goyacht/internal/modules/seed"
+	"goyacht/internal/platform/config"
 	pdb "goyacht/internal/platform/db"
 )
 
@@ -29,8 +33,10 @@ const usage = `GoYacht maintenance CLI
 
 Usage:
   cli migrate up|down|status    apply, roll back one, or show database migrations
-  cli admin grant <email>       allowlist an email as ADMIN (bootstraps the first admin)
+  cli admin create <email> [name]   create an admin; reads the password from ADMIN_PASSWORD or stdin
+  cli admin password <email>        reset an admin's password the same way and end their sessions
   cli seed reference            insert default policies, tax lines and payment method fees if absent
+  cli seed demo                 fill a development database with a sample catalog (refused in production)
   cli keygen                    print a new identity encryption key (id:base64)
   cli health <url>              exit 0 when the URL answers 2xx (container health checks)
 
@@ -79,27 +85,37 @@ func run(args []string) error {
 		}
 		return migrate(ctx, args[1])
 	case "admin":
-		if len(args) < 3 || args[1] != "grant" {
-			return errors.New("usage: cli admin grant <email>")
+		if len(args) < 3 || (args[1] != "create" && args[1] != "password") {
+			return errors.New("usage: cli admin create|password <email> [name]")
+		}
+		password, err := readPassword()
+		if err != nil {
+			return err
 		}
 		pool, err := connect(ctx)
 		if err != nil {
 			return err
 		}
 		defer pool.Close()
-		promoted, err := auth.GrantBootstrapAdmin(ctx, pool, args[2])
-		if err != nil {
+		if args[1] == "password" {
+			if err := auth.ResetAdminPassword(ctx, pool, args[2], password); err != nil {
+				return err
+			}
+			fmt.Println("password changed; existing sessions ended")
+			return nil
+		}
+		name := strings.Join(args[3:], " ")
+		if err := auth.CreateAdmin(ctx, pool, args[2], name, password, nil); err != nil {
 			return err
 		}
-		if promoted {
-			fmt.Println("existing user promoted to ADMIN")
-		} else {
-			fmt.Println("email allowlisted; ADMIN is granted on first Google login")
-		}
+		fmt.Println("admin created; sign in at /admin/login")
 		return nil
 	case "seed":
+		if len(args) == 2 && args[1] == "demo" {
+			return seedDemo(ctx)
+		}
 		if len(args) < 2 || args[1] != "reference" {
-			return errors.New("usage: cli seed reference")
+			return errors.New("usage: cli seed reference|demo")
 		}
 		pool, err := connect(ctx)
 		if err != nil {
@@ -111,6 +127,59 @@ func run(args []string) error {
 		fmt.Println(usage)
 		return fmt.Errorf("unknown command %q", args[0])
 	}
+}
+
+func seedDemo(ctx context.Context) error {
+	cfg, err := config.Load()
+	if err != nil {
+		return err
+	}
+	if cfg.IsProduction() {
+		return seed.ErrDemoInProduction
+	}
+	pool, err := connect(ctx)
+	if err != nil {
+		return err
+	}
+	defer pool.Close()
+	store, err := storage.NewS3(storage.Options{
+		Endpoint: cfg.S3Endpoint, Region: cfg.S3Region, AccessKey: cfg.S3AccessKey, SecretKey: cfg.S3SecretKey,
+		UseSSL: cfg.S3UseSSL, PublicBucket: cfg.S3PublicBucket, PrivateBucket: cfg.S3PrivateBucket, PublicBaseURL: cfg.MediaPublicURL,
+	})
+	if err != nil {
+		return err
+	}
+	if err := store.EnsureBuckets(ctx); err != nil {
+		return err
+	}
+	vips.LoggingSettings(nil, vips.LogLevelWarning)
+	if err := vips.Startup(nil); err != nil {
+		return err
+	}
+	defer vips.Shutdown()
+	seeded, err := seed.Demo(ctx, cfg, pool, store, seed.UnsplashPhotos(&http.Client{Timeout: time.Minute}))
+	if err != nil {
+		return err
+	}
+	if seeded {
+		fmt.Println("demo data inserted")
+	} else {
+		fmt.Println("demo data already present")
+	}
+	fmt.Printf("demo admin: %s / %s at /admin/login\n", seed.DemoAdminEmail, seed.DemoAdminPassword)
+	return nil
+}
+
+// readPassword avoids a command-line argument, which would land in shell history and process lists.
+func readPassword() (string, error) {
+	if p := os.Getenv("ADMIN_PASSWORD"); p != "" {
+		return p, nil
+	}
+	line, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	if err != nil && line == "" {
+		return "", errors.New("set ADMIN_PASSWORD or pipe the password on stdin")
+	}
+	return strings.TrimRight(line, "\r\n"), nil
 }
 
 func databaseURL() (string, error) {

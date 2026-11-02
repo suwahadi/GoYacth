@@ -91,6 +91,14 @@ func (c *Client) Do(t testing.TB, method, path string, body any, headers map[str
 		t.Fatal(err)
 	}
 	defer func() { _ = res.Body.Close() }()
+	for _, ck := range res.Cookies() {
+		switch ck.Name {
+		case "gy_session":
+			c.cookie = ck.Value
+		case "gy_csrf":
+			c.csrf = ck.Value
+		}
+	}
 	raw, _ := io.ReadAll(res.Body)
 	return Response{Status: res.StatusCode, Body: raw}
 }

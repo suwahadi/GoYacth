@@ -120,6 +120,8 @@
     "NOT_FOUND": "Tidak ditemukan.",
     "NOT_AVAILABLE": "Tidak tersedia.",
     "ARCHIVED": "Item ini diarsipkan.",
-    "USER_NOT_FOUND": "Customer tidak ditemukan."
+    "USER_NOT_FOUND": "Customer tidak ditemukan.",
+    "PASSWORD_TOO_SHORT": "Gunakan minimal 12 karakter.",
+    "PASSWORD_TOO_LONG": "Gunakan maksimal 72 byte."
   }
 }

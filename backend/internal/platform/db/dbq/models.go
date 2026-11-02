@@ -12,15 +12,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type AdminInvite struct {
-	ID         uuid.UUID  `json:"id"`
-	Email      string     `json:"email"`
-	InvitedBy  *uuid.UUID `json:"invited_by"`
-	AcceptedAt *time.Time `json:"accepted_at"`
-	AcceptedBy *uuid.UUID `json:"accepted_by"`
-	CreatedAt  time.Time  `json:"created_at"`
-}
-
 type Area struct {
 	ID        uuid.UUID `json:"id"`
 	BoatID    uuid.UUID `json:"boat_id"`
@@ -817,4 +808,7 @@ type User struct {
 	LastLoginAt     *time.Time `json:"last_login_at"`
 	CreatedAt       time.Time  `json:"created_at"`
 	UpdatedAt       time.Time  `json:"updated_at"`
+	PasswordHash    string     `json:"password_hash"`
+	FailedLogins    int32      `json:"failed_logins"`
+	LockedUntil     *time.Time `json:"locked_until"`
 }
