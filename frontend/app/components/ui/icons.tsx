@@ -201,6 +201,12 @@ export const CloseIcon = (p: IconProps) => (
     <path d="M6 6l12 12M18 6L6 18" />
   </Stroke>
 );
+export const CardIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <rect x="2.5" y="5" width="19" height="14" rx="2" />
+    <path d="M2.5 9.5h19M6 15h4" />
+  </Stroke>
+);
 export const MailIcon = (p: IconProps) => (
   <Stroke {...p}>
     <rect x="3" y="5.5" width="18" height="13" rx="2" />

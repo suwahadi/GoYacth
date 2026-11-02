@@ -44,9 +44,7 @@
     "method": "Payment method",
     "no_methods": "No payment methods are available right now.",
     "choose_method": "Choose a payment method.",
-    "no_fee": "No fee",
     "fee": "Fee {{fee}}",
-    "hold": "pay within {{minutes}} min",
     "scheme": "How much do you want to pay now?",
     "full": "Pay in full",
     "deposit": "Pay a deposit"

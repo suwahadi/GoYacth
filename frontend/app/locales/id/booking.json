@@ -44,9 +44,7 @@
     "method": "Metode pembayaran",
     "no_methods": "Saat ini tidak ada metode pembayaran yang tersedia.",
     "choose_method": "Pilih metode pembayaran.",
-    "no_fee": "Tanpa biaya",
     "fee": "Biaya {{fee}}",
-    "hold": "bayar dalam {{minutes}} menit",
     "scheme": "Berapa yang ingin Anda bayar sekarang?",
     "full": "Bayar lunas",
     "deposit": "Bayar DP"
