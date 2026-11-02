@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useMatches } from "react-router";
 
-import { ArrowRightIcon, Button, ButtonLink, ChatIcon, ChevronDownIcon, Drawer, Dropdown, DropdownItem, GlobeIcon, MailIcon, MenuIcon, PhoneIcon, SunIcon, UserIcon, YachtMark, cn } from "~/components/ui";
+import { ArrowRightIcon, Button, ButtonLink, ChevronDownIcon, Drawer, Dropdown, DropdownItem, GlobeIcon, MailIcon, MenuIcon, PhoneIcon, SunIcon, UserIcon, WhatsAppIcon, YachtMark, cn } from "~/components/ui";
 import { loadAnalytics } from "~/lib/analytics";
 import { readCookie } from "~/lib/api";
 import { LOCALES, localePath, splitLocale, type Locale } from "~/lib/config";
@@ -216,7 +216,9 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
       <div className="px-5 pt-10 lg:px-[3.9vw]">
         <div className="grid gap-8 sm:grid-cols-2 lg:flex lg:gap-[clamp(2.5rem,1rem+4vw,6rem)]">
           <div className="sm:col-span-2 lg:mr-auto">
-            <Logo className="text-[clamp(1.75rem,1rem+1.2vw,2.5rem)]" />
+            <Link to={link("/")} className="inline-flex min-h-11 items-center text-primary">
+              <Logo className="text-[clamp(1.75rem,1rem+1.2vw,2.5rem)]" />
+            </Link>
             <p className="mt-3 text-sm text-muted">{t("common.brand.tagline")}</p>
           </div>
           <div>
@@ -301,7 +303,7 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
                 {site?.whatsapp && (
                   <li>
                     <a className={footerContact} href={`https://wa.me/${site.whatsapp.replace(/[^0-9]/g, "")}`} rel="noopener">
-                      <ChatIcon className="size-4 shrink-0 text-accent-icon" />
+                      <WhatsAppIcon className="size-4 shrink-0 text-accent-icon" />
                       WhatsApp
                     </a>
                   </li>

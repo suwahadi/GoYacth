@@ -15,8 +15,11 @@ export function localePath(locale: Locale, path: string): string {
   return clean === "/" ? `/${locale}` : `/${locale}${clean}`;
 }
 
-// stripLocale returns the locale encoded in a pathname and the path without it.
-export function splitLocale(pathname: string): { locale: Locale; path: string } {
+// splitLocale returns the locale encoded in a pathname and the path without it. Client-side
+// navigations load data from "<path>.data" ("/id" becomes "/id.data", "/" becomes "/_root.data"),
+// so that suffix is removed first or the locale segment would not be recognized.
+export function splitLocale(rawPathname: string): { locale: Locale; path: string } {
+  const pathname = rawPathname.replace(/(\/_root)?\.data$/, "") || "/";
   const seg = pathname.split("/")[1];
   if (isLocale(seg) && seg !== DEFAULT_LOCALE) {
     const rest = pathname.slice(seg.length + 1);

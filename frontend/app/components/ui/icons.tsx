@@ -212,9 +212,12 @@ export const PhoneIcon = (p: IconProps) => (
     <path d="M6.6 3.5h2.3l1.6 4.4-2 1.6a12.5 12.5 0 0 0 5.9 5.9l1.6-2 4.4 1.6v2.3a2.3 2.3 0 0 1-2.5 2.3C10.7 19.1 4.9 13.3 4.3 6a2.3 2.3 0 0 1 2.3-2.5z" />
   </Stroke>
 );
-export const ChatIcon = (p: IconProps) => (
+// WhatsAppIcon is the familiar round speech bubble with a handset, drawn as a line icon so it
+// matches the rest of the set instead of the filled brand mark.
+export const WhatsAppIcon = (p: IconProps) => (
   <Stroke {...p}>
-    <path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.9l-1.2 4.1 4.2-1.1A8.5 8.5 0 1 0 12 3.5zM8.5 10.5h7M8.5 13.8H13" />
+    <path d="M3.6 20.4l1.2-4.3a8.6 8.6 0 1 1 3.2 3.1z" />
+    <path d="M9.1 7.9c-.6.3-1 .9-.9 1.7.4 2.6 2.6 4.9 5.2 5.3.8.1 1.5-.3 1.8-.9l.2-.6-1.9-1-.8.8c-1-.4-1.9-1.3-2.3-2.3l.8-.8-.9-1.9z" />
   </Stroke>
 );
 
