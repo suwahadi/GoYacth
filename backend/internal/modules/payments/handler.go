@@ -1,8 +1,10 @@
 package payments
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -107,11 +109,26 @@ func (h *Handler) webhook(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, r, httpx.BadRequest("WEBHOOK_INVALID", "cannot read body"))
 		return
 	}
+	if isDashboardTest(raw) {
+		httpx.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
+		return
+	}
 	if err := h.svc.HandleNotification(r.Context(), raw); err != nil {
 		httpx.WriteError(w, r, err)
 		return
 	}
 	httpx.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+// isDashboardTest reports whether the body is the notification sent by the Midtrans dashboard's
+// "Test notification URL" button. It carries a fictitious order and no valid signature, and the
+// dashboard refuses to save the URL unless it gets a 2xx, so it is acknowledged without being
+// processed or stored. Nothing is changed for any real order.
+func isDashboardTest(raw []byte) bool {
+	var n struct {
+		OrderID string `json:"order_id"`
+	}
+	return json.Unmarshal(raw, &n) == nil && strings.HasPrefix(n.OrderID, "payment_notif_test_")
 }
 
 type adminPaymentRow struct {
