@@ -192,8 +192,8 @@ func (h *Handler) reschedule(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		if _, err := tx.Exec(r.Context(), `UPDATE bookings SET starts_at = $2, ends_at = $3, departure_id = $4, departure_slot_id = $5,
-			verify_token = $6, verify_token_revoked = false, balance_due_at = CASE WHEN balance_due_at IS NULL THEN NULL ELSE $2 - (starts_at - balance_due_at) END,
+		if _, err := tx.Exec(r.Context(), `UPDATE bookings SET starts_at = $2::timestamptz, ends_at = $3, departure_id = $4, departure_slot_id = $5,
+			verify_token = $6, verify_token_revoked = false, balance_due_at = CASE WHEN balance_due_at IS NULL THEN NULL ELSE $2::timestamptz - (starts_at - balance_due_at) END,
 			updated_at = now() WHERE id = $1`, b.ID, newStart, newEnd, newDep, newSlot, secure.RandomToken(16)); err != nil {
 			if db.UniqueConstraint(err) == "bookings_private_slot_unique_idx" {
 				return bookings.ErrSlotTaken
