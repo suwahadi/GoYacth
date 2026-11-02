@@ -5,8 +5,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 
 type Tone = "photo" | "page";
 
-export function useCarousel(count: number) {
-  const [position, go] = useState(0);
+export function useCarousel(count: number, initial = 0) {
+  const [position, go] = useState(initial);
   const index = count > 0 ? ((position % count) + count) % count : 0;
   return { index, go, next: () => go(index + 1), prev: () => go(index - 1) };
 }

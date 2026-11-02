@@ -83,7 +83,9 @@
     "faqs": "Pertanyaan tentang kapal ini",
     "departures": "Jadwal keberangkatan kapal ini",
     "departures_empty": "Belum ada jadwal keberangkatan untuk kapal ini.",
-    "section_error": "Bagian ini gagal dimuat. Muat ulang halaman untuk mencoba lagi."
+    "section_error": "Bagian ini gagal dimuat. Muat ulang halaman untuk mencoba lagi.",
+    "view_more": "Lihat selengkapnya",
+    "view_less": "Tampilkan lebih sedikit"
   },
   "rate_units": {
     "HOURLY": "Per jam",
@@ -239,5 +241,12 @@
     "empty": "Belum ada ulasan.",
     "from": "{{name}}, {{country}}",
     "rated_by": "Dinilai tamu: {{count}}"
+  },
+  "gallery": {
+    "open": "Buka foto {{n}} dari {{total}}",
+    "counter": "{{n}} / {{total}}",
+    "prev": "Foto sebelumnya",
+    "next": "Foto berikutnya",
+    "go_to": "Tampilkan foto {{n}}"
   }
 }

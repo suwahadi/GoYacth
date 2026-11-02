@@ -1,10 +1,12 @@
 import type { ReactNode, SVGProps } from "react";
 import { Link, isRouteErrorResponse, useRouteError } from "react-router";
 
-import { BedIcon, ButtonLink, CalendarIcon, ClockIcon, Container, Money, PHONE_IMAGE, ResponsiveImage, RulerIcon, SealCheckIcon, UsersIcon, cn } from "~/components/ui";
+import { BedIcon, ButtonLink, CalendarIcon, ChevronRightIcon, ClockIcon, Container, Money, PHONE_IMAGE, ResponsiveImage, RulerIcon, SealCheckIcon, UsersIcon, cn } from "~/components/ui";
 import { localePath, splitLocale, DEFAULT_LOCALE, type Locale } from "~/lib/config";
 import { countryName, formatBasisPoints, formatDuration, formatIDR, formatNumber, formatPlainDate } from "~/lib/format";
 import { useLocale, useT, useTCode } from "~/lib/i18n";
+
+export { Gallery } from "./gallery";
 import type { BoatCard, CancellationTier, Faq, Img, PackageCard, PolicySummary, RegionCard, Review, RouteCard } from "~/lib/types";
 
 // localizeHref keeps admin-entered links on the visitor's language: locale-free site paths get
@@ -227,27 +229,6 @@ export function RouteCardItem({ route }: { route: RouteCard }) {
     </ImageCard>
   );
 }
-export function Gallery({ images, fallback }: { images: Img[]; fallback?: Img | null }) {
-  const t = useT();
-  const list = images.length > 0 ? images : fallback ? [fallback] : [];
-  if (list.length === 0) return null;
-  const [first, ...rest] = list;
-  return (
-    <section aria-label={t("public.boat.gallery")} className="space-y-2">
-      <ResponsiveImage image={first} sizes={`(min-width: 1152px) 1120px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} priority className="aspect-[16/9] h-auto w-full rounded-lg" />
-      {rest.length > 0 && (
-        <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          {rest.slice(0, 8).map((img) => (
-            <li key={img.id}>
-              <ResponsiveImage image={img} sizes="(min-width: 640px) 25vw, 33vw" className="aspect-[4/3] h-auto w-full rounded" />
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
 export function initials(name: string): string {
   return name
     .split(/\s+/)
@@ -264,7 +245,9 @@ export interface ReviewStats {
   crew: number;
 }
 
-export function ReviewSummary({ stats }: { stats: ReviewStats }) {
+// ReviewSummary shows the averages. With onOpen, the "Rated by guests" line becomes the button
+// that opens the full list.
+export function ReviewSummary({ stats, onOpen }: { stats: ReviewStats; onOpen?: () => void }) {
   const t = useT();
   const locale = useLocale();
   const score = (v: number) => formatNumber(Math.round(v * 10) / 10, locale);
@@ -274,12 +257,19 @@ export function ReviewSummary({ stats }: { stats: ReviewStats }) {
     [t("account.review.rating_crew"), stats.crew],
   ];
   return (
-    <div className="mb-8 flex flex-wrap items-center gap-x-12 gap-y-4 border-y border-border py-5">
+    <div className={cn("flex flex-wrap items-center gap-x-12 gap-y-4 border-y border-border py-5", !onOpen && "mb-8")}>
       <p className="flex items-center gap-4">
         <span className="font-display text-5xl leading-none">{score(stats.overall)}</span>
         <span>
           <Stars rating={stats.overall} className="text-lg" />
-          <span className="block text-sm text-muted">{t("public.reviews.rated_by", { count: stats.total })}</span>
+          {onOpen ? (
+            <button type="button" onClick={onOpen} className="-my-1 flex cursor-pointer items-center gap-1 py-1 text-sm text-primary underline-offset-4 hover:underline">
+              {t("public.reviews.rated_by", { count: stats.total })}
+              <ChevronRightIcon className="size-4" />
+            </button>
+          ) : (
+            <span className="block text-sm text-muted">{t("public.reviews.rated_by", { count: stats.total })}</span>
+          )}
         </span>
       </p>
       <dl className="flex flex-wrap gap-x-10 gap-y-3 text-sm">
@@ -297,12 +287,12 @@ export function ReviewSummary({ stats }: { stats: ReviewStats }) {
   );
 }
 
-export function ReviewList({ reviews }: { reviews: Review[] }) {
+export function ReviewList({ reviews, columns = 2 }: { reviews: Review[]; columns?: 1 | 2 }) {
   const t = useT();
   const locale = useLocale();
   if (reviews.length === 0) return <p className="text-muted">{t("public.reviews.empty")}</p>;
   return (
-    <ul className="grid gap-x-10 gap-y-8 md:grid-cols-2">
+    <ul className={cn("grid gap-x-10 gap-y-8", columns === 2 ? "md:grid-cols-2" : "divide-y divide-border [&>li:not(:first-child)]:pt-8")}>
       {reviews.map((r) => (
         <li key={r.id}>
           <article lang={r.locale}>

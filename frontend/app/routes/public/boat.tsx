@@ -3,7 +3,9 @@ import { data, Link } from "react-router";
 import type { Route } from "./+types/boat";
 import { AnchorIcon, BathIcon, BeamIcon, BedIcon, CalendarIcon, Card, ClockIcon, Container, CrownIcon, FacilityIcon, GaugeIcon, HelmIcon, MapPinIcon, Money, MoonIcon, RouteIcon, RulerIcon, SailboatIcon, SunIcon, TagIcon, UsersIcon } from "~/components/ui";
 import { CharterWidget } from "~/features/public/charter-widget";
-import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, RatingLine, ReviewList, ReviewSummary, Section, SectionError, tapLink, unitKey, type ReviewStats } from "~/features/public/components";
+import { BoatReviews } from "~/features/public/boat-reviews";
+import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, RatingLine, Section, SectionError, tapLink, unitKey, type ReviewStats } from "~/features/public/components";
+import { ExpandableText } from "~/features/public/expandable-text";
 import { DepartureList } from "~/features/public/departures";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { api } from "~/lib/api";
@@ -94,35 +96,28 @@ function RateIcon({ unit }: { unit: string }) {
   return <Icon className="size-6 shrink-0 text-accent-icon" />;
 }
 
+// Areas lists every area as one card in a two-column grid, with its deck as a label, so cards
+// line up across decks instead of leaving half-empty rows.
 function Areas({ areas }: { areas: PublicArea[] }) {
   const t = useT();
-  const decks = new Map<string, PublicArea[]>();
-  for (const a of areas) {
-    const key = a.deck_label || "";
-    decks.set(key, [...(decks.get(key) ?? []), a]);
-  }
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted">{t("public.boat.areas_hint")}</p>
-      {[...decks.entries()].map(([deck, list]) => (
-        <div key={deck}>
-          <h3 className="font-semibold">{deck || t("public.boat.deck_other")}</h3>
-          <ul className="mt-2 grid gap-3 sm:grid-cols-2">
-            {list.map((a) => (
-              <li key={a.id}>
-                <Card className="h-full text-sm">
-                  <p className="font-medium">{a.name}</p>
-                  {a.description && <p className="mt-1 text-muted">{a.description}</p>}
-                  <ul className="mt-2">
-                    <Meta icon={UsersIcon}>{t("public.boat.area_pax", { min: a.min_pax, max: a.max_pax })}</Meta>
-                  </ul>
-                  {a.facilities.length > 0 && <p className="mt-1 text-muted">{a.facilities.map((f) => f.name).join(", ")}</p>}
-                </Card>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <ul className="grid gap-3 md:grid-cols-2">
+        {areas.map((a) => (
+          <li key={a.id}>
+            <Card className="flex h-full flex-col text-sm">
+              <p className="text-xs font-medium uppercase tracking-wide text-accent-text">{a.deck_label || t("public.boat.deck_other")}</p>
+              <p className="mt-1 font-medium">{a.name}</p>
+              {a.description && <p className="mt-1 text-muted">{a.description}</p>}
+              <ul className="mt-auto pt-3">
+                <Meta icon={UsersIcon}>{t("public.boat.area_pax", { min: a.min_pax, max: a.max_pax })}</Meta>
+              </ul>
+              {a.facilities.length > 0 && <p className="mt-1 text-muted">{a.facilities.map((f) => f.name).join(", ")}</p>}
+            </Card>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -152,7 +147,7 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
         <div className="min-w-0">
           {boat.description && (
             <Section title={t("public.boat.overview")} id="overview">
-              <p className="whitespace-pre-line">{boat.description}</p>
+              <ExpandableText text={boat.description} />
             </Section>
           )}
           <Section title={t("public.boat.specs")} id="specs">
@@ -237,8 +232,7 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
             )}
           </Section>
           <Section title={t("public.boat.reviews")} id="reviews">
-            {reviewStats && reviewStats.total > 0 && <ReviewSummary stats={reviewStats} />}
-            {reviews === null ? <SectionError /> : <ReviewList reviews={reviews} />}
+            <BoatReviews boatId={boat.id} stats={reviewStats} initial={reviews} />
           </Section>
           {faqs === null ? (
             <Section title={t("public.boat.faqs")} id="faqs">

@@ -355,11 +355,39 @@ var boatCopy = map[string]text{
 	"sailing-yacht": {"Classic sailing yacht for %d guests with a crew of %d.", "Yacht layar klasik untuk %d tamu dengan %d awak."},
 }
 
+// boatLife adds two paragraphs per category so demo descriptions are long enough to exercise
+// the collapsed overview on the boat page.
+var boatLife = map[string][2]text{
+	"motor-yacht": {
+		{"Life on board centres on the main saloon and the sun deck. The saloon stays cool at midday, with sofas facing wide windows, while the upper deck has loungers, shade and a bar for the evening. Cabins have their own bathrooms, fresh towels and blackout curtains for an afternoon rest between stops.", "Kehidupan di atas kapal berpusat di salon utama dan sun deck. Salon tetap sejuk di siang hari dengan sofa menghadap jendela lebar, sementara dek atas punya kursi berjemur, peneduh dan bar untuk sore hari. Setiap kabin memiliki kamar mandi sendiri, handuk bersih dan tirai gelap untuk beristirahat di antara pemberhentian."},
+		{"A typical day starts with breakfast at anchor, then a cruise to a quiet bay for snorkelling or paddleboarding. The crew prepares lunch in the galley, and the captain times the return so you watch the sunset from the bow. Tell us about dietary needs or celebrations when you book and the crew plans around them.", "Hari biasanya dimulai dengan sarapan saat berlabuh, lalu berlayar ke teluk yang tenang untuk snorkeling atau paddleboard. Awak menyiapkan makan siang di dapur kapal, dan kapten mengatur waktu pulang agar Anda menikmati matahari terbenam dari haluan. Sampaikan kebutuhan makanan atau acara khusus saat memesan agar awak dapat menyiapkannya."},
+	},
+	"catamaran": {
+		{"Two hulls keep the boat level even in a swell, so guests who worry about seasickness feel at ease. The wide trampoline at the bow is the favourite spot for sunbathing, and the covered cockpit seats everyone for meals with an open view of the water.", "Dua lambung menjaga kapal tetap stabil meski ada gelombang, sehingga tamu yang khawatir mabuk laut tetap nyaman. Trampolin lebar di haluan adalah tempat favorit untuk berjemur, dan kokpit beratap muat untuk semua tamu saat makan dengan pemandangan laut terbuka."},
+		{"The shallow draft lets the catamaran anchor close to beaches that larger yachts cannot reach. Swim straight off the stern steps, explore the reef with the snorkelling gear on board, and come back to cold drinks and fresh fruit from the crew.", "Draft yang dangkal memungkinkan katamaran berlabuh dekat pantai yang tidak bisa dijangkau yacht besar. Berenanglah langsung dari tangga buritan, jelajahi terumbu dengan perlengkapan snorkeling di kapal, lalu kembali untuk minuman dingin dan buah segar dari awak."},
+	},
+	"phinisi": {
+		{"The phinisi is built by hand from ironwood and teak in the tradition of South Sulawesi boatbuilders. Polished wooden decks, rope rigging and canvas sails give the boat its character, while the cabins below are fitted with air conditioning and private bathrooms.", "Phinisi dibuat dengan tangan dari kayu ulin dan jati mengikuti tradisi pembuat kapal Sulawesi Selatan. Dek kayu yang mengilap, tali temali dan layar kanvas memberi karakter khas, sementara kabin di bawah dilengkapi pendingin udara dan kamar mandi pribadi."},
+		{"Days follow the rhythm of the islands: an early start to beat the crowds at the viewpoints, swimming and snorkelling at midday, and dinner on deck under the stars. The crew has sailed these waters for years and knows where the manta rays feed and where the beaches stay empty.", "Hari mengikuti ritme kepulauan: berangkat pagi agar mendahului keramaian di titik pandang, berenang dan snorkeling di siang hari, lalu makan malam di dek di bawah bintang. Awak sudah bertahun-tahun berlayar di perairan ini dan tahu di mana pari manta mencari makan serta pantai mana yang tetap sepi."},
+	},
+	"speedboat": {
+		{"Twin outboard engines cover the crossing between islands in a fraction of the time a larger boat needs, which leaves more of the day for the places you came to see. Padded seats, a shade canopy and dry storage keep the ride comfortable.", "Dua mesin tempel menempuh penyeberangan antarpulau jauh lebih cepat daripada kapal besar, sehingga lebih banyak waktu untuk tempat yang ingin Anda kunjungi. Kursi empuk, kanopi peneduh dan tempat penyimpanan kering menjaga perjalanan tetap nyaman."},
+		{"The speedboat suits island hopping and snorkelling trips for small groups. The driver knows the currents and the best times to visit each spot, and life jackets in every size are on board. Bring a towel and sunscreen; water and snorkelling gear are provided.", "Speedboat cocok untuk island hopping dan snorkeling bagi kelompok kecil. Pengemudi memahami arus dan waktu terbaik mengunjungi setiap lokasi, dan jaket pelampung berbagai ukuran tersedia. Bawa handuk dan tabir surya; air minum dan perlengkapan snorkeling disediakan."},
+	},
+	"sailing-yacht": {
+		{"Under sail the yacht moves quietly with the wind, heeling gently as the crew trims the sheets. Guests can take the helm with the skipper's guidance or simply relax in the cockpit and watch the coastline pass.", "Saat berlayar, yacht bergerak tenang mengikuti angin dan sedikit miring ketika awak mengatur layar. Tamu bisa memegang kemudi dengan panduan skipper atau sekadar bersantai di kokpit sambil memandangi garis pantai."},
+		{"Below deck the saloon and cabins are compact but well kept, with good ventilation and fresh linen. When the wind drops the engine takes over, so the schedule stays on time. It is the boat for guests who want to feel the sea rather than just cross it.", "Di bawah dek, salon dan kabin memang ringkas namun terawat, dengan ventilasi baik dan seprai bersih. Saat angin melemah mesin mengambil alih, sehingga jadwal tetap tepat waktu. Inilah kapal bagi tamu yang ingin merasakan laut, bukan sekadar menyeberanginya."},
+	},
+}
+
 func (b demoBoat) copy(locale string) (summary, description string) {
 	summary = fmt.Sprintf(boatCopy[b.category].get(locale), b.pax, b.crew)
 	meters := float64(b.lengthCm) / 100
+	life := boatLife[b.category]
 	if locale == "id" {
-		return summary, fmt.Sprintf("%s adalah kapal sepanjang %.0f meter buatan %d yang berpangkalan di %s. %s Deskripsi ini adalah data demo.", b.name, meters, b.year, portOf(b.port).name, summary)
+		intro := fmt.Sprintf("%s adalah kapal sepanjang %.0f meter buatan %d yang berpangkalan di %s. %s", b.name, meters, b.year, portOf(b.port).name, summary)
+		return summary, intro + "\n\n" + life[0].get(locale) + "\n\n" + life[1].get(locale) + "\n\nDeskripsi ini adalah data demo."
 	}
-	return summary, fmt.Sprintf("%s is a %.0f metre boat built in %d and based at %s. %s This description is demo data.", b.name, meters, b.year, portOf(b.port).name, summary)
+	intro := fmt.Sprintf("%s is a %.0f metre boat built in %d and based at %s. %s", b.name, meters, b.year, portOf(b.port).name, summary)
+	return summary, intro + "\n\n" + life[0].get(locale) + "\n\n" + life[1].get(locale) + "\n\nThis description is demo data."
 }

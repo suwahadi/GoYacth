@@ -120,6 +120,16 @@
   --color-overlay: var(--overlay);
   --font-sans: "Figtree Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-display: "Newsreader Variable", ui-serif, Georgia, "Times New Roman", serif;
+  --animate-fade-in: fade-in 200ms ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 html {

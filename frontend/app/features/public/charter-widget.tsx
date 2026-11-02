@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { Button, ButtonLink, Card, Field, Input, Select } from "~/components/ui";
+import { Button, ButtonLink, Card, Field, Input, Select, cn } from "~/components/ui";
 import { formatDuration, formatTime, zoneLabel } from "~/lib/format";
 import { useLocale, useT } from "~/lib/i18n";
 import type { BoatDetail, Rate } from "~/lib/types";
@@ -138,61 +138,66 @@ export function CharterWidget({ boat }: { boat: BoatDetail }) {
             </Select>
           )}
         </Field>
-        {boat.rates.length > 1 && (
-          <Field label={t("public.widget.rate")}>
+        {/* Short fields share a row so the form stays compact on phones and in the sidebar. */}
+        <div className="grid grid-cols-2 gap-x-3 gap-y-4">
+          {boat.rates.length > 1 && (
+            <Field label={t("public.widget.rate")}>
+              {(p) => (
+                <Select {...p} value={rateUnit} onChange={(e) => setRateUnit(e.target.value as Rate["rate_unit"])}>
+                  {boat.rates.map((r) => (
+                    <option key={r.rate_unit} value={r.rate_unit}>
+                      {t(`public.rate_units.${r.rate_unit}`)}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+          )}
+          {rateUnit === "FIXED" ? (
+            <p className={cn("self-end pb-2.5 text-sm", boat.rates.length === 1 && "col-span-2")}>{t("public.widget.fixed_duration", { duration: formatDuration(routeMin, locale) })}</p>
+          ) : (
+            <Field label={t(rateUnit === "DAILY" ? "public.widget.days" : "public.widget.hours")} className={boat.rates.length === 1 ? "col-span-2" : undefined}>
+              {(p) => (
+                <Select {...p} value={effectiveUnits || ""} onChange={(e) => setUnits(Number(e.target.value))}>
+                  {units_.map((u) => (
+                    <option key={u} value={u}>
+                      {rateUnit === "DAILY" ? t("public.widget.day_count", { count: u }) : formatDuration(u * 60, locale)}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+          )}
+          <Field label={t("public.widget.date")} hint={t("public.widget.date_hint", { zone: zoneLabel(tz) })} className="col-span-2">
+            {(p) => <Input {...p} type="date" min={today} max={maxDate} value={date} onChange={(e) => setDate(e.target.value)} />}
+          </Field>
+          <div className="col-span-2 empty:hidden">
+            <BusyList state={busy} tz={tz} />
+          </div>
+          <Field label={t("public.widget.start_time")} error={times.length === 0 ? t("public.widget.no_times") : undefined}>
             {(p) => (
-              <Select {...p} value={rateUnit} onChange={(e) => setRateUnit(e.target.value as Rate["rate_unit"])}>
-                {boat.rates.map((r) => (
-                  <option key={r.rate_unit} value={r.rate_unit}>
-                    {t(`public.rate_units.${r.rate_unit}`)}
+              <Select {...p} value={effectiveStart} onChange={(e) => setStartTime(e.target.value)} disabled={times.length === 0}>
+                <option value="">{t("public.widget.choose_time")}</option>
+                {times.map((tm) => (
+                  <option key={tm} value={tm}>
+                    {tm} {zoneLabel(tz)}
                   </option>
                 ))}
               </Select>
             )}
           </Field>
-        )}
-        {rateUnit === "FIXED" ? (
-          <p className="text-sm">{t("public.widget.fixed_duration", { duration: formatDuration(routeMin, locale) })}</p>
-        ) : (
-          <Field label={t(rateUnit === "DAILY" ? "public.widget.days" : "public.widget.hours")}>
+          <Field label={t("public.widget.pax")} hint={t("public.widget.pax_hint", { count: boat.max_passengers })}>
             {(p) => (
-              <Select {...p} value={effectiveUnits || ""} onChange={(e) => setUnits(Number(e.target.value))}>
-                {units_.map((u) => (
-                  <option key={u} value={u}>
-                    {rateUnit === "DAILY" ? t("public.widget.day_count", { count: u }) : formatDuration(u * 60, locale)}
+              <Select {...p} value={pax} onChange={(e) => setPax(Number(e.target.value))}>
+                {range(1, boat.max_passengers).map((n) => (
+                  <option key={n} value={n}>
+                    {n}
                   </option>
                 ))}
               </Select>
             )}
           </Field>
-        )}
-        <Field label={t("public.widget.date")} hint={t("public.widget.date_hint", { zone: zoneLabel(tz) })}>
-          {(p) => <Input {...p} type="date" min={today} max={maxDate} value={date} onChange={(e) => setDate(e.target.value)} />}
-        </Field>
-        <BusyList state={busy} tz={tz} />
-        <Field label={t("public.widget.start_time")} error={times.length === 0 ? t("public.widget.no_times") : undefined}>
-          {(p) => (
-            <Select {...p} value={effectiveStart} onChange={(e) => setStartTime(e.target.value)} disabled={times.length === 0}>
-              <option value="">{t("public.widget.choose_time")}</option>
-              {times.map((tm) => (
-                <option key={tm} value={tm}>
-                  {tm} {zoneLabel(tz)}
-                </option>
-              ))}
-            </Select>
-          )}
-        </Field>
-        <Field label={t("public.widget.pax")} hint={t("public.widget.pax_hint", { count: boat.max_passengers })}>
-          {(p) => (
-            <Select {...p} value={pax} onChange={(e) => setPax(Number(e.target.value))}>
-              {range(1, boat.max_passengers).map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </Select>
-          )}
-        </Field>
+        </div>
         <QuoteView state={quote} idleText={t("public.widget.complete_form")} />
         {quote.status === "success" && request ? (
           <ButtonLink

@@ -83,7 +83,9 @@
     "faqs": "Questions about this boat",
     "departures": "Upcoming departures on this boat",
     "departures_empty": "No departures are scheduled on this boat right now.",
-    "section_error": "This section could not be loaded. Reload the page to try again."
+    "section_error": "This section could not be loaded. Reload the page to try again.",
+    "view_more": "View more",
+    "view_less": "View less"
   },
   "rate_units": {
     "HOURLY": "Hourly",
@@ -239,5 +241,12 @@
     "empty": "No reviews yet.",
     "from": "{{name}}, {{country}}",
     "rated_by": "Rated by guests: {{count}}"
+  },
+  "gallery": {
+    "open": "Open photo {{n}} of {{total}}",
+    "counter": "{{n}} / {{total}}",
+    "prev": "Previous photo",
+    "next": "Next photo",
+    "go_to": "Show photo {{n}}"
   }
 }
