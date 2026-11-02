@@ -47,6 +47,9 @@ export default function Boats({ loaderData }: Route.ComponentProps) {
   const t = useT();
   const { boats, page, regions, categories, classes } = loaderData;
   const [params, setParams] = useSearchParams();
+  // Carries the homepage search date into the charter form on the boat page.
+  const date = params.get("date");
+  const dateSearch = date ? `?date=${encodeURIComponent(date)}` : "";
   const active = FILTERS.filter((k) => params.get(k)).length;
   const setFilter = (key: (typeof FILTERS)[number], value: string) => {
     const next = new URLSearchParams(params);
@@ -87,7 +90,7 @@ export default function Boats({ loaderData }: Route.ComponentProps) {
         ) : (
           <CardGrid>
             {boats.map((b) => (
-              <BoatCardItem key={b.id} boat={b} names={{ category: categoryName.get(b.category_id), class: className.get(b.class_id) }} />
+              <BoatCardItem key={b.id} boat={b} search={dateSearch} names={{ category: categoryName.get(b.category_id), class: className.get(b.class_id) }} />
             ))}
           </CardGrid>
         )}

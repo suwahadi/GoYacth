@@ -1,9 +1,9 @@
 {
   "brand": {
-    "tagline": "Private charters and shared trips across Indonesia"
+    "tagline": "Luxury Yacht Charter in Indonesia"
   },
   "nav": {
-    "boats": "Boats",
+    "boats": "Our Fleet",
     "packages": "Packages",
     "departures": "Departures",
     "regions": "Destinations",
@@ -12,7 +12,9 @@
     "account": "My bookings",
     "admin": "Admin",
     "menu": "Menu",
-    "close": "Close"
+    "close": "Close",
+    "main": "Main",
+    "book": "Book Your Journey"
   },
   "auth": {
     "sign_in": "Sign in",
@@ -95,7 +97,17 @@
     "legal": "Legal",
     "terms": "Terms & conditions",
     "privacy": "Privacy policy",
-    "cancellation": "Cancellation policy"
+    "cancellation": "Cancellation policy",
+    "quick_links": "Quick Links",
+    "help": "Help",
+    "subscribe_title": "Subscribe for updates",
+    "subscribe_placeholder": "Your email address",
+    "coming_soon": "Coming soon",
+    "company": "Company",
+    "about": "About Us",
+    "reviews": "Reviews",
+    "contact_us": "Contact",
+    "how_to_book": "How to Book"
   },
   "cookies": {
     "title": "Cookies",

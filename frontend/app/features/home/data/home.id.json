@@ -1,0 +1,393 @@
+[
+  {
+    "id": "static-hero-1",
+    "type": "HERO",
+    "content": {
+      "title": "Temukan Keindahan Indonesia",
+      "subtitle": "Sewa Yacht Premium",
+      "body": "Sewa yacht mewah atau ikut jadwal keberangkatan pilihan kami untuk perjalanan tak terlupakan ke destinasi terindah di Indonesia.",
+      "cta_label": "Lihat Armada Kami",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": {
+      "id": "static-hero-yacht",
+      "status": "READY",
+      "alt": "Yacht putih berlayar saat matahari terbenam dengan pegunungan di cakrawala",
+      "width": 1920,
+      "height": 1080,
+      "sources": [
+        {
+          "url": "/home/hero-yacht-960.webp",
+          "width": 960,
+          "height": 540
+        },
+        {
+          "url": "/home/hero-yacht-1920.webp",
+          "width": 1920,
+          "height": 1080
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-hero-2",
+    "type": "HERO",
+    "content": {
+      "title": "Berlayar di Antara Pulau-Pulau Indonesia",
+      "subtitle": "Destinasi",
+      "body": "Bali, Lombok, Labuan Bajo, dan Raja Ampat, masing-masing berangkat dari pelabuhannya sendiri.",
+      "cta_label": "Lihat Destinasi",
+      "cta_url": "/destinations",
+      "items": null
+    },
+    "image": {
+      "id": "static-hero-islands",
+      "status": "READY",
+      "alt": "Pulau hijau berpantai putih di perairan pirus jernih, dilihat dari atas",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/region-islands-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/region-islands-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-hero-3",
+    "type": "HERO",
+    "content": {
+      "title": "Senja di Dek Kapal Anda Sendiri",
+      "subtitle": "Private Charter",
+      "body": "Sewa seluruh kapal untuk rombongan Anda, lalu pilih rute, tanggal, dan waktu berlayar.",
+      "cta_label": "Rencanakan Private Charter",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": {
+      "id": "static-hero-sunset",
+      "status": "READY",
+      "alt": "Pasangan menikmati matahari terbenam dari haluan yacht",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/moment-sunset-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/moment-sunset-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-trust",
+    "type": "HIGHLIGHTS",
+    "content": {
+      "title": "",
+      "subtitle": "",
+      "body": "",
+      "cta_label": "",
+      "cta_url": "",
+      "items": [
+        {
+          "title": "Armada Mewah",
+          "text": "Pilihan Premium",
+          "icon": "diamond"
+        },
+        {
+          "title": "Tepercaya & Aman",
+          "text": "Keselamatan Anda yang Utama",
+          "icon": "shield"
+        },
+        {
+          "title": "Dukungan 24/7",
+          "text": "Selalu Siap Membantu",
+          "icon": "headset"
+        },
+        {
+          "title": "Pengalaman Tak Terlupakan",
+          "text": "Melebihi Harapan",
+          "icon": "star"
+        }
+      ]
+    },
+    "image": null
+  },
+  {
+    "id": "static-fleet",
+    "type": "FEATURED_BOATS",
+    "content": {
+      "title": "Yacht Istimewa",
+      "subtitle": "Armada Kami",
+      "body": "Dari yacht elegan hingga katamaran yang lapang, jelajahi armada pilihan kami.",
+      "cta_label": "Lihat Semua Armada",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": null,
+    "data": [
+      {
+        "id": "static-boat-yacht",
+        "code": "",
+        "name": "Yacht Mewah",
+        "slug": "",
+        "summary": "",
+        "category_id": "",
+        "class_id": "",
+        "max_passengers": 12,
+        "length_cm": null,
+        "cabins": 0,
+        "from_price": 0,
+        "from_unit": "",
+        "rating": 0,
+        "review_count": 0,
+        "thumbnail": {
+          "id": "static-fleet-yacht",
+          "status": "READY",
+          "alt": "Yacht putih di atas air biru yang tenang",
+          "width": 800,
+          "height": 760,
+          "sources": [
+            {
+              "url": "/home/fleet-yacht-400.webp",
+              "width": 400,
+              "height": 380
+            },
+            {
+              "url": "/home/fleet-yacht-800.webp",
+              "width": 800,
+              "height": 760
+            }
+          ]
+        }
+      },
+      {
+        "id": "static-boat-catamaran",
+        "code": "",
+        "name": "Katamaran",
+        "slug": "",
+        "summary": "",
+        "category_id": "",
+        "class_id": "",
+        "max_passengers": 16,
+        "length_cm": null,
+        "cabins": 0,
+        "from_price": 0,
+        "from_unit": "",
+        "rating": 0,
+        "review_count": 0,
+        "thumbnail": {
+          "id": "static-fleet-catamaran",
+          "status": "READY",
+          "alt": "Katamaran layar dengan layar putih terkembang",
+          "width": 800,
+          "height": 760,
+          "sources": [
+            {
+              "url": "/home/fleet-catamaran-400.webp",
+              "width": 400,
+              "height": 380
+            },
+            {
+              "url": "/home/fleet-catamaran-800.webp",
+              "width": 800,
+              "height": 760
+            }
+          ]
+        }
+      },
+      {
+        "id": "static-boat-phinisi",
+        "code": "",
+        "name": "Phinisi",
+        "slug": "",
+        "summary": "",
+        "category_id": "",
+        "class_id": "",
+        "max_passengers": 20,
+        "length_cm": null,
+        "cabins": 0,
+        "from_price": 0,
+        "from_unit": "",
+        "rating": 0,
+        "review_count": 0,
+        "thumbnail": {
+          "id": "static-fleet-phinisi",
+          "status": "READY",
+          "alt": "Kapal kayu phinisi tradisional sedang berlabuh",
+          "width": 800,
+          "height": 760,
+          "sources": [
+            {
+              "url": "/home/fleet-phinisi-400.webp",
+              "width": 400,
+              "height": 380
+            },
+            {
+              "url": "/home/fleet-phinisi-800.webp",
+              "width": 800,
+              "height": 760
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "static-regions",
+    "type": "REGIONS",
+    "content": {
+      "title": "Surga Menanti",
+      "subtitle": "Jelajahi Destinasi",
+      "body": "Berlayar ke destinasi memukau, dari Bali hingga Labuan Bajo dan sekitarnya.",
+      "cta_label": "Jelajahi Destinasi",
+      "cta_url": "/destinations",
+      "items": null
+    },
+    "image": {
+      "id": "static-region-islands",
+      "status": "READY",
+      "alt": "Pulau hijau berpantai putih di perairan pirus jernih, dilihat dari atas",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/region-islands-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/region-islands-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    },
+    "data": [
+      {
+        "id": "static-region-bali",
+        "name": "Bali",
+        "slug": "",
+        "locale": "id",
+        "description": "",
+        "thumbnail": null
+      },
+      {
+        "id": "static-region-lombok",
+        "name": "Lombok",
+        "slug": "",
+        "locale": "id",
+        "description": "",
+        "thumbnail": null
+      },
+      {
+        "id": "static-region-labuan-bajo",
+        "name": "Labuan Bajo",
+        "slug": "",
+        "locale": "id",
+        "description": "",
+        "thumbnail": null
+      },
+      {
+        "id": "static-region-raja-ampat",
+        "name": "Raja Ampat",
+        "slug": "",
+        "locale": "id",
+        "description": "",
+        "thumbnail": null
+      }
+    ]
+  },
+  {
+    "id": "static-why",
+    "type": "HIGHLIGHTS",
+    "content": {
+      "title": "Momen Tak Terlupakan",
+      "subtitle": "Mengapa Memilih Kami",
+      "body": "Lebih dari sekadar perjalanan, ini pengalaman yang berkesan.",
+      "cta_label": "",
+      "cta_url": "",
+      "items": [
+        {
+          "title": "Armada Kelas Dunia",
+          "text": "",
+          "icon": "globe"
+        },
+        {
+          "title": "Aman & Andal",
+          "text": "",
+          "icon": "shield"
+        },
+        {
+          "title": "Dukungan Khusus",
+          "text": "",
+          "icon": "headset"
+        },
+        {
+          "title": "Paket Sesuai Keinginan",
+          "text": "",
+          "icon": "star"
+        }
+      ]
+    },
+    "image": {
+      "id": "static-why-sunset",
+      "status": "READY",
+      "alt": "Pasangan menikmati matahari terbenam dari haluan yacht",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/moment-sunset-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/moment-sunset-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-reviews",
+    "type": "REVIEWS",
+    "content": {
+      "title": "Kata Tamu Kami",
+      "subtitle": "",
+      "body": "",
+      "cta_label": "",
+      "cta_url": "",
+      "items": null
+    },
+    "image": null,
+    "data": []
+  },
+  {
+    "id": "static-cta",
+    "type": "CTA",
+    "content": {
+      "title": "Siap untuk Petualangan Berikutnya?",
+      "subtitle": "",
+      "body": "Pesan yacht Anda hari ini dan nikmati yang terbaik dari Indonesia.",
+      "cta_label": "Pesan Perjalanan",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": null
+  }
+]

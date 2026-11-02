@@ -2,11 +2,30 @@
   "home": {
     "title": "Sewa kapal dan yacht di Indonesia",
     "description": "Pesan sewa kapal privat dan trip bersama di Bali, Lombok, Labuan Bajo, dan destinasi lainnya, dengan harga rupiah yang jelas.",
-    "fallback_title": "Temukan kapal Anda",
-    "fallback_subtitle": "Sewa privat dan keberangkatan bersama di seluruh Indonesia.",
-    "featured_boats": "Kapal pilihan",
     "browse_boats": "Lihat semua kapal",
-    "see_departures": "Lihat jadwal keberangkatan"
+    "see_departures": "Lihat jadwal keberangkatan",
+    "hero_label": "Perjalanan pilihan",
+    "prev_slide": "Slide sebelumnya",
+    "next_slide": "Slide berikutnya",
+    "go_to_slide": "Ke slide {{n}}",
+    "highlights_label": "Alasan memesan di sini",
+    "more_regions": "& Lainnya",
+    "reviews_title": "Kata Tamu Kami",
+    "prev_review": "Ulasan sebelumnya",
+    "next_review": "Ulasan berikutnya",
+    "go_to_review": "Ke ulasan {{n}}",
+    "search": {
+      "label": "Cari kapal dan keberangkatan",
+      "mode": "Jenis Pemesanan",
+      "mode_charter": "Private Charter",
+      "mode_departure": "Keberangkatan",
+      "date": "Tanggal",
+      "from": "Dari",
+      "all_regions": "Semua destinasi",
+      "guests": "Tamu",
+      "guests_option": "{{count}} Tamu",
+      "submit": "Cari"
+    }
   },
   "breadcrumb": {
     "label": "Navigasi remah roti",

@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useState } from "react";
+import { useSearchParams } from "react-router";
 
 import { Button, ButtonLink, Card, Field, Input, Select } from "~/components/ui";
 import { formatDuration, formatTime, zoneLabel } from "~/lib/format";
@@ -70,7 +71,9 @@ export function CharterWidget({ boat }: { boat: BoatDetail }) {
   const tz = boat.home_port.timezone || "Asia/Makassar";
   const [routeId, setRouteId] = useState(boat.routes[0]?.id ?? "");
   const [rateUnit, setRateUnit] = useState<Rate["rate_unit"]>(boat.rates[0]?.rate_unit ?? "HOURLY");
-  const [date, setDate] = useState("");
+  const [searchParams] = useSearchParams();
+  const requestedDate = searchParams.get("date") ?? "";
+  const [date, setDate] = useState(/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) ? requestedDate : "");
   const [startTime, setStartTime] = useState("");
   const [units, setUnits] = useState(0);
   const [pax, setPax] = useState(Math.min(2, boat.max_passengers));

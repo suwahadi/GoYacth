@@ -125,11 +125,11 @@ function ImageCard({ href, image, title, children }: { href: string; image: Img 
   );
 }
 
-export function BoatCardItem({ boat, names }: { boat: BoatCard; names?: { category?: string; class?: string } }) {
+export function BoatCardItem({ boat, names, search = "" }: { boat: BoatCard; names?: { category?: string; class?: string }; search?: string }) {
   const t = useT();
   const locale = useLocale();
   return (
-    <ImageCard href={localePath(locale, `/boats/${boat.slug}`)} image={boat.thumbnail} title={boat.name}>
+    <ImageCard href={localePath(locale, `/boats/${boat.slug}`) + search} image={boat.thumbnail} title={boat.name}>
       {(names?.category || names?.class) && (
         <p className="flex flex-wrap gap-1">
           {names.category && <Badge>{names.category}</Badge>}

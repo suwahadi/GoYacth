@@ -1,6 +1,9 @@
 import { data, isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteLoaderData } from "react-router";
 
 import type { Route } from "./+types/root";
+import "@fontsource-variable/figtree";
+import "@fontsource-variable/newsreader/opsz.css";
+import "@fontsource-variable/newsreader/opsz-italic.css";
 import "./app.css";
 import { ApiError, apiData, readCookie } from "./lib/api";
 import { splitLocale, type Locale } from "./lib/config";
@@ -57,7 +60,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#0b5d7a" />
+        <meta name="theme-color" content="#04203c" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <Meta />
         <Links />

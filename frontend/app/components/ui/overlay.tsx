@@ -134,7 +134,7 @@ export function ConfirmDialog({
   );
 }
 
-export function Dropdown({ label, children, align = "right" }: { label: ReactNode; children: ReactNode; align?: "left" | "right" }) {
+export function Dropdown({ label, children, align = "right", triggerClassName }: { label: ReactNode; children: ReactNode; align?: "left" | "right"; triggerClassName?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const menuId = useId();
@@ -153,7 +153,7 @@ export function Dropdown({ label, children, align = "right" }: { label: ReactNod
   }, [open]);
   return (
     <div ref={ref} className="relative">
-      <button type="button" aria-haspopup="menu" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((o) => !o)} className="flex items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-surface-2">
+      <button type="button" aria-haspopup="menu" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((o) => !o)} className={triggerClassName ?? "flex items-center gap-1 rounded-md px-2 py-1.5 text-sm hover:bg-surface-2"}>
         {label}
       </button>
       {open && (

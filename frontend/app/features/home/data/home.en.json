@@ -1,0 +1,393 @@
+[
+  {
+    "id": "static-hero-1",
+    "type": "HERO",
+    "content": {
+      "title": "Discover the\nBeauty of Indonesia",
+      "subtitle": "Premium Yacht Charter",
+      "body": "Charter a luxury yacht or join our curated departures for an unforgettable journey across Indonesia's most stunning destinations.",
+      "cta_label": "Explore Our Fleet",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": {
+      "id": "static-hero-yacht",
+      "status": "READY",
+      "alt": "White motor yacht cruising at sunset with mountains on the horizon",
+      "width": 1920,
+      "height": 1080,
+      "sources": [
+        {
+          "url": "/home/hero-yacht-960.webp",
+          "width": 960,
+          "height": 540
+        },
+        {
+          "url": "/home/hero-yacht-1920.webp",
+          "width": 1920,
+          "height": 1080
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-hero-2",
+    "type": "HERO",
+    "content": {
+      "title": "Sail Between Indonesia's Islands",
+      "subtitle": "Destinations",
+      "body": "Bali, Lombok, Labuan Bajo and Raja Ampat, each with departures from its own home port.",
+      "cta_label": "View Destinations",
+      "cta_url": "/destinations",
+      "items": null
+    },
+    "image": {
+      "id": "static-hero-islands",
+      "status": "READY",
+      "alt": "Green islands with white beaches in clear turquoise water, seen from above",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/region-islands-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/region-islands-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-hero-3",
+    "type": "HERO",
+    "content": {
+      "title": "Sunset Hours on Your Own Deck",
+      "subtitle": "Private Charter",
+      "body": "Book the whole boat for your group, then choose your route, date and time on the water.",
+      "cta_label": "Plan a Private Charter",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": {
+      "id": "static-hero-sunset",
+      "status": "READY",
+      "alt": "Couple watching the sunset from the bow of a yacht",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/moment-sunset-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/moment-sunset-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-trust",
+    "type": "HIGHLIGHTS",
+    "content": {
+      "title": "",
+      "subtitle": "",
+      "body": "",
+      "cta_label": "",
+      "cta_url": "",
+      "items": [
+        {
+          "title": "Luxury Fleet",
+          "text": "Premium Selection",
+          "icon": "diamond"
+        },
+        {
+          "title": "Trusted & Safe",
+          "text": "Your Safety First",
+          "icon": "shield"
+        },
+        {
+          "title": "24/7 Support",
+          "text": "Always Here",
+          "icon": "headset"
+        },
+        {
+          "title": "Unforgettable Experience",
+          "text": "Beyond Expectations",
+          "icon": "star"
+        }
+      ]
+    },
+    "image": null
+  },
+  {
+    "id": "static-fleet",
+    "type": "FEATURED_BOATS",
+    "content": {
+      "title": "Exceptional Yachts",
+      "subtitle": "Our Fleet",
+      "body": "From elegant yachts to spacious catamarans, explore our handpicked fleet.",
+      "cta_label": "View All Fleet",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": null,
+    "data": [
+      {
+        "id": "static-boat-yacht",
+        "code": "",
+        "name": "Luxury Yacht",
+        "slug": "",
+        "summary": "",
+        "category_id": "",
+        "class_id": "",
+        "max_passengers": 12,
+        "length_cm": null,
+        "cabins": 0,
+        "from_price": 0,
+        "from_unit": "",
+        "rating": 0,
+        "review_count": 0,
+        "thumbnail": {
+          "id": "static-fleet-yacht",
+          "status": "READY",
+          "alt": "White motor yacht on calm blue water",
+          "width": 800,
+          "height": 760,
+          "sources": [
+            {
+              "url": "/home/fleet-yacht-400.webp",
+              "width": 400,
+              "height": 380
+            },
+            {
+              "url": "/home/fleet-yacht-800.webp",
+              "width": 800,
+              "height": 760
+            }
+          ]
+        }
+      },
+      {
+        "id": "static-boat-catamaran",
+        "code": "",
+        "name": "Catamaran",
+        "slug": "",
+        "summary": "",
+        "category_id": "",
+        "class_id": "",
+        "max_passengers": 16,
+        "length_cm": null,
+        "cabins": 0,
+        "from_price": 0,
+        "from_unit": "",
+        "rating": 0,
+        "review_count": 0,
+        "thumbnail": {
+          "id": "static-fleet-catamaran",
+          "status": "READY",
+          "alt": "Sailing catamaran with white sails raised",
+          "width": 800,
+          "height": 760,
+          "sources": [
+            {
+              "url": "/home/fleet-catamaran-400.webp",
+              "width": 400,
+              "height": 380
+            },
+            {
+              "url": "/home/fleet-catamaran-800.webp",
+              "width": 800,
+              "height": 760
+            }
+          ]
+        }
+      },
+      {
+        "id": "static-boat-phinisi",
+        "code": "",
+        "name": "Phinisi",
+        "slug": "",
+        "summary": "",
+        "category_id": "",
+        "class_id": "",
+        "max_passengers": 20,
+        "length_cm": null,
+        "cabins": 0,
+        "from_price": 0,
+        "from_unit": "",
+        "rating": 0,
+        "review_count": 0,
+        "thumbnail": {
+          "id": "static-fleet-phinisi",
+          "status": "READY",
+          "alt": "Traditional wooden phinisi schooner at anchor",
+          "width": 800,
+          "height": 760,
+          "sources": [
+            {
+              "url": "/home/fleet-phinisi-400.webp",
+              "width": 400,
+              "height": 380
+            },
+            {
+              "url": "/home/fleet-phinisi-800.webp",
+              "width": 800,
+              "height": 760
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "static-regions",
+    "type": "REGIONS",
+    "content": {
+      "title": "Paradise Awaits",
+      "subtitle": "Explore Destinations",
+      "body": "Sail to breathtaking destinations from Bali to Labuan Bajo and beyond.",
+      "cta_label": "Explore Destinations",
+      "cta_url": "/destinations",
+      "items": null
+    },
+    "image": {
+      "id": "static-region-islands",
+      "status": "READY",
+      "alt": "Green islands with white beaches in clear turquoise water, seen from above",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/region-islands-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/region-islands-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    },
+    "data": [
+      {
+        "id": "static-region-bali",
+        "name": "Bali",
+        "slug": "",
+        "locale": "en",
+        "description": "",
+        "thumbnail": null
+      },
+      {
+        "id": "static-region-lombok",
+        "name": "Lombok",
+        "slug": "",
+        "locale": "en",
+        "description": "",
+        "thumbnail": null
+      },
+      {
+        "id": "static-region-labuan-bajo",
+        "name": "Labuan Bajo",
+        "slug": "",
+        "locale": "en",
+        "description": "",
+        "thumbnail": null
+      },
+      {
+        "id": "static-region-raja-ampat",
+        "name": "Raja Ampat",
+        "slug": "",
+        "locale": "en",
+        "description": "",
+        "thumbnail": null
+      }
+    ]
+  },
+  {
+    "id": "static-why",
+    "type": "HIGHLIGHTS",
+    "content": {
+      "title": "Unforgettable Moments",
+      "subtitle": "Why Choose Us",
+      "body": "More than a journey, a memorable experience.",
+      "cta_label": "",
+      "cta_url": "",
+      "items": [
+        {
+          "title": "World-Class Fleet",
+          "text": "",
+          "icon": "globe"
+        },
+        {
+          "title": "Safe & Reliable",
+          "text": "",
+          "icon": "shield"
+        },
+        {
+          "title": "Dedicated Support",
+          "text": "",
+          "icon": "headset"
+        },
+        {
+          "title": "Tailored Packages",
+          "text": "",
+          "icon": "star"
+        }
+      ]
+    },
+    "image": {
+      "id": "static-why-sunset",
+      "status": "READY",
+      "alt": "Couple watching the sunset from the bow of a yacht",
+      "width": 1600,
+      "height": 900,
+      "sources": [
+        {
+          "url": "/home/moment-sunset-800.webp",
+          "width": 800,
+          "height": 450
+        },
+        {
+          "url": "/home/moment-sunset-1600.webp",
+          "width": 1600,
+          "height": 900
+        }
+      ]
+    }
+  },
+  {
+    "id": "static-reviews",
+    "type": "REVIEWS",
+    "content": {
+      "title": "What Our Guests Say",
+      "subtitle": "",
+      "body": "",
+      "cta_label": "",
+      "cta_url": "",
+      "items": null
+    },
+    "image": null,
+    "data": []
+  },
+  {
+    "id": "static-cta",
+    "type": "CTA",
+    "content": {
+      "title": "Ready for Your Next Adventure?",
+      "subtitle": "",
+      "body": "Book your yacht today and experience the best of Indonesia.",
+      "cta_label": "Book Your Journey",
+      "cta_url": "/boats",
+      "items": null
+    },
+    "image": null
+  }
+]

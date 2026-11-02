@@ -19,6 +19,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     const v = params.get(k);
     if (v) query[k] = v;
   }
+  // +09:00 is the easternmost Indonesian zone, so the day starts before any port's first departure.
+  const date = params.get("date");
+  if (date) query.from = `${date}T00:00:00+09:00`;
   const [departures, routes, boats] = await Promise.all([
     load<Departure[]>("/departures", request, query),
     load<RouteCard[]>("/routes", request),

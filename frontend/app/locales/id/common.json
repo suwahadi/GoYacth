@@ -1,9 +1,9 @@
 {
   "brand": {
-    "tagline": "Sewa kapal privat dan open trip di seluruh Indonesia"
+    "tagline": "Sewa Yacht Mewah di Indonesia"
   },
   "nav": {
-    "boats": "Kapal",
+    "boats": "Armada Kami",
     "packages": "Paket",
     "departures": "Jadwal",
     "regions": "Destinasi",
@@ -12,7 +12,9 @@
     "account": "Booking saya",
     "admin": "Admin",
     "menu": "Menu",
-    "close": "Tutup"
+    "close": "Tutup",
+    "main": "Utama",
+    "book": "Pesan Perjalanan"
   },
   "auth": {
     "sign_in": "Masuk",
@@ -95,7 +97,17 @@
     "legal": "Legal",
     "terms": "Syarat & ketentuan",
     "privacy": "Kebijakan privasi",
-    "cancellation": "Kebijakan pembatalan"
+    "cancellation": "Kebijakan pembatalan",
+    "quick_links": "Tautan Cepat",
+    "help": "Bantuan",
+    "subscribe_title": "Berlangganan kabar terbaru",
+    "subscribe_placeholder": "Alamat email Anda",
+    "coming_soon": "Segera hadir",
+    "company": "Perusahaan",
+    "about": "Tentang Kami",
+    "reviews": "Ulasan",
+    "contact_us": "Kontak",
+    "how_to_book": "Cara Memesan"
   },
   "cookies": {
     "title": "Cookie",

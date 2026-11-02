@@ -4,16 +4,25 @@
    emails and PDFs are always light, so the admin shell sets data-theme="light". */
 [data-theme="light"],
 [data-theme="system"] {
-  --bg: #f7f9fb;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #eef2f6;
-  --fg: #14212b;
-  --muted: #566573;
-  --border: #d7dee5;
-  --primary: #0b5d7a;
-  --primary-hover: #094c64;
+  --surface-2: #eef3f8;
+  --fg: #061c3a;
+  --muted: #4a5a76;
+  --border: #d7deea;
+  --primary: #04203c;
+  --primary-hover: #0c3560;
   --primary-fg: #ffffff;
-  --accent: #e3a33b;
+  --accent: #e0b46c;
+  --accent-hover: #d3a357;
+  --accent-fg: #04203c;
+  --accent-text: #8a6214;
+  --accent-icon: #a67a2e;
+  --panel: #ecf4f8;
+  --ink: #04203c;
+  --ink-fg: #ffffff;
+  --ink-muted: #c9d5e3;
+  --ink-line: rgb(255 255 255 / 0.24);
   --danger: #b42318;
   --danger-bg: #fdecea;
   --success: #067647;
@@ -21,22 +30,31 @@
   --warning: #b54708;
   --warning-bg: #fef4e6;
   --info-bg: #e8f2f7;
-  --focus: #2a8fbd;
+  --focus: #1f6fb2;
   --overlay: rgb(15 23 32 / 0.55);
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --bg: #0d151c;
-  --surface: #131f29;
-  --surface-2: #1b2a36;
-  --fg: #e6edf3;
-  --muted: #9aaab8;
-  --border: #2a3a47;
-  --primary: #4fb3d9;
-  --primary-hover: #74c4e3;
-  --primary-fg: #08202b;
-  --accent: #f0b65a;
+  --bg: #071527;
+  --surface: #0d2038;
+  --surface-2: #14304e;
+  --fg: #e8eef6;
+  --muted: #a6b5c8;
+  --border: #27405e;
+  --primary: #9cc5ee;
+  --primary-hover: #b6d5f4;
+  --primary-fg: #04203c;
+  --accent: #e0b46c;
+  --accent-hover: #ebc68a;
+  --accent-fg: #04203c;
+  --accent-text: #e8c58c;
+  --accent-icon: #e0b46c;
+  --panel: #0d2038;
+  --ink: #0b2a4d;
+  --ink-fg: #ffffff;
+  --ink-muted: #c9d5e3;
+  --ink-line: rgb(255 255 255 / 0.24);
   --danger: #f97066;
   --danger-bg: #3a1714;
   --success: #47cd89;
@@ -44,23 +62,32 @@
   --warning: #fdb022;
   --warning-bg: #33230b;
   --info-bg: #13303d;
-  --focus: #74c4e3;
+  --focus: #9cc5ee;
   --overlay: rgb(0 0 0 / 0.65);
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   [data-theme="system"] {
-    --bg: #0d151c;
-    --surface: #131f29;
-    --surface-2: #1b2a36;
-    --fg: #e6edf3;
-    --muted: #9aaab8;
-    --border: #2a3a47;
-    --primary: #4fb3d9;
-    --primary-hover: #74c4e3;
-    --primary-fg: #08202b;
-    --accent: #f0b65a;
+    --bg: #071527;
+    --surface: #0d2038;
+    --surface-2: #14304e;
+    --fg: #e8eef6;
+    --muted: #a6b5c8;
+    --border: #27405e;
+    --primary: #9cc5ee;
+    --primary-hover: #b6d5f4;
+    --primary-fg: #04203c;
+    --accent: #e0b46c;
+    --accent-hover: #ebc68a;
+    --accent-fg: #04203c;
+    --accent-text: #e8c58c;
+    --accent-icon: #e0b46c;
+    --panel: #0d2038;
+    --ink: #0b2a4d;
+    --ink-fg: #ffffff;
+    --ink-muted: #c9d5e3;
+    --ink-line: rgb(255 255 255 / 0.24);
     --danger: #f97066;
     --danger-bg: #3a1714;
     --success: #47cd89;
@@ -68,7 +95,7 @@
     --warning: #fdb022;
     --warning-bg: #33230b;
     --info-bg: #13303d;
-    --focus: #74c4e3;
+    --focus: #9cc5ee;
     --overlay: rgb(0 0 0 / 0.65);
     color-scheme: dark;
   }
@@ -85,6 +112,15 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-fg: var(--primary-fg);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-text: var(--accent-text);
+  --color-accent-icon: var(--accent-icon);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-ink-fg: var(--ink-fg);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-line: var(--ink-line);
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
   --color-success: var(--success);
@@ -94,7 +130,8 @@
   --color-info-bg: var(--info-bg);
   --color-focus: var(--focus);
   --color-overlay: var(--overlay);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Newsreader Variable", ui-serif, Georgia, "Times New Roman", serif;
 }
 
 html {
@@ -111,6 +148,11 @@ body {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+/* The default ring disappears on navy bands and hero photos. */
+.on-ink :focus-visible {
+  outline-color: var(--accent);
 }
 
 .prose-content p {

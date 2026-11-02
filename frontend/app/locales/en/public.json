@@ -2,11 +2,30 @@
   "home": {
     "title": "Boat and yacht charters in Indonesia",
     "description": "Book private boat charters and shared trips in Bali, Lombok, Labuan Bajo and beyond, with clear prices in rupiah.",
-    "fallback_title": "Find your boat",
-    "fallback_subtitle": "Private charters and shared departures across Indonesia.",
-    "featured_boats": "Featured boats",
     "browse_boats": "Browse all boats",
-    "see_departures": "See upcoming departures"
+    "see_departures": "See upcoming departures",
+    "hero_label": "Featured journeys",
+    "prev_slide": "Previous slide",
+    "next_slide": "Next slide",
+    "go_to_slide": "Go to slide {{n}}",
+    "highlights_label": "Why book with us",
+    "more_regions": "& More",
+    "reviews_title": "What Our Guests Say",
+    "prev_review": "Previous review",
+    "next_review": "Next review",
+    "go_to_review": "Go to review {{n}}",
+    "search": {
+      "label": "Search boats and departures",
+      "mode": "Booking Mode",
+      "mode_charter": "Private Charter",
+      "mode_departure": "Departure",
+      "date": "Date",
+      "from": "From",
+      "all_regions": "All destinations",
+      "guests": "Guests",
+      "guests_option": "{{count}} Guests",
+      "submit": "Search"
+    }
   },
   "breadcrumb": {
     "label": "Breadcrumb",

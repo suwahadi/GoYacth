@@ -1,5 +1,8 @@
 export { Button, ButtonLink, ButtonPair, buttonClass } from "./button";
+export { CarouselArrow, CarouselDots, useCarousel } from "./carousel";
 export { cn } from "./cn";
+export { DisplayHeading, Eyebrow } from "./heading";
+export * from "./icons";
 export { Badge, Card, Container, DataTable, Pagination, ResponsiveImage, StatusBadge, Tabs, type Column } from "./data";
 export { Alert, EmptyState, ErrorState, Skeleton, SkeletonList, Spinner, ToastProvider, useToast } from "./feedback";
 export { Checkbox, Field, Input, PhoneInput, SearchableSelect, Select, Textarea, useCountryOptions, type Option } from "./form";

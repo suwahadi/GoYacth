@@ -1,0 +1,70 @@
+{
+  "en": [
+    {
+      "id": "sample-review-1",
+      "boat_id": "",
+      "author_name": "Sample guest",
+      "author_country": "",
+      "rating_overall": 5,
+      "rating_boat": 5,
+      "rating_service": 5,
+      "rating_crew": 5,
+      "title": "",
+      "body": "An incredible experience! The yacht was perfect, and the crew made our trip unforgettable.",
+      "locale": "en",
+      "verified_booking": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "photos": []
+    },
+    {
+      "id": "sample-review-2",
+      "boat_id": "",
+      "author_name": "Sample guest",
+      "author_country": "",
+      "rating_overall": 4,
+      "rating_boat": 4,
+      "rating_service": 4,
+      "rating_crew": 4,
+      "title": "",
+      "body": "Sample text for checking this layout. Real reviews from completed trips replace it.",
+      "locale": "en",
+      "verified_booking": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "photos": []
+    }
+  ],
+  "id": [
+    {
+      "id": "sample-review-1",
+      "boat_id": "",
+      "author_name": "Contoh tamu",
+      "author_country": "",
+      "rating_overall": 5,
+      "rating_boat": 5,
+      "rating_service": 5,
+      "rating_crew": 5,
+      "title": "",
+      "body": "Pengalaman yang luar biasa! Yacht-nya sempurna, dan kru membuat perjalanan kami tak terlupakan.",
+      "locale": "id",
+      "verified_booking": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "photos": []
+    },
+    {
+      "id": "sample-review-2",
+      "boat_id": "",
+      "author_name": "Contoh tamu",
+      "author_country": "",
+      "rating_overall": 4,
+      "rating_boat": 4,
+      "rating_service": 4,
+      "rating_crew": 4,
+      "title": "",
+      "body": "Teks contoh untuk memeriksa tata letak ini. Ulasan asli dari perjalanan yang selesai akan menggantikannya.",
+      "locale": "id",
+      "verified_booking": false,
+      "created_at": "2026-01-01T00:00:00Z",
+      "photos": []
+    }
+  ]
+}
