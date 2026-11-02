@@ -4,7 +4,7 @@ type IconProps = SVGProps<SVGSVGElement>;
 
 function Stroke({ children, ...props }: IconProps & { children: ReactNode }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
       {children}
     </svg>
   );
@@ -110,6 +110,192 @@ const highlightIcons: Record<string, (p: IconProps) => ReactNode> = { diamond: D
 export function HighlightIcon({ name, ...props }: IconProps & { name?: string }) {
   const Icon = name ? highlightIcons[name] : undefined;
   return Icon ? <Icon {...props} /> : null;
+}
+
+// Fine-line nautical set for specs, facilities and contact rows.
+export const AnchorIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <circle cx="12" cy="5" r="2.5" />
+    <path d="M12 7.5V21M8 11h8M4 13.5c0 4.2 3.6 7.5 8 7.5s8-3.3 8-7.5M4 13.5L2.5 16M4 13.5L6.5 15M20 13.5l1.5 2.5M20 13.5L17.5 15" />
+  </Stroke>
+);
+export const HelmIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <circle cx="12" cy="12" r="7.5" />
+    <circle cx="12" cy="12" r="2.2" />
+    <path d="M12 1.8v8M12 14.2v8M1.8 12h8M14.2 12h8M6.7 6.7l3.75 3.75M13.55 13.55l3.75 3.75M6.7 17.3l3.75-3.75M13.55 10.45l3.75-3.75" />
+  </Stroke>
+);
+export const SailboatIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M12 3v12.5M12 3.5l7 12h-7zM9.5 7.5L5 15.5h4.5zM3 18h18l-2 3H5z" />
+  </Stroke>
+);
+export const CrownIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3.5 8l4.2 3.6L12 5l4.3 6.6L20.5 8l-1.8 10H5.3zM5.3 21h13.4" />
+  </Stroke>
+);
+export const RulerIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3 16.5L16.5 3 21 7.5 7.5 21zM7 12.5l2 2M10 9.5l2.5 2.5M13 6.5l2 2" />
+  </Stroke>
+);
+export const BeamIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3 5v14M21 5v14M6.5 12h11M9.5 9l-3 3 3 3M14.5 9l3 3-3 3" />
+  </Stroke>
+);
+export const BedIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3 6v13M3 16h18M21 19v-5a2.5 2.5 0 0 0-2.5-2.5H3M6 11.5V10a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 12 10v1.5" />
+  </Stroke>
+);
+export const BathIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3 12h18v2.5a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5zM6 19.5L5 21M18 19.5l1 1.5M6 12V6a2 2 0 0 1 2-2h.5a2 2 0 0 1 2 2" />
+  </Stroke>
+);
+export const GaugeIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M4.2 18a9 9 0 1 1 15.6 0M13 13.3l3.5-4.3M12 5v1.5M5 12h1.5M17.5 12H19" />
+    <circle cx="12" cy="14.5" r="1.6" />
+  </Stroke>
+);
+export const ClockIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7v5l3.2 2" />
+  </Stroke>
+);
+export const MoonIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" />
+  </Stroke>
+);
+export const RouteIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <circle cx="6" cy="18.5" r="2.2" />
+    <circle cx="18" cy="5.5" r="2.2" />
+    <path d="M8.2 18.5h7.3a3 3 0 0 0 0-6.5h-7a3 3 0 0 1 0-6.5h7.3" />
+  </Stroke>
+);
+export const TagIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3.5 12.5V5A1.5 1.5 0 0 1 5 3.5h7.5l8 8a1.5 1.5 0 0 1 0 2.1l-7 7a1.5 1.5 0 0 1-2.1 0z" />
+    <circle cx="8" cy="8" r="1.4" />
+  </Stroke>
+);
+export const SealCheckIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M12 2.8l2.4 1.7 2.9-.2 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.2-2.4 1.7-2.4-1.7-2.9.2-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.2zM8.7 12.2l2.2 2.2 4.4-4.8" />
+  </Stroke>
+);
+export const CheckIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M5 12.5l4.5 4.5L19 7" />
+  </Stroke>
+);
+export const CloseIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M6 6l12 12M18 6L6 18" />
+  </Stroke>
+);
+export const MailIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <rect x="3" y="5.5" width="18" height="13" rx="2" />
+    <path d="M3.5 7l8.5 6 8.5-6" />
+  </Stroke>
+);
+export const PhoneIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M6.6 3.5h2.3l1.6 4.4-2 1.6a12.5 12.5 0 0 0 5.9 5.9l1.6-2 4.4 1.6v2.3a2.3 2.3 0 0 1-2.5 2.3C10.7 19.1 4.9 13.3 4.3 6a2.3 2.3 0 0 1 2.3-2.5z" />
+  </Stroke>
+);
+export const ChatIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.9l-1.2 4.1 4.2-1.1A8.5 8.5 0 1 0 12 3.5zM8.5 10.5h7M8.5 13.8H13" />
+  </Stroke>
+);
+
+const SnowflakeIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M12 2.5v19M3.8 7.2l16.4 9.6M20.2 7.2L3.8 16.8M12 6L9.8 4M12 6l2.2-2M12 18l-2.2 2M12 18l2.2 2M6.8 10l-3-.8M6.8 10L6 7M17.2 14l3 .8M17.2 14l.8 3M17.2 10l3-.8M17.2 10l.8-3M6.8 14l-3 .8M6.8 14L6 17" />
+  </Stroke>
+);
+const WifiIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M2.5 9.5a14 14 0 0 1 19 0M6 13.2a9 9 0 0 1 12 0M9.4 16.7a4 4 0 0 1 5.2 0M12 19.7h.01" />
+  </Stroke>
+);
+const SpeakerIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M4 9.5v5h3.5l5 4.5V5l-5 4.5zM15.8 9a4.2 4.2 0 0 1 0 6M18.4 6.5a8 8 0 0 1 0 11" />
+  </Stroke>
+);
+const ShowerIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M4 21V6.5a3 3 0 0 1 6 0V8M6.8 11a3.2 3.2 0 0 1 6.4 0zM8 14.5v1M10 14.5v1M12 14.5v1M7.5 18v1M10 18v1M12.5 18v1" />
+  </Stroke>
+);
+const SnorkelIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3.5 9.5h13A1.5 1.5 0 0 1 18 11v3a3 3 0 0 1-3 3h-1.7a2.5 2.5 0 0 1-2.1-1.1l-.4-.6a1.6 1.6 0 0 0-2.6 0l-.4.6A2.5 2.5 0 0 1 5.7 17H5a3 3 0 0 1-3-3v-3a1.5 1.5 0 0 1 1.5-1.5zM21 4v13a3.5 3.5 0 0 1-3.5 3.5H15" />
+  </Stroke>
+);
+const PaddleIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M15 9L6.5 17.5M15.2 4.6a2.8 2.8 0 0 1 4 0l.2.2a2.8 2.8 0 0 1 0 4L17 11.2a2 2 0 0 1-2.8 0l-1.4-1.4a2 2 0 0 1 0-2.8zM4.2 15.2l4.6 4.6" />
+  </Stroke>
+);
+const ForkKnifeIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M7 3v18M4.5 3v5a2.5 2.5 0 0 0 5 0V3M17 21v-7M17 3c-2.2 1-3.2 3.6-3.2 7.2 0 2.2 1.2 3.8 3.2 3.8z" />
+  </Stroke>
+);
+const GrillIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M4 9.5h16a8 8 0 0 1-16 0zM8.2 16L6 21M15.8 16l2.2 5M12 17.5V21M9 6.5c0-1.4 1.2-1.6 1.2-3M14 6.5c0-1.4 1.2-1.6 1.2-3" />
+  </Stroke>
+);
+const SunbedIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <circle cx="17.5" cy="6" r="2.5" />
+    <path d="M3.5 10l5 6.5H21M7 16.5L5.5 20M18.5 16.5L20 20" />
+  </Stroke>
+);
+const LifebuoyIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="3.8" />
+    <path d="M5.6 5.6l3.7 3.7M14.7 14.7l3.7 3.7M18.4 5.6l-3.7 3.7M9.3 14.7l-3.7 3.7" />
+  </Stroke>
+);
+const WavesIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M2.5 7c2 0 2.4-1.6 4.7-1.6S9.7 7 12 7s2.5-1.6 4.8-1.6S19.3 7 21.5 7M2.5 12.5c2 0 2.4-1.6 4.7-1.6s2.5 1.6 4.8 1.6 2.5-1.6 4.8-1.6 2.5 1.6 4.7 1.6M2.5 18c2 0 2.4-1.6 4.7-1.6S9.7 18 12 18s2.5-1.6 4.8-1.6S19.3 18 21.5 18" />
+  </Stroke>
+);
+
+const facilityIcons: Record<string, (p: IconProps) => ReactNode> = {
+  "air-conditioning": SnowflakeIcon,
+  wifi: WifiIcon,
+  "sound-system": SpeakerIcon,
+  shower: ShowerIcon,
+  snorkeling: SnorkelIcon,
+  paddleboard: PaddleIcon,
+  kitchen: ForkKnifeIcon,
+  bbq: GrillIcon,
+  sundeck: SunbedIcon,
+  "life-jackets": LifebuoyIcon,
+  cabins: BedIcon,
+  "jet-ski": WavesIcon,
+};
+
+// Facilities are created in the admin panel, so a name outside this set still gets a mark.
+export function FacilityIcon({ name, ...props }: IconProps & { name?: string }) {
+  const Icon = (name && facilityIcons[name]) || AnchorIcon;
+  return <Icon {...props} />;
 }
 
 export const YachtMark = (p: IconProps) => (

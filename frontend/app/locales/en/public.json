@@ -44,10 +44,11 @@
     "empty_title": "No boats match these filters",
     "empty_body": "Try removing a filter.",
     "price_on_request": "Price on request",
-    "reviews": "{{rating}} ({{count}} reviews)",
+    "reviews": "{{rating}} ({{count}})",
     "no_reviews": "No reviews yet",
     "length": "{{meters}} m",
-    "cabins": "{{count}} cabins"
+    "cabins": "{{count}} cabins",
+    "cabin": "{{count}} cabin"
   },
   "boat": {
     "gallery": "Photos",
@@ -236,6 +237,7 @@
     "rating": "{{rating}} out of 5",
     "verified": "Verified booking",
     "empty": "No reviews yet.",
-    "from": "{{name}}, {{country}}"
+    "from": "{{name}}, {{country}}",
+    "rated_by": "Rated by guests: {{count}}"
   }
 }

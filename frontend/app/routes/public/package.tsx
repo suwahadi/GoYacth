@@ -1,8 +1,8 @@
 import { data } from "react-router";
 
 import type { Route } from "./+types/package";
-import { Badge, Container } from "~/components/ui";
-import { Breadcrumbs, FaqList, Gallery, PolicyView, PublicErrorBoundary, Section } from "~/features/public/components";
+import { CalendarIcon, CheckIcon, ClockIcon, CloseIcon, Container, RouteIcon, TagIcon, UsersIcon } from "~/components/ui";
+import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, Section } from "~/features/public/components";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import { CharterPackageBooking, DeparturePackageBooking } from "~/features/public/package-booking";
 import { formatDuration, formatPlainDate } from "~/lib/format";
@@ -62,11 +62,14 @@ export function meta({ loaderData, matches }: Route.MetaArgs) {
   });
 }
 
-function TextList({ items }: { items: string[] }) {
+function TextList({ items, icon: Icon }: { items: string[]; icon: typeof CheckIcon }) {
   return (
-    <ul className="list-disc space-y-1 pl-5 text-sm">
+    <ul className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
       {items.map((it, i) => (
-        <li key={i}>{it}</li>
+        <li key={i} className="flex items-start gap-3">
+          <Icon className="mt-0.5 size-5 shrink-0 text-accent-icon" />
+          {it}
+        </li>
       ))}
     </ul>
   );
@@ -80,33 +83,31 @@ export default function PackagePage({ loaderData }: Route.ComponentProps) {
     <Container className="pb-8">
       <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.packages.title"), path: "/packages" }, { name: pkg.name }]} />
       <header className="pb-4">
-        <h1 className="text-2xl font-bold">{pkg.name}</h1>
-        <p className="mt-1">
-          <Badge tone="info">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</Badge>
-        </p>
+        <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{pkg.name}</h1>
+        <p className="mt-2 text-sm text-accent-text">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</p>
         {pkg.summary && <p className="mt-2 text-muted">{pkg.summary}</p>}
       </header>
       <Gallery images={pkg.gallery} fallback={pkg.thumbnail} />
       <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="min-w-0">
           <Section title={t("public.packages.details")} id="details">
-            <ul className="space-y-1 text-sm">
-              <li>{t("public.packages.valid", { from: formatPlainDate(pkg.valid_from, locale), until: formatPlainDate(pkg.valid_until, locale) })}</li>
-              <li>{t("public.packages.pax_range", { min: pkg.min_pax, max: pkg.max_pax })}</li>
-              {pkg.duration_minutes ? <li>{t("public.packages.duration", { duration: formatDuration(pkg.duration_minutes, locale) })}</li> : null}
-              {route && <li>{t("public.packages.route", { name: route.name })}</li>}
-              {pkg.booking_cutoff_hours > 0 && <li>{t("public.packages.cutoff", { hours: pkg.booking_cutoff_hours })}</li>}
+            <ul className="grid gap-2">
+              <Meta icon={CalendarIcon}>{t("public.packages.valid", { from: formatPlainDate(pkg.valid_from, locale), until: formatPlainDate(pkg.valid_until, locale) })}</Meta>
+              <Meta icon={UsersIcon}>{t("public.packages.pax_range", { min: pkg.min_pax, max: pkg.max_pax })}</Meta>
+              {pkg.duration_minutes ? <Meta icon={ClockIcon}>{t("public.packages.duration", { duration: formatDuration(pkg.duration_minutes, locale) })}</Meta> : null}
+              {route && <Meta icon={RouteIcon}>{t("public.packages.route", { name: route.name })}</Meta>}
+              {pkg.booking_cutoff_hours > 0 && <Meta icon={TagIcon}>{t("public.packages.cutoff", { hours: pkg.booking_cutoff_hours })}</Meta>}
             </ul>
             {pkg.description && <p className="mt-3 whitespace-pre-line">{pkg.description}</p>}
           </Section>
           {pkg.inclusions.length > 0 && (
             <Section title={t("public.packages.inclusions")} id="inclusions">
-              <TextList items={pkg.inclusions} />
+              <TextList items={pkg.inclusions} icon={CheckIcon} />
             </Section>
           )}
           {pkg.exclusions.length > 0 && (
             <Section title={t("public.packages.exclusions")} id="exclusions">
-              <TextList items={pkg.exclusions} />
+              <TextList items={pkg.exclusions} icon={CloseIcon} />
             </Section>
           )}
           <Section title={t("public.policy.title")} id="policy">

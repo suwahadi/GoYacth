@@ -72,7 +72,7 @@ export default function ContentPage({ loaderData }: Route.ComponentProps) {
       <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: page.title }]} />
       <article>
         <header className="pb-4">
-          <h1 className="text-2xl font-bold">{page.title}</h1>
+          <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{page.title}</h1>
           <p className="mt-1 text-sm text-muted">
             {t("public.page.updated", { date: formatPlainDate(page.updated_at.slice(0, 10), locale) })}
           </p>

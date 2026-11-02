@@ -7,9 +7,9 @@ import { homeWidth } from "./sections";
 export function CtaBand({ section }: { section: HomeSection }) {
   const c = section.content;
   return (
-    <section className="on-ink relative isolate overflow-hidden border-b border-ink-line bg-ink text-ink-fg">
+    <section className="relative isolate overflow-hidden border-y border-border">
       {/* Wake lines behind the band, the same water the hero opens with. */}
-      <svg className="absolute inset-0 -z-10 size-full text-ink-fg/10" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="none" stroke="currentColor" aria-hidden="true">
+      <svg className="absolute inset-0 -z-10 size-full text-accent/40 [mask-image:linear-gradient(to_right,transparent_55%,black_80%)]" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="none" stroke="currentColor" aria-hidden="true">
         <path d="M0 96C180 40 320 118 520 96s300-96 680-44" />
         <path d="M0 112c220-60 340 12 560-12s320-82 640-28" />
         <path d="M0 60c200 20 360 62 620 26S980 8 1200 30" />
@@ -17,7 +17,7 @@ export function CtaBand({ section }: { section: HomeSection }) {
       <div className={cn(homeWidth, "flex flex-col gap-5 py-7 md:flex-row xl:py-9 md:items-center md:justify-between")}>
         <div>
           <DisplayHeading className="text-[clamp(1.75rem,1rem+2vw,3.25rem)]">{c.title}</DisplayHeading>
-          {(c.subtitle || c.body) && <p className="mt-1 xl:text-lg">{c.subtitle || c.body}</p>}
+          {(c.subtitle || c.body) && <p className="mt-1 text-muted xl:text-lg">{c.subtitle || c.body}</p>}
         </div>
         {c.cta_label && c.cta_url && (
           <p className="shrink-0">

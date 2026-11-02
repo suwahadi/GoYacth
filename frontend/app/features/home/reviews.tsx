@@ -1,18 +1,10 @@
 import { CarouselArrow, CarouselDots, Eyebrow, cn, useCarousel } from "~/components/ui";
-import { Stars } from "~/features/public/components";
+import { Stars, initials } from "~/features/public/components";
 import { countryName } from "~/lib/format";
 import { useLocale, useT } from "~/lib/i18n";
 import type { HomeSection, Review } from "~/lib/types";
 
 import { asArray, homeWidth } from "./sections";
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join("");
-}
 
 export function ReviewsSection({ section }: { section: HomeSection }) {
   const t = useT();
@@ -34,12 +26,12 @@ export function ReviewsSection({ section }: { section: HomeSection }) {
           </div>
         )}
         <figure aria-live="polite" lang={review.locale} className="flex w-full max-w-[46rem] items-center gap-5 rounded-2xl border border-border bg-surface px-5 py-4 lg:gap-6 lg:px-8">
-          <span className="hidden size-16 shrink-0 place-items-center rounded-full bg-surface-2 font-display text-2xl text-primary sm:grid" aria-hidden="true">
+          <span className="hidden size-16 shrink-0 place-items-center rounded-full border border-accent font-display text-2xl text-accent-text sm:grid" aria-hidden="true">
             {initials(review.author_name)}
           </span>
           <div className="min-w-0">
-            <p className="text-xl leading-none text-accent-icon">
-              <Stars rating={review.rating_overall} />
+            <p className="leading-none">
+              <Stars rating={review.rating_overall} className="text-xl" />
             </p>
             <blockquote className="mt-2 font-display text-lg italic leading-snug xl:text-xl before:content-['\201C'] after:content-['\201D']">{review.body}</blockquote>
             <figcaption className="mt-1 text-sm text-muted">

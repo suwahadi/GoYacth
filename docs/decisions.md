@@ -44,7 +44,13 @@ Clarifications agreed with the product owner on 2026-11-01. They amend or resolv
 - **Trust claims** on the homepage ("24/7 Support", "Trusted & Safe", "World-Class Fleet", "Premium Selection") are confirmed by the owner and stay editable in the CMS.
 - **Photos** in `frontend/public/home/` and the demo seed come from the free Unsplash library, whose license allows commercial use without attribution. Replace them with the operator's own photos through the CMS media library before launch.
 - **Deviations from the reference**: "Watch Video" became a link to departures (no video exists), the newsletter field is disabled and labelled "Coming soon" (no endpoint exists), social icons stay hidden until URLs exist, and the header shows Departures instead of "About" and "Reviews", which moved to the footer.
-- **Demo data**: `cli seed demo` fills a development database with 30 boats, 8 routes, packages, departures, static pages, FAQs and 8 invented testimonials. It refuses to run when `APP_ENV=production`, and its legal pages are marked as sample text. Before launch, create real content for `/p/about`, `/p/contact`, `/p/how-to-book`, `/p/terms`, `/p/privacy` and `/p/cancellation-policy`.
+- **Demo data**: `cli seed demo` fills a development database with 30 boats, 8 routes, packages, departures, static pages, FAQs and about 150 invented reviews: every boat gets several, with scores from 3 to 5 so averages differ, and eight are featured on the homepage. It refuses to run when `APP_ENV=production`, and its legal pages are marked as sample text. Before launch, create real content for `/p/about`, `/p/contact`, `/p/how-to-book`, `/p/terms`, `/p/privacy` and `/p/cancellation-policy`.
+
+## Visual direction
+
+- **Light luxury**, decided by the owner on 2026-11-02: navy text and fine gold line icons on white, with photos carrying the visual weight. Solid navy stays only under text on photos. This replaces the navy CTA band, footer and tinted destinations panel from the UI reference.
+- `--accent-icon` is the gold for stars and icons because it reaches 3:1 on white. The lighter `--accent` is for button fills.
+- Icons are drawn for this site in `components/ui/icons.tsx`. A facility's `icon` value selects one; an unknown value shows the anchor.
 
 ## Admin access
 

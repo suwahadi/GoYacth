@@ -1,11 +1,12 @@
 import { data, Link } from "react-router";
 
 import type { Route } from "./+types/boat";
-import { Badge, Card, Container, Money } from "~/components/ui";
+import { AnchorIcon, BathIcon, BeamIcon, BedIcon, CalendarIcon, Card, ClockIcon, Container, CrownIcon, FacilityIcon, GaugeIcon, HelmIcon, MapPinIcon, Money, MoonIcon, RouteIcon, RulerIcon, SailboatIcon, SunIcon, TagIcon, UsersIcon } from "~/components/ui";
 import { CharterWidget } from "~/features/public/charter-widget";
-import { Breadcrumbs, FaqList, Gallery, PolicyView, PublicErrorBoundary, ReviewList, Section, SectionError, Stars, unitKey } from "~/features/public/components";
+import { Breadcrumbs, FaqList, Gallery, Meta, PolicyView, PublicErrorBoundary, RatingLine, ReviewList, ReviewSummary, Section, SectionError, unitKey, type ReviewStats } from "~/features/public/components";
 import { DepartureList } from "~/features/public/departures";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
+import { api } from "~/lib/api";
 import { localePath } from "~/lib/config";
 import { formatDuration, formatNumber, minutesToClock, zoneLabel } from "~/lib/format";
 import { translate, useLocale, useT } from "~/lib/i18n";
@@ -15,13 +16,13 @@ import type { BoatDetail, Departure, Faq, PublicArea, Review } from "~/lib/types
 export async function loader({ request, params }: Route.LoaderArgs) {
   const locale = requestLocale(request);
   const boat = await loadBySlug<BoatDetail>(request, "/boats", "/boats", params.slug);
-  const [reviews, faqs, departures] = await Promise.all([
-    loadOptional<Review[]>("/reviews", request, { boat_id: boat.id, per_page: 6 }),
+  const [reviewPage, faqs, departures] = await Promise.all([
+    api<Review[], { stats: ReviewStats | null }>("/reviews", { request, query: { locale, boat_id: boat.id, per_page: 6 } }).catch(() => null),
     loadOptional<Faq[]>("/faqs", request, { boat_id: boat.id }),
     loadOptional<Departure[]>("/departures", request, { boat_id: boat.id }),
   ]);
   return data(
-    { locale, boat, reviews, faqs, departures: departures?.slice(0, 6) ?? null, alternatePaths: alternatePaths("/boats", boat.alternates) },
+    { locale, boat, reviews: reviewPage?.data ?? null, reviewStats: reviewPage?.meta?.stats ?? null, faqs, departures: departures?.slice(0, 6) ?? null, alternatePaths: alternatePaths("/boats", boat.alternates) },
     { headers: NO_STORE },
   );
 }
@@ -56,33 +57,41 @@ function Specs({ boat }: { boat: BoatDetail }) {
   const locale = useLocale();
   const zone = zoneLabel(boat.home_port.timezone);
   const meters = (cm: number) => t("public.boats.length", { meters: formatNumber(cm / 100, locale) });
-  const rows: [string, string][] = [
-    [t("public.boat.spec_category"), boat.category],
-    [t("public.boat.spec_class"), boat.class],
-    [t("public.boat.spec_capacity"), t("common.units.pax_max", { count: boat.max_passengers })],
-    [t("public.boat.spec_length"), boat.length_cm ? meters(boat.length_cm) : ""],
-    [t("public.boat.spec_beam"), boat.beam_cm ? meters(boat.beam_cm) : ""],
-    [t("public.boat.spec_year"), boat.year_built ? String(boat.year_built) : ""],
-    [t("public.boat.spec_cabins"), boat.cabins ? formatNumber(boat.cabins, locale) : ""],
-    [t("public.boat.spec_bathrooms"), boat.bathrooms ? formatNumber(boat.bathrooms, locale) : ""],
-    [t("public.boat.spec_speed"), boat.speed_knots ? t("public.boat.spec_speed_value", { knots: boat.speed_knots }) : ""],
-    [t("public.boat.spec_crew"), boat.crew_count ? formatNumber(boat.crew_count, locale) : ""],
-    [t("public.boat.spec_home_port"), boat.home_port.name ? `${boat.home_port.name} (${zone})` : ""],
-    [t("public.boat.spec_hours"), t("public.boat.spec_hours_value", { from: minutesToClock(boat.operating_start_minute), to: minutesToClock(boat.operating_end_minute), zone })],
-    [t("public.boat.spec_overnight"), t(boat.overnight_allowed ? "common.actions.yes" : "common.actions.no")],
+  const rows: [typeof AnchorIcon, string, string][] = [
+    [SailboatIcon, t("public.boat.spec_category"), boat.category],
+    [CrownIcon, t("public.boat.spec_class"), boat.class],
+    [UsersIcon, t("public.boat.spec_capacity"), t("common.units.pax_max", { count: boat.max_passengers })],
+    [RulerIcon, t("public.boat.spec_length"), boat.length_cm ? meters(boat.length_cm) : ""],
+    [BeamIcon, t("public.boat.spec_beam"), boat.beam_cm ? meters(boat.beam_cm) : ""],
+    [CalendarIcon, t("public.boat.spec_year"), boat.year_built ? String(boat.year_built) : ""],
+    [BedIcon, t("public.boat.spec_cabins"), boat.cabins ? formatNumber(boat.cabins, locale) : ""],
+    [BathIcon, t("public.boat.spec_bathrooms"), boat.bathrooms ? formatNumber(boat.bathrooms, locale) : ""],
+    [GaugeIcon, t("public.boat.spec_speed"), boat.speed_knots ? t("public.boat.spec_speed_value", { knots: boat.speed_knots }) : ""],
+    [HelmIcon, t("public.boat.spec_crew"), boat.crew_count ? formatNumber(boat.crew_count, locale) : ""],
+    [AnchorIcon, t("public.boat.spec_home_port"), boat.home_port.name ? `${boat.home_port.name} (${zone})` : ""],
+    [ClockIcon, t("public.boat.spec_hours"), t("public.boat.spec_hours_value", { from: minutesToClock(boat.operating_start_minute), to: minutesToClock(boat.operating_end_minute), zone })],
+    [MoonIcon, t("public.boat.spec_overnight"), t(boat.overnight_allowed ? "common.actions.yes" : "common.actions.no")],
   ];
   return (
-    <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-5 xl:grid-cols-3">
       {rows
-        .filter(([, v]) => v)
-        .map(([k, v]) => (
-          <div key={k} className="flex justify-between gap-3 border-b border-border py-1">
-            <dt className="text-muted">{k}</dt>
-            <dd className="text-right">{v}</dd>
+        .filter(([, , v]) => v)
+        .map(([Icon, k, v]) => (
+          <div key={k} className="flex items-start gap-3">
+            <Icon className="mt-0.5 size-6 shrink-0 text-accent-icon" />
+            <div className="min-w-0">
+              <dt className="text-sm text-muted">{k}</dt>
+              <dd className="font-medium">{v}</dd>
+            </div>
           </div>
         ))}
     </dl>
   );
+}
+
+function RateIcon({ unit }: { unit: string }) {
+  const Icon = unit === "HOURLY" ? ClockIcon : unit === "DAILY" ? SunIcon : TagIcon;
+  return <Icon className="size-6 shrink-0 text-accent-icon" />;
 }
 
 function Areas({ areas }: { areas: PublicArea[] }) {
@@ -104,7 +113,9 @@ function Areas({ areas }: { areas: PublicArea[] }) {
                 <Card className="h-full text-sm">
                   <p className="font-medium">{a.name}</p>
                   {a.description && <p className="mt-1 text-muted">{a.description}</p>}
-                  <p className="mt-1">{t("public.boat.area_pax", { min: a.min_pax, max: a.max_pax })}</p>
+                  <ul className="mt-2">
+                    <Meta icon={UsersIcon}>{t("public.boat.area_pax", { min: a.min_pax, max: a.max_pax })}</Meta>
+                  </ul>
                   {a.facilities.length > 0 && <p className="mt-1 text-muted">{a.facilities.map((f) => f.name).join(", ")}</p>}
                 </Card>
               </li>
@@ -119,19 +130,19 @@ function Areas({ areas }: { areas: PublicArea[] }) {
 export default function Boat({ loaderData }: Route.ComponentProps) {
   const t = useT();
   const locale = useLocale();
-  const { boat, reviews, faqs, departures } = loaderData;
+  const { boat, reviews, reviewStats, faqs, departures } = loaderData;
+  const kind = [boat.category, boat.class].filter(Boolean).join(", ");
   return (
     <Container className="pb-8">
       <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.boats.title"), path: "/boats" }, { name: boat.name }]} />
       <header className="pb-4">
-        <h1 className="text-2xl font-bold">{boat.name}</h1>
-        <p className="mt-1 flex flex-wrap items-center gap-2 text-sm">
-          {boat.category && <Badge>{boat.category}</Badge>}
-          {boat.class && <Badge tone="info">{boat.class}</Badge>}
+        <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{boat.name}</h1>
+        <p className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+          {kind && <span className="text-accent-text">{kind}</span>}
           {boat.review_count > 0 && (
-            <span>
-              <Stars rating={boat.rating} /> {t("public.boats.reviews", { rating: formatNumber(Math.round(boat.rating * 10) / 10, locale), count: boat.review_count })}
-            </span>
+            <a href="#reviews" className="hover:underline">
+              <RatingLine rating={boat.rating} count={boat.review_count} />
+            </a>
           )}
         </p>
         {boat.summary && <p className="mt-2 text-muted">{boat.summary}</p>}
@@ -149,10 +160,13 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
           </Section>
           {boat.rates.length > 0 && (
             <Section title={t("public.boat.rates")} id="rates">
-              <ul className="space-y-1 text-sm">
+              <ul className="space-y-2">
                 {boat.rates.map((r) => (
-                  <li key={r.rate_unit}>
-                    <Money amount={r.price} /> <span className="text-muted">{t(unitKey(r.rate_unit))}</span>
+                  <li key={r.rate_unit} className="flex items-center gap-3">
+                    <RateIcon unit={r.rate_unit} />
+                    <span>
+                      <Money amount={r.price} className="font-semibold" /> <span className="text-muted">{t(unitKey(r.rate_unit))}</span>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -160,10 +174,11 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
           )}
           {boat.facilities.length > 0 && (
             <Section title={t("public.boat.facilities")} id="facilities">
-              <ul className="flex flex-wrap gap-2">
+              <ul className="grid grid-cols-2 gap-x-6 gap-y-3 xl:grid-cols-3">
                 {boat.facilities.map((f) => (
-                  <li key={f.id}>
-                    <Badge>{f.name}</Badge>
+                  <li key={f.id} className="flex items-center gap-3">
+                    <FacilityIcon name={f.icon} className="size-6 shrink-0 text-accent-icon" />
+                    {f.name}
                   </li>
                 ))}
               </ul>
@@ -176,18 +191,21 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
           )}
           {boat.routes.length > 0 && (
             <Section title={t("public.boat.routes")} id="routes">
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-3">
                 {boat.routes.map((r) => (
-                  <li key={r.id}>
-                    <Link to={localePath(locale, `/routes/${r.slug}`)} className="font-medium text-primary hover:underline">
-                      {r.name}
-                    </Link>{" "}
-                    <span className="text-muted">· {formatDuration(r.min_duration_minutes ?? r.duration_minutes, locale)}</span>
-                    {r.fixed_price !== null && (
-                      <span className="block">
-                        {t("public.boat.route_fixed_price")}: <Money amount={r.fixed_price} />
-                      </span>
-                    )}
+                  <li key={r.id} className="flex items-start gap-3">
+                    <RouteIcon className="mt-0.5 size-6 shrink-0 text-accent-icon" />
+                    <span>
+                      <Link to={localePath(locale, `/routes/${r.slug}`)} className="font-medium text-primary hover:underline">
+                        {r.name}
+                      </Link>
+                      <span className="block text-sm text-muted">{formatDuration(r.min_duration_minutes ?? r.duration_minutes, locale)}</span>
+                      {r.fixed_price !== null && (
+                        <span className="block text-sm">
+                          {t("public.boat.route_fixed_price")}: <Money amount={r.fixed_price} />
+                        </span>
+                      )}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -195,13 +213,13 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
           )}
           {boat.regions.length > 0 && (
             <Section title={t("public.boat.regions")} id="regions">
-              <ul className="flex flex-wrap gap-2 text-sm">
+              <ul className="flex flex-wrap gap-x-6 gap-y-2">
                 {boat.regions.map((r) => (
-                  <li key={r.id}>
+                  <Meta key={r.id} icon={MapPinIcon}>
                     <Link to={localePath(locale, `/destinations/${r.slug}`)} className="text-primary hover:underline">
                       {r.name}
                     </Link>
-                  </li>
+                  </Meta>
                 ))}
               </ul>
             </Section>
@@ -219,6 +237,7 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
             )}
           </Section>
           <Section title={t("public.boat.reviews")} id="reviews">
+            {reviewStats && reviewStats.total > 0 && <ReviewSummary stats={reviewStats} />}
             {reviews === null ? <SectionError /> : <ReviewList reviews={reviews} />}
           </Section>
           {faqs === null ? (

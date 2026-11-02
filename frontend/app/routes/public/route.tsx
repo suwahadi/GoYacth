@@ -1,8 +1,8 @@
 import { data } from "react-router";
 
 import type { Route } from "./+types/route";
-import { Container } from "~/components/ui";
-import { BoatCardItem, Breadcrumbs, CardGrid, Gallery, PublicErrorBoundary, Section, SectionError } from "~/features/public/components";
+import { AnchorIcon, ClockIcon, Container, MapPinIcon } from "~/components/ui";
+import { BoatCardItem, Breadcrumbs, CardGrid, Gallery, Meta, PublicErrorBoundary, Section, SectionError } from "~/features/public/components";
 import { DepartureList } from "~/features/public/departures";
 import { NO_STORE, alternatePaths, crumbsLd, firstImageUrl, loadBySlug, loadOptional, noStoreHeaders, requestLocale, rootFromMatches } from "~/features/public/loaders";
 import type { Locale } from "~/lib/config";
@@ -73,12 +73,15 @@ export function meta({ loaderData, matches }: Route.MetaArgs) {
 
 function Port({ label, port }: { label: string; port: PortInfo }) {
   return (
-    <div>
-      <dt className="text-muted">{label}</dt>
-      <dd>
-        {port.name} ({zoneLabel(port.timezone)})
-        {port.address && <span className="block text-muted">{port.address}</span>}
-      </dd>
+    <div className="flex items-start gap-3">
+      <AnchorIcon className="mt-0.5 size-6 shrink-0 text-accent-icon" />
+      <div>
+        <dt className="text-muted">{label}</dt>
+        <dd>
+          {port.name} ({zoneLabel(port.timezone)})
+          {port.address && <span className="block text-muted">{port.address}</span>}
+        </dd>
+      </div>
     </div>
   );
 }
@@ -91,8 +94,10 @@ export default function RoutePage({ loaderData }: Route.ComponentProps) {
   return (
     <Container className="pb-8">
       <Breadcrumbs items={items.map((c, i) => (i === items.length - 1 ? { name: c.name } : c))} />
-      <h1 className="text-2xl font-bold">{route.name}</h1>
-      <p className="pb-4 text-muted">{t("public.route.duration", { duration: formatDuration(route.duration_minutes, locale) })}</p>
+      <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{route.name}</h1>
+      <ul className="pb-4 pt-1 text-muted">
+        <Meta icon={ClockIcon}>{t("public.route.duration", { duration: formatDuration(route.duration_minutes, locale) })}</Meta>
+      </ul>
       <Gallery images={route.gallery} fallback={route.thumbnail} />
       {route.description && <p className="mt-4 whitespace-pre-line">{route.description}</p>}
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
@@ -103,11 +108,14 @@ export default function RoutePage({ loaderData }: Route.ComponentProps) {
         {route.stops.length === 0 ? (
           <p className="text-sm text-muted">{t("public.route.stops_empty")}</p>
         ) : (
-          <ol className="list-decimal space-y-2 pl-5">
+          <ol className="space-y-3">
             {route.stops.map((s) => (
-              <li key={s.id}>
-                <span className="font-medium">{s.name}</span>
-                {s.activity && <span className="block text-sm text-muted">{s.activity}</span>}
+              <li key={s.id} className="flex items-start gap-3">
+                <MapPinIcon className="mt-0.5 size-5 shrink-0 text-accent-icon" />
+                <span>
+                  <span className="font-medium">{s.name}</span>
+                  {s.activity && <span className="block text-sm text-muted">{s.activity}</span>}
+                </span>
               </li>
             ))}
           </ol>

@@ -36,7 +36,7 @@ export function WhySection({ section }: { section: HomeSection }) {
         <ul className="mt-7 grid grid-cols-2 gap-y-6 sm:flex sm:divide-x sm:divide-border">
           {(c.items ?? []).map((it) => (
             <li key={it.title} className="flex flex-1 flex-col items-center px-2 text-center">
-              <HighlightIcon name={it.icon} className="size-8 text-primary" />
+              <HighlightIcon name={it.icon} className="size-8 text-accent-icon" />
               <p className="mt-2 text-sm font-semibold leading-tight">{it.title}</p>
               {it.text && <p className="mt-0.5 text-sm text-muted">{it.text}</p>}
             </li>

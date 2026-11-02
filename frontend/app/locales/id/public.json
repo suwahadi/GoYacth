@@ -44,10 +44,11 @@
     "empty_title": "Tidak ada kapal yang sesuai filter",
     "empty_body": "Coba hapus salah satu filter.",
     "price_on_request": "Harga atas permintaan",
-    "reviews": "{{rating}} ({{count}} ulasan)",
+    "reviews": "{{rating}} ({{count}})",
     "no_reviews": "Belum ada ulasan",
     "length": "{{meters}} m",
-    "cabins": "{{count}} kabin"
+    "cabins": "{{count}} kabin",
+    "cabin": "{{count}} kabin"
   },
   "boat": {
     "gallery": "Foto",
@@ -236,6 +237,7 @@
     "rating": "{{rating}} dari 5",
     "verified": "Pemesanan terverifikasi",
     "empty": "Belum ada ulasan.",
-    "from": "{{name}}, {{country}}"
+    "from": "{{name}}, {{country}}",
+    "rated_by": "Dinilai tamu: {{count}}"
   }
 }

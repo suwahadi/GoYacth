@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
+import type { ReactNode, SVGProps } from "react";
 import { Link, isRouteErrorResponse, useRouteError } from "react-router";
 
-import { Badge, ButtonLink, Card, Container, Money, ResponsiveImage } from "~/components/ui";
+import { BedIcon, ButtonLink, CalendarIcon, ClockIcon, Container, Money, ResponsiveImage, RulerIcon, SealCheckIcon, UsersIcon, cn } from "~/components/ui";
 import { localePath, splitLocale, DEFAULT_LOCALE, type Locale } from "~/lib/config";
 import { countryName, formatBasisPoints, formatDuration, formatIDR, formatNumber, formatPlainDate } from "~/lib/format";
 import { useLocale, useT, useTCode } from "~/lib/i18n";
@@ -61,7 +61,7 @@ export function Breadcrumbs({ items }: { items: { name: string; path?: string }[
 export function PageHeader({ title, intro }: { title: string; intro?: string }) {
   return (
     <header className="py-4">
-      <h1 className="text-2xl font-bold">{title}</h1>
+      <h1 className="font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{title}</h1>
       {intro && <p className="mt-1 text-muted">{intro}</p>}
     </header>
   );
@@ -69,10 +69,10 @@ export function PageHeader({ title, intro }: { title: string; intro?: string }) 
 
 export function Section({ title, children, id, action }: { title: string; children: ReactNode; id?: string; action?: ReactNode }) {
   return (
-    <section aria-labelledby={title ? id : undefined} className="mt-8">
-      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+    <section aria-labelledby={title ? id : undefined} className="mt-10">
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         {title && (
-          <h2 id={id} className="text-xl font-semibold">
+          <h2 id={id} className="font-display text-2xl font-normal leading-tight">
             {title}
           </h2>
         )}
@@ -84,7 +84,7 @@ export function Section({ title, children, id, action }: { title: string; childr
 }
 
 export function CardGrid({ children }: { children: ReactNode }) {
-  return <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</ul>;
+  return <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">{children}</ul>;
 }
 
 export function unitKey(unit: BoatCard["from_unit"]) {
@@ -93,34 +93,62 @@ export function unitKey(unit: BoatCard["from_unit"]) {
   return "common.money.per_trip" as const;
 }
 
-export function Stars({ rating }: { rating: number }) {
+const STAR = "M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.1-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z";
+const starRow = [0, 24, 48, 72, 96].map((x) => <path key={x} transform={`translate(${x})`} d={STAR} />);
+
+// The gold row sits in a nested svg that clips it, so 4.5 shows a half star without inline styles.
+export function Stars({ rating, className }: { rating: number; className?: string }) {
   const t = useT();
   const locale = useLocale();
-  const rounded = Math.round(rating);
   const label = t("public.reviews.rating", { rating: formatNumber(Math.round(rating * 10) / 10, locale) });
   return (
-    <span role="img" aria-label={label} title={label}>
-      <span aria-hidden="true">{"★".repeat(rounded) + "☆".repeat(Math.max(0, 5 - rounded))}</span>
+    <span role="img" aria-label={label} title={label} className={cn("inline-flex align-[-0.15em]", className)}>
+      <svg viewBox="0 0 120 24" className="h-[1.1em] w-[5.5em]" aria-hidden="true">
+        <g className="fill-border">{starRow}</g>
+        <svg width={Math.min(5, Math.max(0, rating)) * 24} height="24">
+          <g className="fill-accent-icon">{starRow}</g>
+        </svg>
+      </svg>
+    </span>
+  );
+}
+
+type Icon = (p: SVGProps<SVGSVGElement>) => ReactNode;
+
+export function Meta({ icon: Icon, children }: { icon: Icon; children: ReactNode }) {
+  return (
+    <li className="inline-flex items-center gap-1.5">
+      <Icon className="size-4 shrink-0 text-accent-icon" />
+      {children}
+    </li>
+  );
+}
+
+export function RatingLine({ rating, count }: { rating: number; count: number }) {
+  const t = useT();
+  const locale = useLocale();
+  return (
+    <span className="inline-flex items-center gap-2 text-sm">
+      <Stars rating={rating} />
+      {t("public.boats.reviews", { rating: formatNumber(Math.round(rating * 10) / 10, locale), count })}
     </span>
   );
 }
 
 function ImageCard({ href, image, title, children }: { href: string; image: Img | null; title: string; children?: ReactNode }) {
   return (
-    <li>
-      <Card className="h-full overflow-hidden p-0">
-        <Link to={href} className="block">
-          <ResponsiveImage image={image} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="aspect-[3/2] h-auto w-full" />
-        </Link>
-        <div className="space-y-1 p-4">
-          <h3 className="font-semibold">
-            <Link to={href} className="hover:underline">
-              {title}
-            </Link>
-          </h3>
-          {children}
-        </div>
-      </Card>
+    <li className="group flex h-full flex-col">
+      <Link to={href} className="block overflow-hidden rounded-xl">
+        <ResponsiveImage image={image} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="aspect-[3/2] h-auto w-full transition-transform duration-500 motion-safe:group-hover:scale-105" />
+      </Link>
+      <div className="flex flex-1 flex-col gap-2 pt-4">
+        <h3 className="font-display text-xl leading-tight">
+          <Link to={href} className="hover:underline">
+            {title}
+          </Link>
+        </h3>
+        {children}
+      </div>
     </li>
   );
 }
@@ -128,30 +156,20 @@ function ImageCard({ href, image, title, children }: { href: string; image: Img 
 export function BoatCardItem({ boat, names, search = "" }: { boat: BoatCard; names?: { category?: string; class?: string }; search?: string }) {
   const t = useT();
   const locale = useLocale();
+  const kind = [names?.category, names?.class].filter(Boolean).join(", ");
   return (
     <ImageCard href={localePath(locale, `/boats/${boat.slug}`) + search} image={boat.thumbnail} title={boat.name}>
-      {(names?.category || names?.class) && (
-        <p className="flex flex-wrap gap-1">
-          {names.category && <Badge>{names.category}</Badge>}
-          {names.class && <Badge tone="info">{names.class}</Badge>}
-        </p>
-      )}
-      {boat.summary && <p className="text-sm text-muted">{boat.summary}</p>}
-      <p className="text-sm">
-        {t("common.units.pax_max", { count: boat.max_passengers })}
-        {boat.length_cm ? ` · ${t("public.boats.length", { meters: formatNumber(boat.length_cm / 100, locale) })}` : ""}
-        {boat.cabins > 0 ? ` · ${t("public.boats.cabins", { count: boat.cabins })}` : ""}
-      </p>
-      <p className="text-sm">
-        {boat.review_count > 0 ? (
-          <>
-            <Stars rating={boat.rating} /> {t("public.boats.reviews", { rating: formatNumber(Math.round(boat.rating * 10) / 10, locale), count: boat.review_count })}
-          </>
-        ) : (
-          <span className="text-muted">{t("public.boats.no_reviews")}</span>
-        )}
-      </p>
-      <FromPrice amount={boat.from_price} unitLabel={boat.from_unit ? t(unitKey(boat.from_unit)) : undefined} />
+      {kind && <p className="text-sm text-accent-text">{kind}</p>}
+      {boat.summary && <p className="line-clamp-2 text-sm text-muted">{boat.summary}</p>}
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+        <Meta icon={UsersIcon}>{t("common.units.pax_max", { count: boat.max_passengers })}</Meta>
+        {!!boat.length_cm && <Meta icon={RulerIcon}>{t("public.boats.length", { meters: formatNumber(boat.length_cm / 100, locale) })}</Meta>}
+        {boat.cabins > 0 && <Meta icon={BedIcon}>{t(boat.cabins === 1 ? "public.boats.cabin" : "public.boats.cabins", { count: boat.cabins })}</Meta>}
+      </ul>
+      <p>{boat.review_count > 0 ? <RatingLine rating={boat.rating} count={boat.review_count} /> : <span className="text-sm text-muted">{t("public.boats.no_reviews")}</span>}</p>
+      <div className="mt-auto border-t border-border pt-3">
+        <FromPrice amount={boat.from_price} unitLabel={boat.from_unit ? t(unitKey(boat.from_unit)) : undefined} />
+      </div>
     </ImageCard>
   );
 }
@@ -173,20 +191,19 @@ export function PackageCardItem({ pkg }: { pkg: PackageCard }) {
   const locale = useLocale();
   return (
     <ImageCard href={localePath(locale, `/packages/${pkg.slug}`)} image={pkg.thumbnail} title={pkg.name}>
-      <p>
-        <Badge tone="info">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</Badge>
-      </p>
-      {pkg.summary && <p className="text-sm text-muted">{pkg.summary}</p>}
-      <p className="text-sm">
-        {t("public.packages.pax_range", { min: pkg.min_pax, max: pkg.max_pax })}
-        {pkg.duration_minutes ? ` · ${formatDuration(pkg.duration_minutes, locale)}` : ""}
-      </p>
-      <p className="text-sm text-muted">{t("public.packages.valid", { from: formatPlainDate(pkg.valid_from, locale), until: formatPlainDate(pkg.valid_until, locale) })}</p>
-      <FromPrice amount={pkg.from_price} unitLabel={pkg.mode === "PRIVATE_CHARTER" ? t("public.packages.per_trip") : undefined} />
+      <p className="text-sm text-accent-text">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</p>
+      {pkg.summary && <p className="line-clamp-2 text-sm text-muted">{pkg.summary}</p>}
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+        <Meta icon={UsersIcon}>{t("public.packages.pax_range", { min: pkg.min_pax, max: pkg.max_pax })}</Meta>
+        {pkg.duration_minutes ? <Meta icon={ClockIcon}>{formatDuration(pkg.duration_minutes, locale)}</Meta> : null}
+        <Meta icon={CalendarIcon}>{t("public.packages.valid", { from: formatPlainDate(pkg.valid_from, locale), until: formatPlainDate(pkg.valid_until, locale) })}</Meta>
+      </ul>
+      <div className="mt-auto border-t border-border pt-3">
+        <FromPrice amount={pkg.from_price} unitLabel={pkg.mode === "PRIVATE_CHARTER" ? t("public.packages.per_trip") : undefined} />
+      </div>
     </ImageCard>
   );
 }
-
 export function RegionCardItem({ region }: { region: RegionCard }) {
   const locale = useLocale();
   return (
@@ -195,18 +212,18 @@ export function RegionCardItem({ region }: { region: RegionCard }) {
     </ImageCard>
   );
 }
-
 export function RouteCardItem({ route }: { route: RouteCard }) {
   const t = useT();
   const locale = useLocale();
   return (
     <ImageCard href={localePath(locale, `/routes/${route.slug}`)} image={route.thumbnail} title={route.name}>
-      <p className="text-sm">{t("public.route.duration", { duration: formatDuration(route.duration_minutes, locale) })}</p>
+      <ul className="text-sm">
+        <Meta icon={ClockIcon}>{t("public.route.duration", { duration: formatDuration(route.duration_minutes, locale) })}</Meta>
+      </ul>
       {route.description && <p className="line-clamp-3 text-sm text-muted">{route.description}</p>}
     </ImageCard>
   );
 }
-
 export function Gallery({ images, fallback }: { images: Img[]; fallback?: Img | null }) {
   const t = useT();
   const list = images.length > 0 ? images : fallback ? [fallback] : [];
@@ -228,43 +245,101 @@ export function Gallery({ images, fallback }: { images: Img[]; fallback?: Img | 
   );
 }
 
+export function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
+}
+
+export interface ReviewStats {
+  total: number;
+  overall: number;
+  boat: number;
+  service: number;
+  crew: number;
+}
+
+export function ReviewSummary({ stats }: { stats: ReviewStats }) {
+  const t = useT();
+  const locale = useLocale();
+  const score = (v: number) => formatNumber(Math.round(v * 10) / 10, locale);
+  const parts: [string, number][] = [
+    [t("account.review.rating_boat"), stats.boat],
+    [t("account.review.rating_service"), stats.service],
+    [t("account.review.rating_crew"), stats.crew],
+  ];
+  return (
+    <div className="mb-8 flex flex-wrap items-center gap-x-12 gap-y-4 border-y border-border py-5">
+      <p className="flex items-center gap-4">
+        <span className="font-display text-5xl leading-none">{score(stats.overall)}</span>
+        <span>
+          <Stars rating={stats.overall} className="text-lg" />
+          <span className="block text-sm text-muted">{t("public.reviews.rated_by", { count: stats.total })}</span>
+        </span>
+      </p>
+      <dl className="flex flex-wrap gap-x-10 gap-y-3 text-sm">
+        {parts.map(([label, value]) => (
+          <div key={label}>
+            <dt className="text-muted">{label}</dt>
+            <dd className="flex items-center gap-2">
+              <Stars rating={value} />
+              {score(value)}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
+}
+
 export function ReviewList({ reviews }: { reviews: Review[] }) {
   const t = useT();
   const locale = useLocale();
   if (reviews.length === 0) return <p className="text-muted">{t("public.reviews.empty")}</p>;
   return (
-    <ul className="grid gap-4 md:grid-cols-2">
+    <ul className="grid gap-x-10 gap-y-8 md:grid-cols-2">
       {reviews.map((r) => (
         <li key={r.id}>
-          <Card className="h-full">
-            <article lang={r.locale}>
-              <p>
-                <Stars rating={r.rating_overall} />
-              </p>
-              <h3 className="mt-1 font-semibold">{r.title}</h3>
-              <p className="mt-1 whitespace-pre-line text-sm">{r.body}</p>
-              <p className="mt-2 text-xs text-muted">
-                {r.author_country ? t("public.reviews.from", { name: r.author_name, country: countryName(r.author_country, locale) }) : r.author_name} ·{" "}
-                <time dateTime={r.created_at}>{formatPlainDate(r.created_at.slice(0, 10), locale)}</time>
-                {r.verified_booking && <> · {t("public.reviews.verified")}</>}
-              </p>
-              {r.photos.length > 0 && (
-                <ul className="mt-2 flex gap-2">
-                  {r.photos.slice(0, 3).map((p) => (
-                    <li key={p.id} className="w-20">
-                      <ResponsiveImage image={p} sizes="80px" className="aspect-square h-auto w-full rounded" />
-                    </li>
-                  ))}
-                </ul>
+          <article lang={r.locale}>
+            <p>
+              <Stars rating={r.rating_overall} />
+            </p>
+            <h3 className="mt-2 font-display text-xl leading-snug">{r.title}</h3>
+            <p className="mt-2 whitespace-pre-line leading-relaxed text-muted">{r.body}</p>
+            {r.photos.length > 0 && (
+              <ul className="mt-3 flex gap-2">
+                {r.photos.slice(0, 3).map((p) => (
+                  <li key={p.id} className="w-20">
+                    <ResponsiveImage image={p} sizes="80px" className="aspect-square h-auto w-full rounded" />
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="mt-4 flex items-center gap-3 text-sm">
+              <span className="grid size-10 shrink-0 place-items-center rounded-full border border-accent font-display text-accent-text" aria-hidden="true">
+                {initials(r.author_name)}
+              </span>
+              <span className="min-w-0">
+                <span className="block font-medium">{r.author_country ? t("public.reviews.from", { name: r.author_name, country: countryName(r.author_country, locale) }) : r.author_name}</span>
+                <time dateTime={r.created_at} className="block text-muted">
+                  {formatPlainDate(r.created_at.slice(0, 10), locale)}
+                </time>
+              </span>
+              {r.verified_booking && (
+                <span className="ml-auto inline-flex shrink-0 items-center gap-1 text-accent-text">
+                  <SealCheckIcon className="size-4" />
+                  {t("public.reviews.verified")}
+                </span>
               )}
-            </article>
-          </Card>
+            </div>
+          </article>
         </li>
       ))}
     </ul>
   );
 }
-
 export function FaqList({ faqs }: { faqs: Faq[] }) {
   return (
     <div className="divide-y divide-border rounded-lg border border-border bg-surface">

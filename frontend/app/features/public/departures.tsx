@@ -1,13 +1,14 @@
 import { useId } from "react";
 import { Link } from "react-router";
 
-import { Badge, Button, Card, Money, Select } from "~/components/ui";
+import { AnchorIcon, Badge, Button, Card, ClockIcon, Money, RouteIcon, SailboatIcon, Select } from "~/components/ui";
 import { localePath } from "~/lib/config";
 import { formatDateTime } from "~/lib/format";
 import { useLocale, useT } from "~/lib/i18n";
 import type { Departure, DepartureSlot } from "~/lib/types";
 
 import { checkoutParams, range, type CheckoutTarget } from "./booking-options";
+import { Meta } from "./components";
 
 export function slotPaxLimit(slot: DepartureSlot, extraMax?: number): number {
   return Math.min(slot.max_pax, slot.remaining, extraMax ?? Number.POSITIVE_INFINITY);
@@ -90,26 +91,22 @@ export function DepartureCard({ departure, showBoat = true }: { departure: Depar
   return (
     <Card>
       <article>
-        <h3 className="font-semibold">
+        <h3 className="font-display text-xl leading-tight">
           <time dateTime={departure.departs_at}>{formatDateTime(departure.departs_at, tz, locale)}</time>
         </h3>
-        <p className="text-sm">
-          {departure.route_name}
+        <ul className="mt-2 grid gap-1 text-sm">
+          <Meta icon={RouteIcon}>{departure.route_name}</Meta>
           {showBoat && (
-            <>
-              {" · "}
+            <Meta icon={SailboatIcon}>
               <Link to={localePath(locale, `/boats/${departure.boat_slug}`)} className="text-primary hover:underline">
                 {departure.boat_name}
               </Link>
-            </>
+            </Meta>
           )}
-        </p>
-        <p className="text-sm text-muted">
-          {departure.port_name && t("public.departures.port", { port: departure.port_name })}
-          {departure.port_name && " · "}
-          {t("public.departures.returns", { time: formatDateTime(departure.returns_at, tz, locale) })}
-        </p>
-        <p className="text-xs text-muted">{t("public.departures.closes", { time: formatDateTime(departure.booking_closes_at, tz, locale) })}</p>
+          {departure.port_name && <Meta icon={AnchorIcon}>{t("public.departures.port", { port: departure.port_name })}</Meta>}
+          <Meta icon={ClockIcon}>{t("public.departures.returns", { time: formatDateTime(departure.returns_at, tz, locale) })}</Meta>
+        </ul>
+        <p className="mt-2 text-xs text-muted">{t("public.departures.closes", { time: formatDateTime(departure.booking_closes_at, tz, locale) })}</p>
         <h4 className="sr-only">{t("public.departures.slots")}</h4>
         <ul className="mt-2">
           {departure.slots.map((s) => (

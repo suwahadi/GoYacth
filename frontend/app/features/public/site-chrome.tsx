@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useMatches } from "react-router";
 
-import { ArrowRightIcon, Button, ButtonLink, ChevronDownIcon, Drawer, Dropdown, DropdownItem, GlobeIcon, MenuIcon, SunIcon, UserIcon, YachtMark, cn } from "~/components/ui";
+import { ArrowRightIcon, Button, ButtonLink, ChatIcon, ChevronDownIcon, Drawer, Dropdown, DropdownItem, GlobeIcon, MailIcon, MenuIcon, PhoneIcon, SunIcon, UserIcon, YachtMark, cn } from "~/components/ui";
 import { loadAnalytics } from "~/lib/analytics";
 import { readCookie } from "~/lib/api";
 import { LOCALES, localePath, splitLocale, type Locale } from "~/lib/config";
@@ -203,6 +203,7 @@ export function SiteHeader() {
 }
 
 const footerLink = "inline-block min-w-11 py-3 hover:underline lg:py-1";
+const footerContact = "inline-flex min-w-11 items-center gap-2 py-3 hover:underline lg:py-1";
 
 export function SiteFooter({ flush }: { flush?: boolean }) {
   const t = useT();
@@ -211,12 +212,12 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
   const site = settings.site;
   const hasContact = site?.email || site?.phone || site?.whatsapp;
   return (
-    <footer className={cn("on-ink bg-ink text-ink-fg", !flush && "mt-16")}>
+    <footer className={cn("text-fg", !flush && "mt-16 border-t border-border")}>
       <div className="px-5 pt-10 lg:px-[3.9vw]">
         <div className="grid gap-8 sm:grid-cols-2 lg:flex lg:gap-[clamp(2.5rem,1rem+4vw,6rem)]">
           <div className="sm:col-span-2 lg:mr-auto">
             <Logo className="text-[clamp(1.75rem,1rem+1.2vw,2.5rem)]" />
-            <p className="mt-3 text-sm">{t("common.brand.tagline")}</p>
+            <p className="mt-3 text-sm text-muted">{t("common.brand.tagline")}</p>
           </div>
           <div>
             <p className="font-semibold">{t("common.footer.quick_links")}</p>
@@ -283,21 +284,24 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
               <ul className="mt-2 text-sm">
                 {site?.email && (
                   <li>
-                    <a className={footerLink} href={`mailto:${site.email}`}>
+                    <a className={footerContact} href={`mailto:${site.email}`}>
+                      <MailIcon className="size-4 shrink-0 text-accent-icon" />
                       {site.email}
                     </a>
                   </li>
                 )}
                 {site?.phone && (
                   <li>
-                    <a className={footerLink} href={`tel:${site.phone}`}>
+                    <a className={footerContact} href={`tel:${site.phone}`}>
+                      <PhoneIcon className="size-4 shrink-0 text-accent-icon" />
                       {site.phone}
                     </a>
                   </li>
                 )}
                 {site?.whatsapp && (
                   <li>
-                    <a className={footerLink} href={`https://wa.me/${site.whatsapp.replace(/[^0-9]/g, "")}`} rel="noopener">
+                    <a className={footerContact} href={`https://wa.me/${site.whatsapp.replace(/[^0-9]/g, "")}`} rel="noopener">
+                      <ChatIcon className="size-4 shrink-0 text-accent-icon" />
                       WhatsApp
                     </a>
                   </li>
@@ -305,19 +309,19 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
               </ul>
             </div>
           )}
-          <div className="lg:w-[22rem] lg:border-l lg:border-ink-line lg:pl-[clamp(1.5rem,0.5rem+2vw,3rem)]">
+          <div className="lg:w-[22rem] lg:border-l lg:border-border lg:pl-[clamp(1.5rem,0.5rem+2vw,3rem)]">
             <p className="font-semibold">{t("common.footer.subscribe_title")}</p>
             {/* shortcut: no newsletter endpoint exists yet, so the field stays disabled and labelled until the PRD adds one. */}
-            <div className="mt-3 flex h-12 items-stretch overflow-hidden rounded-xl border border-ink-line text-sm">
-              <input disabled aria-label={t("common.footer.subscribe_placeholder")} placeholder={t("common.footer.subscribe_placeholder")} className="min-w-0 flex-1 cursor-not-allowed bg-transparent px-4 text-ink-fg placeholder:text-ink-muted" />
+            <div className="mt-3 flex h-12 items-stretch overflow-hidden rounded-xl border border-border text-sm">
+              <input disabled aria-label={t("common.footer.subscribe_placeholder")} placeholder={t("common.footer.subscribe_placeholder")} className="min-w-0 flex-1 cursor-not-allowed bg-transparent px-4 text-fg placeholder:text-muted" />
               <span className="grid w-14 place-items-center bg-accent/60 text-accent-fg" aria-hidden="true">
                 <ArrowRightIcon className="size-5" />
               </span>
             </div>
-            <p className="mt-2 text-sm text-ink-muted">{t("common.footer.coming_soon")}</p>
+            <p className="mt-2 text-sm text-muted">{t("common.footer.coming_soon")}</p>
           </div>
         </div>
-        <div className="mt-8 flex flex-col gap-2 border-t border-ink-line py-5 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-2 border-t border-border py-5 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>{t("common.footer.rights", { year: new Date().getFullYear() })}</p>
           <p className="flex items-center gap-3">
             <Link className={footerLink} to={link("/privacy")}>

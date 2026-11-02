@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useRevalidator } from "react-router";
 
 import { ApiErrorMessage, Button, Card, Field, Input, Select, StatusBadge, Textarea, useFieldErrors, useToast } from "~/components/ui";
+import { Stars } from "~/features/public/components";
 import { api } from "~/lib/api";
 import { useLocale, useT, type TKey } from "~/lib/i18n";
 
@@ -21,7 +22,7 @@ export function ReviewSection({ bookingId, review, canReview }: { bookingId: str
       <Card>
         <h2 className="text-lg font-semibold">{t("account.review.yours")}</h2>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-          <span>{t("account.review.stars", { rating: review.rating_overall })}</span>
+          <Stars rating={review.rating_overall} />
           <StatusBadge status={review.status} />
         </div>
         <p className="mt-2 font-medium">{review.title}</p>

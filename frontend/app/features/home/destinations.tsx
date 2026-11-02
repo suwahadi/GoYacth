@@ -18,7 +18,7 @@ export function DestinationsBand({ section }: { section: HomeSection }) {
   if (regions.length === 0) return null;
   const rowClass = "flex min-h-11 items-center gap-3 py-2 text-[0.9375rem] font-medium hover:underline";
   return (
-    <section className="grid bg-panel lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+    <section className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
       <ResponsiveImage image={section.image} sizes="(min-width: 1024px) 55vw, 100vw" className="aspect-[5/2] w-full lg:aspect-auto lg:h-full lg:[mask-image:linear-gradient(to_right,black_78%,transparent)]" />
       <div className="flex flex-col gap-8 px-5 py-9 sm:flex-row sm:items-center sm:justify-between lg:gap-10 lg:py-11 lg:pl-4 lg:pr-[7.3vw]">
         <div className="max-w-[30rem]">
@@ -35,14 +35,14 @@ export function DestinationsBand({ section }: { section: HomeSection }) {
           {regions.slice(0, SHOWN_REGIONS).map((r) => (
             <li key={r.id}>
               <Link to={localePath(locale, r.slug ? `/destinations/${r.slug}` : "/destinations")} className={rowClass}>
-                <MapPinIcon className="size-5 shrink-0 text-primary" />
+                <MapPinIcon className="size-5 shrink-0 text-accent-icon" />
                 {r.name}
               </Link>
             </li>
           ))}
           <li>
             <Link to={localePath(locale, "/destinations")} className={rowClass}>
-              <CompassIcon className="size-5 shrink-0 text-primary" />
+              <CompassIcon className="size-5 shrink-0 text-accent-icon" />
               {t("public.home.more_regions")}
             </Link>
           </li>

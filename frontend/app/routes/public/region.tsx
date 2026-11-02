@@ -52,7 +52,7 @@ export default function Region({ loaderData }: Route.ComponentProps) {
   return (
     <Container className="pb-8">
       <Breadcrumbs items={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.regions.title"), path: "/destinations" }, { name: region.name }]} />
-      <h1 className="pb-4 text-2xl font-bold">{region.name}</h1>
+      <h1 className="pb-4 font-display text-[clamp(2rem,1.5rem+1.5vw,3rem)] font-normal leading-tight">{region.name}</h1>
       <Gallery images={region.gallery} fallback={region.thumbnail} />
       {region.description && <p className="mt-4 whitespace-pre-line">{region.description}</p>}
       <Section title={t("public.regions.routes", { name: region.name })} id="routes">
