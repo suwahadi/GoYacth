@@ -10,6 +10,8 @@ export function requestLocale(request: Request): Locale {
 }
 
 function toRouteError(err: unknown): never {
+  // The visitor only sees a 503, so this is the one place the real cause reaches the logs.
+  if (err instanceof ApiError && err.status === 0) console.error(err.message);
   if (err instanceof Response) throw err;
   const status = httpStatusFor(err);
   throw data({ code: err instanceof ApiError ? err.code : "UNKNOWN" }, { status });

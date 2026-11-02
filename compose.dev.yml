@@ -95,6 +95,9 @@ services:
       # 100 ms interval starves the dev server on those slow mounts.
       CHOKIDAR_USEPOLLING: "true"
       CHOKIDAR_INTERVAL: "1000"
+      # Polling queues file stats on the same libuv pool as DNS. With the default four threads,
+      # looking up the api host can pass fetch's 10s connect timeout and turn a page into a 503.
+      UV_THREADPOOL_SIZE: "32"
     volumes: [./frontend:/app, /app/node_modules]
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:5173/robots.txt').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]

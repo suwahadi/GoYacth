@@ -94,7 +94,8 @@ export async function apiRaw(path: string, opts: RequestOptions = {}): Promise<R
     });
   } catch (err) {
     if ((err as Error).name === "AbortError") throw err;
-    throw new ApiError(0, "NETWORK", "network error");
+    const code = (err as { cause?: { code?: string } }).cause?.code;
+    throw new ApiError(0, "NETWORK", code ? `network error: ${code}` : "network error");
   }
 }
 
