@@ -5,6 +5,8 @@ cmd = "go build -o ./tmp/api ./cmd/api"
 bin = "./tmp/api"
 include_ext = ["go", "json", "sql", "html", "txt"]
 poll = true
+# The default 500 ms keeps dozens of threads waiting on the Windows bind mount and starves the VM.
+poll_interval = 3000
 exclude_dir = ["tmp", "internal/testutil", "internal/scenarios"]
 [log]
 time = false
