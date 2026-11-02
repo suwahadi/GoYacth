@@ -2,8 +2,9 @@
 // supported language. The admin namespace is English only.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = new URL("../app/locales/", import.meta.url).pathname;
+const root = fileURLToPath(new URL("../app/locales/", import.meta.url));
 const locales = readdirSync(root);
 const flatten = (o, p = "") => Object.entries(o).flatMap(([k, v]) => (typeof v === "object" && v !== null ? flatten(v, `${p}${k}.`) : [`${p}${k}`]));
 let failed = false;

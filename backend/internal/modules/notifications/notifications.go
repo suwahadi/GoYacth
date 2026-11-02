@@ -5,8 +5,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"html/template"
+	htmltemplate "html/template"
 	"strings"
+	texttemplate "text/template"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,6 +21,7 @@ import (
 	"goyacht/internal/platform/db/dbq"
 	"goyacht/internal/platform/i18n"
 	"goyacht/internal/platform/jobs"
+	"goyacht/templates"
 )
 
 type Service struct {
@@ -35,29 +37,28 @@ func NewService(pool *pgxpool.Pool, sender smtp.Sender, msgs *i18n.Messages, app
 	return &Service{pool: pool, sender: sender, msgs: msgs, appURL: strings.TrimRight(appURL, "/"), adminTo: adminTo, siteName: "GoYacht"}
 }
 
-var layout = template.Must(template.New("email").Parse(`<!doctype html>
-<html lang="{{.Locale}}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{{.Subject}}</title></head>
-<body style="margin:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#1f2933">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px">
-<table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:8px" cellpadding="0" cellspacing="0">
-<tr><td style="padding:24px 24px 8px;font-size:20px;font-weight:bold;color:#0b4f6c">{{.Site}}</td></tr>
-<tr><td style="padding:8px 24px;font-size:15px;line-height:1.6">
-<p>{{.Greeting}}</p>
-<p>{{.Body}}</p>
-{{if .Rows}}<table role="presentation" width="100%" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;margin:12px 0">
-{{range .Rows}}<tr><td style="color:#52606d;border-bottom:1px solid #e4e7eb">{{.Label}}</td><td style="text-align:right;border-bottom:1px solid #e4e7eb">{{.Value}}</td></tr>{{end}}
-</table>{{end}}
-{{if .ActionURL}}<p style="margin:24px 0"><a href="{{.ActionURL}}" style="background:#0b4f6c;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;display:inline-block">{{.ActionLabel}}</a></p>{{end}}
-<p style="white-space:pre-line">{{.Signoff}}</p>
-</td></tr>
-<tr><td style="padding:16px 24px;font-size:12px;color:#7b8794">{{.Footer}}</td></tr>
-</table></td></tr></table></body></html>`))
+var (
+	htmlLayout = htmltemplate.Must(htmltemplate.ParseFS(templates.FS, "email/layout.html"))
+	textLayout = texttemplate.Must(texttemplate.ParseFS(templates.FS, "email/layout.txt"))
+)
 
 type row struct{ Label, Value string }
 
 type view struct {
 	Locale, Subject, Site, Greeting, Body, ActionURL, ActionLabel, Signoff, Footer string
 	Rows                                                                           []row
+}
+
+// message renders both bodies; callers add the recipient and Message-ID.
+func (v view) message() (smtp.Message, error) {
+	var html, text bytes.Buffer
+	if err := htmlLayout.Execute(&html, v); err != nil {
+		return smtp.Message{}, err
+	}
+	if err := textLayout.Execute(&text, v); err != nil {
+		return smtp.Message{}, err
+	}
+	return smtp.Message{Subject: v.Subject, HTML: html.String(), Text: text.String()}, nil
 }
 
 // Send renders and delivers one notification. The notification_logs row keyed by the job's
@@ -278,20 +279,7 @@ func (s *Service) render(ctx context.Context, q *dbq.Queries, n jobs.Notify, b *
 	}
 	v.Subject = t(n.Template+".subject", vars)
 	v.Body = t(n.Template+".body", vars)
-	var html bytes.Buffer
-	if err := layout.Execute(&html, v); err != nil {
-		return smtp.Message{}, err
-	}
-	var text strings.Builder
-	fmt.Fprintf(&text, "%s\n\n%s\n\n", v.Greeting, v.Body)
-	for _, r := range v.Rows {
-		fmt.Fprintf(&text, "%s: %s\n", r.Label, r.Value)
-	}
-	if v.ActionURL != "" {
-		fmt.Fprintf(&text, "\n%s: %s\n", v.ActionLabel, v.ActionURL)
-	}
-	fmt.Fprintf(&text, "\n%s\n", v.Signoff)
-	return smtp.Message{Subject: v.Subject, HTML: html.String(), Text: text.String()}, nil
+	return v.message()
 }
 
 // SendWelcome greets a newly registered customer.
@@ -314,11 +302,11 @@ func (s *Service) SendWelcome(ctx context.Context, userID uuid.UUID) error {
 	}
 	v := view{Locale: u.PreferredLocale, Site: s.siteName, Subject: t("welcome.subject"), Greeting: t("common.greeting"), Body: t("welcome.body"),
 		ActionURL: s.appURL, ActionLabel: "GoYacht", Signoff: t("common.signoff"), Footer: t("common.footer")}
-	var html bytes.Buffer
-	if err := layout.Execute(&html, v); err != nil {
+	msg, err := v.message()
+	if err != nil {
 		return err
 	}
-	msg := smtp.Message{To: u.Email, Subject: v.Subject, HTML: html.String(), Text: v.Greeting + "\n\n" + v.Body + "\n\n" + v.Signoff, MessageID: "<" + strings.ReplaceAll(key, ":", ".") + "@goyacht>"}
+	msg.To, msg.MessageID = u.Email, "<"+strings.ReplaceAll(key, ":", ".")+"@goyacht>"
 	if err := s.sender.Send(ctx, msg); err != nil {
 		_ = q.MarkNotificationFailed(ctx, dbq.MarkNotificationFailedParams{ID: log.ID, LastError: truncate(err.Error(), 500)})
 		return err

@@ -1,0 +1,9 @@
+{{.Greeting}}
+
+{{.Body}}
+
+{{range .Rows}}{{.Label}}: {{.Value}}
+{{end}}{{if .ActionURL}}
+{{.ActionLabel}}: {{.ActionURL}}
+{{end}}
+{{.Signoff}}

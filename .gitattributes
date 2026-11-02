@@ -1,0 +1,3 @@
+# Docker on Windows bind-mounts this tree into Linux containers, where CRLF breaks shell scripts,
+# gofmt checks and embedded templates.
+* text=auto eol=lf

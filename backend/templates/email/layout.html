@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="{{.Locale}}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{{.Subject}}</title></head>
+<body style="margin:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#1f2933">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px">
+<table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:8px" cellpadding="0" cellspacing="0">
+<tr><td style="padding:24px 24px 8px;font-size:20px;font-weight:bold;color:#0b4f6c">{{.Site}}</td></tr>
+<tr><td style="padding:8px 24px;font-size:15px;line-height:1.6">
+<p>{{.Greeting}}</p>
+<p>{{.Body}}</p>
+{{if .Rows}}<table role="presentation" width="100%" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;margin:12px 0">
+{{range .Rows}}<tr><td style="color:#52606d;border-bottom:1px solid #e4e7eb">{{.Label}}</td><td style="text-align:right;border-bottom:1px solid #e4e7eb">{{.Value}}</td></tr>{{end}}
+</table>{{end}}
+{{if .ActionURL}}<p style="margin:24px 0"><a href="{{.ActionURL}}" style="background:#0b4f6c;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;display:inline-block">{{.ActionLabel}}</a></p>{{end}}
+<p style="white-space:pre-line">{{.Signoff}}</p>
+</td></tr>
+<tr><td style="padding:16px 24px;font-size:12px;color:#7b8794">{{.Footer}}</td></tr>
+</table></td></tr></table></body></html>

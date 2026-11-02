@@ -91,6 +91,10 @@ services:
     environment:
       API_INTERNAL_URL: http://api:8080
       PUBLIC_APP_URL: http://localhost:8000
+      # Bind mounts from Windows hosts deliver no file events, so hot reload has to poll. The default
+      # 100 ms interval starves the dev server on those slow mounts.
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: "1000"
     volumes: [./frontend:/app, /app/node_modules]
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:5173/robots.txt').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
