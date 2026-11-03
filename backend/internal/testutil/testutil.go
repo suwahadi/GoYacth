@@ -261,7 +261,7 @@ func (e *Env) Login(t testing.TB, email, role string) (*Client, uuid.UUID) {
 	t.Helper()
 	ctx := context.Background()
 	var userID uuid.UUID
-	if err := e.Pool.QueryRow(ctx, `INSERT INTO users (provider, provider_subject, email, full_name, role) VALUES ('google', $1, $1, 'Test User', $2) RETURNING id`, email, role).Scan(&userID); err != nil {
+	if err := e.Pool.QueryRow(ctx, `INSERT INTO users (provider, provider_subject, email, full_name, role, email_verified_at) VALUES ('google', $1, $1, 'Test User', $2, now()) RETURNING id`, email, role).Scan(&userID); err != nil {
 		t.Fatal(err)
 	}
 	token, csrf := secure.RandomToken(32), secure.RandomToken(24)

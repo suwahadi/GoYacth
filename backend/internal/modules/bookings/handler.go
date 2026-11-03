@@ -62,6 +62,10 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	p := auth.FromContext(r.Context())
+	if !p.EmailVerified {
+		httpx.WriteError(w, r, auth.ErrEmailUnverified)
+		return
+	}
 	res, err := idempotency.Do(r.Context(), h.svc.pool, "booking.create", &p.UserID, key, in, func(tx pgx.Tx) (int, any, error) {
 		b, err := h.svc.Create(r.Context(), tx, in, CreateOptions{UserID: p.UserID, UserEmail: p.Email})
 		if err != nil {

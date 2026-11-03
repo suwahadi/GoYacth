@@ -54,6 +54,9 @@ func (w *housekeepingWorker) Work(ctx context.Context, _ *river.Job[jobs.Cleanup
 	if _, err := w.q.DeleteExpiredOAuthStates(ctx); err != nil {
 		return err
 	}
+	if _, err := w.q.DeleteExpiredEmailTokens(ctx); err != nil {
+		return err
+	}
 	_, err := w.q.DeleteOldIdempotencyKeys(ctx)
 	return err
 }

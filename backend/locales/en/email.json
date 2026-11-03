@@ -65,5 +65,20 @@
   "admin_exception": {
     "subject": "Payment exception for {{number}}",
     "body": "A payment of {{amount}} arrived for a booking that is {{status}}. Review it in the exception queue."
+  },
+  "verify_email": {
+    "subject": "Finish signing up for GoYacht",
+    "body": "Use the link below to choose your password and finish setting up your GoYacht account. The link works for 48 hours. If you did not sign up, ignore this email and no account is created for you.",
+    "action": "Choose a password"
+  },
+  "password_reset": {
+    "subject": "Reset your GoYacht password",
+    "body": "Use the link below to choose a new password. It works for one hour. If you did not ask for this, ignore this email and your password stays the same.",
+    "action": "Choose a new password"
+  },
+  "account_exists": {
+    "subject": "You already have a GoYacht account",
+    "body": "Someone tried to create a GoYacht account with this address, but it already has one. Sign in with Google, or use the link below to choose a password. It works for one hour. If this was not you, ignore this email and nothing changes.",
+    "action": "Choose a password"
   }
 }

@@ -116,7 +116,6 @@
     "day_count": "{{count}} day(s)",
     "fixed_duration": "Trip length: {{duration}}",
     "pax": "Guests",
-    "pax_hint": "Up to {{count}} guests on this boat.",
     "busy_title": "Already booked on this day",
     "busy_hint": "Your trip must not overlap these times, including preparation time.",
     "busy_none": "No bookings on this day yet.",

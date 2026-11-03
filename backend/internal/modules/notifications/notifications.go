@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	htmltemplate "html/template"
+	"net/url"
 	"strings"
 	texttemplate "text/template"
 	"time"
@@ -21,6 +22,7 @@ import (
 	"goyacht/internal/platform/db/dbq"
 	"goyacht/internal/platform/i18n"
 	"goyacht/internal/platform/jobs"
+	"goyacht/internal/platform/secure"
 	"goyacht/templates"
 )
 
@@ -302,6 +304,55 @@ func (s *Service) SendWelcome(ctx context.Context, userID uuid.UUID) error {
 	}
 	v := view{Locale: u.PreferredLocale, Site: s.siteName, Subject: t("welcome.subject"), Greeting: t("common.greeting"), Body: t("welcome.body"),
 		ActionURL: s.appURL, ActionLabel: "GoYacht", Signoff: t("common.signoff"), Footer: t("common.footer")}
+	msg, err := v.message()
+	if err != nil {
+		return err
+	}
+	msg.To, msg.MessageID = u.Email, "<"+strings.ReplaceAll(key, ":", ".")+"@goyacht>"
+	if err := s.sender.Send(ctx, msg); err != nil {
+		_ = q.MarkNotificationFailed(ctx, dbq.MarkNotificationFailedParams{ID: log.ID, LastError: truncate(err.Error(), 500)})
+		return err
+	}
+	return q.MarkNotificationSent(ctx, log.ID)
+}
+
+// SendAuthEmail sends the link that confirms an address or resets a password, in the customer's
+// language.
+func (s *Service) SendAuthEmail(ctx context.Context, a jobs.SendAuthEmail) error {
+	q := dbq.New(s.pool)
+	u, err := q.GetUserByID(ctx, a.UserID)
+	if err != nil {
+		return river.JobCancel(err)
+	}
+	kind, path := a.Template, "/reset-password"
+	if kind == "verify_email" {
+		path = "/verify-email"
+	}
+	key := kind + ":" + secure.HexSHA256([]byte(a.Token))[:24]
+	log, err := q.ClaimNotification(ctx, dbq.ClaimNotificationParams{Kind: kind, DedupeKey: key, UserID: &u.ID, Recipient: u.Email, Locale: u.PreferredLocale})
+	if db.IsNoRows(err) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	prefix := ""
+	if u.PreferredLocale != i18n.Default {
+		prefix = "/" + u.PreferredLocale
+	}
+	link := url.Values{"token": {a.Token}}
+	if a.ReturnTo != "" && a.ReturnTo != "/" {
+		link.Set("return_to", a.ReturnTo)
+	}
+	name := u.FullName
+	if name == "" {
+		name = "there"
+	}
+	t := func(k string) string {
+		return s.msgs.T(u.PreferredLocale, "email."+k, map[string]string{"name": name})
+	}
+	v := view{Locale: u.PreferredLocale, Site: s.siteName, Subject: t(kind + ".subject"), Greeting: t("common.greeting"), Body: t(kind + ".body"),
+		ActionURL: s.appURL + prefix + path + "?" + link.Encode(), ActionLabel: t(kind + ".action"), Signoff: t("common.signoff"), Footer: t("common.footer")}
 	msg, err := v.message()
 	if err != nil {
 		return err

@@ -88,6 +88,20 @@ export function PageHero({ title, crumbs, image, children, width }: { title: str
   );
 }
 
+// FormSection holds a short form or lookup under the page header: a tinted band with room above and
+// below, and the form on a raised card so it reads as its own section.
+export function FormSection({ children, width = "max-w-md", intro, after }: { children: ReactNode; width?: string; intro?: ReactNode; after?: ReactNode }) {
+  return (
+    <section className="bg-surface-2 py-12 sm:py-16 lg:py-20">
+      <div className={cn("mx-auto w-full px-4", width)}>
+        {intro && <div className="mb-6 text-center text-muted">{intro}</div>}
+        <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-8">{children}</div>
+        {after}
+      </div>
+    </section>
+  );
+}
+
 export function Section({ title, children, id, action }: { title: string; children: ReactNode; id?: string; action?: ReactNode }) {
   return (
     <section aria-labelledby={title ? id : undefined} className="mt-10">

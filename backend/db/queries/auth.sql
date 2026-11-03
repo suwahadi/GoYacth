@@ -5,8 +5,8 @@ SELECT * FROM users WHERE provider = $1 AND provider_subject = $2;
 SELECT * FROM users WHERE id = $1;
 
 -- name: InsertUser :one
-INSERT INTO users (provider, provider_subject, email, full_name, avatar_url, role, preferred_locale, last_login_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, now())
+INSERT INTO users (provider, provider_subject, email, full_name, avatar_url, role, preferred_locale, last_login_at, email_verified_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, now(), now())
 RETURNING *;
 
 -- name: UpdateUserLogin :one
@@ -54,8 +54,8 @@ SELECT count(*) FROM users WHERE role = 'ADMIN' AND status = 'ACTIVE';
 SELECT id FROM users WHERE role = 'ADMIN' AND status = 'ACTIVE' ORDER BY id FOR UPDATE;
 
 -- name: InsertAdminAccount :one
-INSERT INTO users (provider, provider_subject, email, full_name, role, password_hash, last_login_at)
-VALUES ('password', sqlc.arg(email)::text, sqlc.arg(email)::text, sqlc.arg(full_name), 'ADMIN', sqlc.arg(password_hash), NULL)
+INSERT INTO users (provider, provider_subject, email, full_name, role, password_hash, last_login_at, email_verified_at)
+VALUES ('password', sqlc.arg(email)::text, sqlc.arg(email)::text, sqlc.arg(full_name), 'ADMIN', sqlc.arg(password_hash), NULL, now())
 RETURNING *;
 
 -- name: SetUserPassword :exec
@@ -69,3 +69,36 @@ WHERE id = $1;
 
 -- name: ResetFailedLogins :exec
 UPDATE users SET failed_logins = 0, locked_until = NULL, last_login_at = now() WHERE id = $1;
+
+-- name: GetCustomerByEmail :one
+SELECT * FROM users WHERE lower(email) = lower(sqlc.arg(email)::text) AND role = 'CUSTOMER' AND status <> 'ANONYMIZED';
+
+-- name: InsertEmailCustomer :one
+INSERT INTO users (provider, provider_subject, email, full_name, role, preferred_locale)
+VALUES ('email', lower(sqlc.arg(email)::text), sqlc.arg(email)::text, sqlc.arg(full_name), 'CUSTOMER', sqlc.arg(preferred_locale))
+RETURNING *;
+
+-- name: LinkGoogleIdentity :one
+-- Google vouches for the address, so an account still waiting for confirmation counts as confirmed.
+UPDATE users
+SET provider = 'google', provider_subject = sqlc.arg(subject), avatar_url = sqlc.arg(avatar_url),
+    email_verified_at = COALESCE(email_verified_at, now()), last_login_at = now(), updated_at = now()
+WHERE id = sqlc.arg(id)
+RETURNING *;
+
+-- name: MarkEmailVerified :exec
+UPDATE users SET email_verified_at = COALESCE(email_verified_at, now()), updated_at = now() WHERE id = $1;
+
+-- name: InsertEmailToken :exec
+INSERT INTO email_tokens (user_id, purpose, token_hash, expires_at) VALUES ($1, $2, $3, $4);
+
+-- name: DropOpenEmailTokens :exec
+DELETE FROM email_tokens WHERE user_id = $1 AND purpose = $2 AND used_at IS NULL;
+
+-- name: ConsumeEmailToken :one
+UPDATE email_tokens SET used_at = now()
+WHERE token_hash = $1 AND purpose = $2 AND used_at IS NULL AND expires_at > now()
+RETURNING *;
+
+-- name: DeleteExpiredEmailTokens :execrows
+DELETE FROM email_tokens WHERE expires_at < now() - interval '7 days';

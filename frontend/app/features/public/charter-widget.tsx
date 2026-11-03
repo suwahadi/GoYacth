@@ -186,7 +186,7 @@ export function CharterWidget({ boat }: { boat: BoatDetail }) {
               </Select>
             )}
           </Field>
-          <Field label={t("public.widget.pax")} hint={t("public.widget.pax_hint", { count: boat.max_passengers })}>
+          <Field label={t("public.widget.pax")}>
             {(p) => (
               <Select {...p} value={pax} onChange={(e) => setPax(Number(e.target.value))}>
                 {range(1, boat.max_passengers).map((n) => (

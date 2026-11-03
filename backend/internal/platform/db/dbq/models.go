@@ -303,6 +303,16 @@ type DepartureSlotArea struct {
 	AreaID      uuid.UUID `json:"area_id"`
 }
 
+type EmailToken struct {
+	ID        uuid.UUID  `json:"id"`
+	UserID    uuid.UUID  `json:"user_id"`
+	Purpose   string     `json:"purpose"`
+	TokenHash []byte     `json:"token_hash"`
+	ExpiresAt time.Time  `json:"expires_at"`
+	UsedAt    *time.Time `json:"used_at"`
+	CreatedAt time.Time  `json:"created_at"`
+}
+
 type Facility struct {
 	ID        uuid.UUID `json:"id"`
 	Icon      string    `json:"icon"`
@@ -811,4 +821,5 @@ type User struct {
 	PasswordHash    string     `json:"password_hash"`
 	FailedLogins    int32      `json:"failed_logins"`
 	LockedUntil     *time.Time `json:"locked_until"`
+	EmailVerifiedAt *time.Time `json:"email_verified_at"`
 }

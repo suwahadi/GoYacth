@@ -115,6 +115,7 @@ func add[T river.JobArgs](workers *river.Workers, fn func(ctx context.Context, a
 func registerFeatureWorkers(d *Deps, workers *river.Workers, s *Services) []*river.PeriodicJob {
 	add(workers, func(ctx context.Context, a jobs.Notify) error { return s.Notifications.Send(ctx, a) })
 	add(workers, func(ctx context.Context, a jobs.SendWelcome) error { return s.Notifications.SendWelcome(ctx, a.UserID) })
+	add(workers, func(ctx context.Context, a jobs.SendAuthEmail) error { return s.Notifications.SendAuthEmail(ctx, a) })
 	add(workers, func(ctx context.Context, a jobs.RefundProvider) error {
 		return s.Refunds.ProcessProvider(ctx, a.RefundID)
 	})

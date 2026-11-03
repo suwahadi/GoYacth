@@ -31,6 +31,8 @@ type Principal struct {
 	Role      string
 	Locale    string
 	CSRFToken string
+	// EmailVerified is false only for a password account that never confirmed its address.
+	EmailVerified bool
 }
 
 func (p *Principal) IsAdmin() bool { return p != nil && p.Role == RoleAdmin }
@@ -127,6 +129,7 @@ func (s *Sessions) Middleware(next http.Handler) http.Handler {
 		p := &Principal{
 			SessionID: row.Session.ID, UserID: row.User.ID, Email: row.User.Email, FullName: row.User.FullName,
 			Role: row.User.Role, Locale: row.User.PreferredLocale, CSRFToken: row.Session.CsrfToken,
+			EmailVerified: row.User.EmailVerifiedAt != nil,
 		}
 		next.ServeHTTP(w, r.WithContext(WithPrincipal(r.Context(), p)))
 	})

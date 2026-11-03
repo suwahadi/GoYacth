@@ -15,7 +15,7 @@
     "IDEMPOTENCY_KEY_REQUIRED": "Silakan coba lagi.",
     "IDEMPOTENCY_KEY_REUSED": "Permintaan ini sudah dikirim dengan data berbeda. Muat ulang lalu coba lagi.",
     "IDEMPOTENCY_IN_PROGRESS": "Permintaan sebelumnya masih diproses.",
-    "EMAIL_NOT_VERIFIED": "Email Google Anda belum terverifikasi. Verifikasi di Google lalu coba lagi.",
+    "EMAIL_NOT_VERIFIED": "Alamat email ini belum terverifikasi. Verifikasi dulu, lalu coba lagi.",
     "ACCOUNT_DISABLED": "Akun ini dinonaktifkan. Hubungi kami untuk bantuan.",
     "OAUTH_STATE_INVALID": "Sesi masuk kedaluwarsa. Silakan coba lagi.",
     "OAUTH_EXCHANGE_FAILED": "Masuk dengan Google gagal. Silakan coba lagi.",
@@ -62,7 +62,9 @@
     "BOAT_ARCHIVED": "Kapal ini sudah tidak tersedia.",
     "PAGE_ARCHIVED": "Halaman ini sudah dihapus.",
     "MULTIPART_INVALID": "Unggahan tidak dapat dibaca. Pilih file lagi.",
-    "SETTING_NOT_FOUND": "Pengaturan ini tidak ada."
+    "SETTING_NOT_FOUND": "Pengaturan ini tidak ada.",
+    "INVALID_CREDENTIALS": "Email atau kata sandi salah.",
+    "TOKEN_INVALID": "Tautan ini sudah kedaluwarsa atau sudah dipakai. Minta tautan baru."
   },
   "fields": {
     "REQUIRED": "Kolom ini wajib diisi.",
@@ -121,7 +123,7 @@
     "NOT_AVAILABLE": "Tidak tersedia.",
     "ARCHIVED": "Item ini diarsipkan.",
     "USER_NOT_FOUND": "Customer tidak ditemukan.",
-    "PASSWORD_TOO_SHORT": "Gunakan minimal 12 karakter.",
+    "PASSWORD_TOO_SHORT": "Kata sandi ini terlalu pendek.",
     "PASSWORD_TOO_LONG": "Gunakan maksimal 72 byte."
   }
 }

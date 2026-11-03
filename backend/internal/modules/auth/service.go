@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -39,9 +40,10 @@ func NewService(pool *pgxpool.Pool, g google.Authenticator, s *Sessions, enqueue
 }
 
 // SafeReturnPath only allows same-site relative paths so the login flow cannot be used as an
-// open redirect.
+// open redirect. Browsers drop tabs and newlines and read a backslash as a slash, so any control
+// character or backslash is refused.
 func SafeReturnPath(p string) string {
-	if p == "" || !strings.HasPrefix(p, "/") || strings.HasPrefix(p, "//") || strings.ContainsAny(p, "\\\r\n") || len(p) > 512 {
+	if p == "" || !strings.HasPrefix(p, "/") || strings.HasPrefix(p, "//") || strings.ContainsRune(p, '\\') || strings.IndexFunc(p, unicode.IsControl) >= 0 || len(p) > 512 {
 		return "/"
 	}
 	return p
@@ -107,14 +109,25 @@ func (s *Service) loginIdentity(ctx context.Context, w http.ResponseWriter, r *h
 		if found {
 			role = user.Role
 		}
-		if found {
+		switch {
+		case found:
 			user, err = q.UpdateUserLogin(ctx, dbq.UpdateUserLoginParams{ID: user.ID, Email: ident.Email, AvatarUrl: ident.Picture, Role: role, FullName: ident.Name})
-		} else {
-			user, err = q.InsertUser(ctx, dbq.InsertUserParams{
-				Provider: providerGoogle, ProviderSubject: ident.Subject, Email: ident.Email,
-				FullName: ident.Name, AvatarUrl: ident.Picture, Role: role, PreferredLocale: "en",
-			})
-			res.Created = true
+		default:
+			existing, lookupErr := q.GetCustomerByEmail(ctx, ident.Email)
+			switch {
+			case lookupErr == nil && existing.Status != "ACTIVE":
+				return ErrAccountDisabled
+			case lookupErr == nil:
+				user, err = q.LinkGoogleIdentity(ctx, dbq.LinkGoogleIdentityParams{ID: existing.ID, Subject: ident.Subject, AvatarUrl: ident.Picture})
+			case !db.IsNoRows(lookupErr):
+				return lookupErr
+			default:
+				user, err = q.InsertUser(ctx, dbq.InsertUserParams{
+					Provider: providerGoogle, ProviderSubject: ident.Subject, Email: ident.Email,
+					FullName: ident.Name, AvatarUrl: ident.Picture, Role: role, PreferredLocale: "en",
+				})
+				res.Created = true
+			}
 		}
 		if err != nil {
 			return fmt.Errorf("upsert user: %w", err)

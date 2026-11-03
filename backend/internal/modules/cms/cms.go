@@ -121,7 +121,7 @@ func safeURL(u string) bool {
 // folders of static files.
 var reservedSlugs = []string{
 	"account", "admin", "api", "assets", "boats", "checkout", "departures", "destinations", "faq", "home",
-	"login", "media", "metrics", "orders", "packages", "routes", "track", "verify",
+	"login", "media", "metrics", "orders", "packages", "reset-password", "routes", "track", "verify", "verify-email",
 }
 
 // IsReservedSlug also covers locale codes, which prefix every localized URL.

@@ -200,13 +200,16 @@ Refunds are complete only after provider confirmation or recorded transfer proof
 
 ## 8. Authentication and Authorization
 
-- Customers sign in with Google OIDC only, using the authorization code flow with PKCE, completed in the Go backend. Identify them by provider plus Google `sub`, and reject accounts whose email is not verified.
+- Customers sign in with Google OIDC (authorization code flow with PKCE, completed in the Go backend) or with email and password. Google accounts are identified by provider plus Google `sub`, and Google accounts whose email is not verified are rejected.
+- One customer account per email address. Google sign-in joins an existing customer with the same address.
+- Sign-up takes a name and an email, never a password. The password is chosen on the page the emailed link opens, so only the owner of the inbox sets it, and that also confirms the address. Signing up with an address that is already confirmed sends its owner a link to set a password instead. Customer passwords need at least 8 characters; reset links last one hour and end every session.
+- A customer cannot book until their email is confirmed; the booking API checks this as well.
 - Admins sign in with email and password at `/admin/login`. Hash with bcrypt, require at least 12 characters, lock an account for 15 minutes after 5 failures, and answer every failure identically.
 - Server-side sessions in PostgreSQL, referenced by an HttpOnly, Secure, SameSite=Lax cookie. Sessions can be revoked.
 - Do not store tokens in localStorage or sessionStorage.
 - CSRF protection on all cookie-authenticated mutations.
 - Roles: `ADMIN`, `CUSTOMER`. All admins have equal access.
-- The first admin is created by a CLI command. Further admins are created by existing admins. Google login never grants admin, and a role sent by the client is never trusted.
+- The first admin is created by a CLI command. Further admins are created by existing admins. Customer sign-in never grants admin, and a role sent by the client is never trusted.
 - The last active admin cannot be deactivated.
 - Every customer resource checks ownership. A booking belonging to another user returns 404.
 - SSR must never render one user's data into a cacheable response.

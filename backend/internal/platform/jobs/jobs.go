@@ -45,6 +45,20 @@ func (SendWelcome) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{Queue: QueueEmail, MaxAttempts: 10, UniqueOpts: unique()}
 }
 
+// SendAuthEmail mails a confirmation or password link. Template is verify_email, password_reset
+// or account_exists. Token is the raw value; only its hash is stored, and it expires within two days.
+type SendAuthEmail struct {
+	UserID   uuid.UUID `json:"user_id"`
+	Template string    `json:"template"`
+	Token    string    `json:"token"`
+	ReturnTo string    `json:"return_to,omitempty"`
+}
+
+func (SendAuthEmail) Kind() string { return "send_auth_email" }
+func (SendAuthEmail) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: QueueEmail, MaxAttempts: 10, UniqueOpts: unique()}
+}
+
 // Notify sends one templated email. DedupeKey is unique in notification_logs, so a retried or
 // duplicated job never sends the same message twice.
 type Notify struct {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useMatches } from "react-router";
 
 import { ArrowRightIcon, Button, ButtonLink, ChevronDownIcon, Drawer, Dropdown, DropdownItem, GlobeIcon, MailIcon, MenuIcon, PhoneIcon, SunIcon, UserIcon, WhatsAppIcon, YachtMark, cn } from "~/components/ui";
+import { SignInDialog } from "~/features/account/sign-in";
 import { loadAnalytics } from "~/lib/analytics";
 import { readCookie } from "~/lib/api";
 import { LOCALES, localePath, splitLocale, type Locale } from "~/lib/config";
@@ -98,12 +99,16 @@ function UserMenu() {
   const link = useLink();
   const { user } = useRootData();
   const location = useLocation();
+  const [signIn, setSignIn] = useState(false);
   if (!user) {
     return (
-      <a href={`/api/v1/auth/google?return_to=${encodeURIComponent(location.pathname + location.search)}`} className={menuTrigger}>
-        <UserIcon className="size-5 text-primary" />
-        {t("common.auth.sign_in")}
-      </a>
+      <>
+        <button type="button" className={menuTrigger} onClick={() => setSignIn(true)}>
+          <UserIcon className="size-5 text-primary" />
+          {t("common.auth.sign_in")}
+        </button>
+        <SignInDialog open={signIn} onClose={() => setSignIn(false)} returnTo={location.pathname + location.search} />
+      </>
     );
   }
   return (
@@ -134,6 +139,7 @@ function Logo({ className }: { className?: string }) {
 }
 
 const navItems = [
+  { to: "/", key: "common.nav.home" },
   { to: "/boats", key: "common.nav.boats" },
   { to: "/destinations", key: "common.nav.regions" },
   { to: "/packages", key: "common.nav.packages" },
@@ -159,7 +165,7 @@ export function SiteHeader() {
           </Link>
           <nav className="mx-auto hidden items-center gap-5 lg:flex xl:gap-8" aria-label={t("common.nav.main")}>
             {navItems.map((n) => (
-              <NavLink key={n.to} to={link(n.to)} className={({ isActive }) => cn("py-2 font-display text-[clamp(1.0625rem,0.9rem+0.25vw,1.25rem)] underline-offset-8 hover:underline", isActive && "underline decoration-accent decoration-2")}>
+              <NavLink key={n.to} to={link(n.to)} end={n.to === "/"} className={({ isActive }) => cn("py-2 font-display text-[clamp(1.0625rem,0.9rem+0.25vw,1.25rem)] underline-offset-8 hover:underline", isActive && "underline decoration-accent decoration-2")}>
                 {t(n.key)}
               </NavLink>
             ))}
@@ -184,7 +190,7 @@ export function SiteHeader() {
       <Drawer open={menu} onClose={() => setMenu(false)} title={t("common.nav.menu")}>
         <nav className="flex flex-col gap-1" aria-label={t("common.nav.main")}>
           {navItems.map((n) => (
-            <NavLink key={n.to} to={link(n.to)} className="rounded px-3 py-2.5 hover:bg-surface-2">
+            <NavLink key={n.to} to={link(n.to)} end={n.to === "/"} className="rounded px-3 py-2.5 hover:bg-surface-2">
               {t(n.key)}
             </NavLink>
           ))}
@@ -214,8 +220,9 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
   const whatsapp = site?.whatsapp?.startsWith("+") ? site.whatsapp : `+${site?.whatsapp}`;
   return (
     <footer className={cn("text-fg", !flush && "mt-16 border-t border-border")}>
-      <div className="px-5 pt-10 lg:px-[3.9vw]">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4 lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))_minmax(0,1.3fr)] lg:gap-x-10">
+      {/* The footer keeps to the reading width of the pages, not the full width of the header. */}
+      <div className="mx-auto w-full max-w-6xl px-5 pt-12">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,1fr))_minmax(0,1.3fr)] lg:gap-x-8">
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <Link to={link("/")} className="inline-flex min-h-11 items-center text-primary">
               <Logo className="text-[clamp(1.75rem,1rem+1.2vw,2.5rem)]" />
@@ -226,7 +233,7 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
             <p className="font-semibold">{t("common.footer.quick_links")}</p>
             <ul className="mt-2 text-sm">
               {navItems
-                .filter((n) => n.to !== "/departures")
+                .filter((n) => n.to !== "/" && n.to !== "/departures")
                 .map((n) => (
                   <li key={n.to}>
                     <Link className={footerLink} to={link(n.to)}>

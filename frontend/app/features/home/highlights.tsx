@@ -43,9 +43,9 @@ export function WhySection({ section }: { section: HomeSection }) {
           ))}
         </ul>
       </div>
-      <div className="overflow-hidden rounded-2xl lg:rounded-l-none">
-        {/* The slanted edge repeats the bow line of the hero yacht. */}
-        <ResponsiveImage image={section.image} sizes={`(min-width: 1024px) 45vw, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} className="aspect-[5/2] w-full lg:aspect-[8/3] lg:[clip-path:polygon(6%_0,100%_0,100%_100%,0_100%)]" />
+      {/* A 16:9 frame shows a landscape photo almost whole instead of cutting it into a strip. */}
+      <div className="overflow-hidden rounded-2xl">
+        <ResponsiveImage image={section.image} sizes={`(min-width: 1024px) 45vw, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} className="aspect-video w-full" />
       </div>
     </section>
   );

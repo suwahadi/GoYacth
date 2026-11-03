@@ -44,9 +44,9 @@ var absentAccountHash = sync.OnceValue(func() []byte {
 
 func normalizeEmail(email string) string { return strings.ToLower(strings.TrimSpace(email)) }
 
-func passwordFieldError(password string) string {
+func passwordError(password string, minChars int) string {
 	switch {
-	case utf8.RuneCountInString(password) < minPasswordChars:
+	case utf8.RuneCountInString(password) < minChars:
 		return "PASSWORD_TOO_SHORT"
 	case len(password) > maxPasswordBytes:
 		return "PASSWORD_TOO_LONG"
@@ -66,7 +66,7 @@ func CreateAdmin(ctx context.Context, pool *pgxpool.Pool, email, fullName, passw
 	if !validate.Email(email) {
 		fields.Add("email", "INVALID_EMAIL")
 	}
-	if code := passwordFieldError(password); code != "" {
+	if code := passwordError(password, minPasswordChars); code != "" {
 		fields.Add("password", code)
 	}
 	if err := fields.Err(); err != nil {
@@ -91,7 +91,7 @@ func CreateAdmin(ctx context.Context, pool *pgxpool.Pool, email, fullName, passw
 
 // ResetAdminPassword is the recovery path for a forgotten password, reachable only from the CLI.
 func ResetAdminPassword(ctx context.Context, pool *pgxpool.Pool, email, password string) error {
-	if code := passwordFieldError(password); code != "" {
+	if code := passwordError(password, minPasswordChars); code != "" {
 		return httpx.Validation(map[string]string{"password": code})
 	}
 	hash, err := hashPassword(password)
@@ -169,7 +169,7 @@ func (s *Service) ChangePassword(ctx context.Context, w http.ResponseWriter, r *
 	if bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(current)) != nil {
 		return ErrInvalidCredentials
 	}
-	if code := passwordFieldError(next); code != "" {
+	if code := passwordError(next, minPasswordChars); code != "" {
 		return httpx.Validation(map[string]string{"new_password": code})
 	}
 	hash, err := hashPassword(next)

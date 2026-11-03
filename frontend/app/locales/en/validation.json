@@ -15,7 +15,7 @@
     "IDEMPOTENCY_KEY_REQUIRED": "Please try again.",
     "IDEMPOTENCY_KEY_REUSED": "This request was already sent with different details. Reload and try again.",
     "IDEMPOTENCY_IN_PROGRESS": "Your previous request is still being processed.",
-    "EMAIL_NOT_VERIFIED": "Your Google email is not verified. Verify it with Google and try again.",
+    "EMAIL_NOT_VERIFIED": "This email address is not verified yet. Verify it, then try again.",
     "ACCOUNT_DISABLED": "This account has been disabled. Contact us for help.",
     "OAUTH_STATE_INVALID": "Your sign-in session expired. Please try again.",
     "OAUTH_EXCHANGE_FAILED": "Google sign-in failed. Please try again.",
@@ -62,7 +62,9 @@
     "BOAT_ARCHIVED": "This boat is no longer available.",
     "PAGE_ARCHIVED": "This page has been removed.",
     "MULTIPART_INVALID": "The upload could not be read. Choose the file again.",
-    "SETTING_NOT_FOUND": "This setting does not exist."
+    "SETTING_NOT_FOUND": "This setting does not exist.",
+    "INVALID_CREDENTIALS": "The email or password is incorrect.",
+    "TOKEN_INVALID": "This link has expired or was already used. Request a new one."
   },
   "fields": {
     "REQUIRED": "This field is required.",
@@ -121,7 +123,7 @@
     "NOT_AVAILABLE": "Not available.",
     "ARCHIVED": "This item is archived.",
     "USER_NOT_FOUND": "Customer not found.",
-    "PASSWORD_TOO_SHORT": "Use at least 12 characters.",
+    "PASSWORD_TOO_SHORT": "This password is too short.",
     "PASSWORD_TOO_LONG": "Use at most 72 bytes."
   }
 }

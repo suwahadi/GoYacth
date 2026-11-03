@@ -81,6 +81,7 @@ var demoPhotos = []demoPhoto{
 	{"interior-lounge", "1535078035266-a0fa7d3b8f65", text{"Lounge with sculpted backlit panels", "Lounge dengan panel berlampu"}},
 	{"interior-dining", "1600812703042-38e573598898", text{"Formal dining table on a superyacht", "Meja makan formal di superyacht"}},
 	{"moment-couple", "1775717621320-cde667fb8489", text{"Couple embracing on deck at sunset", "Pasangan berpelukan di dek saat matahari terbenam"}},
+	{"moment-bow", "1519801584609-8ee5f072eddd", text{"Friends relaxing on the bow of a sailing yacht", "Teman-teman bersantai di haluan yacht layar"}},
 }
 
 type keyed struct {

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -13,16 +14,24 @@ import (
 )
 
 type Handler struct {
-	svc    *Service
-	appURL *url.URL
+	svc       *Service
+	appURL    *url.URL
+	turnstile func(ctx context.Context, token, ip string) bool
 }
 
-func NewHandler(svc *Service, appURL *url.URL) *Handler {
-	return &Handler{svc: svc, appURL: appURL}
+func NewHandler(svc *Service, appURL *url.URL, turnstile func(ctx context.Context, token, ip string) bool) *Handler {
+	return &Handler{svc: svc, appURL: appURL, turnstile: turnstile}
 }
+
+var errCaptcha = httpx.NewError(http.StatusForbidden, "CAPTCHA_FAILED", "verification failed")
 
 func (h *Handler) Routes(r chi.Router) {
 	r.Post("/auth/admin/login", h.adminLogin)
+	r.Post("/auth/register", h.register)
+	r.Post("/auth/login", h.customerLogin)
+	r.Post("/auth/verify-email", h.verifyEmail)
+	r.Post("/auth/password/forgot", h.forgotPassword)
+	r.Post("/auth/password/reset", h.resetPassword)
 	r.Post("/auth/password", h.changePassword)
 	r.Get("/auth/google", h.begin)
 	r.Get("/auth/google/callback", h.callback)
@@ -132,11 +141,12 @@ func (h *Handler) changePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 type meResponse struct {
-	ID       string `json:"id"`
-	Email    string `json:"email"`
-	FullName string `json:"full_name"`
-	Role     string `json:"role"`
-	Locale   string `json:"locale"`
+	ID            string `json:"id"`
+	Email         string `json:"email"`
+	FullName      string `json:"full_name"`
+	Role          string `json:"role"`
+	Locale        string `json:"locale"`
+	EmailVerified bool   `json:"email_verified"`
 }
 
 func (h *Handler) me(w http.ResponseWriter, r *http.Request) {
@@ -145,5 +155,96 @@ func (h *Handler) me(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, r, httpx.ErrUnauthenticated)
 		return
 	}
-	httpx.JSON(w, http.StatusOK, meResponse{ID: p.UserID.String(), Email: p.Email, FullName: p.FullName, Role: p.Role, Locale: p.Locale})
+	httpx.JSON(w, http.StatusOK, meResponse{ID: p.UserID.String(), Email: p.Email, FullName: p.FullName, Role: p.Role, Locale: p.Locale, EmailVerified: p.EmailVerified})
+}
+
+type registerInput struct {
+	Email          string `json:"email"`
+	FullName       string `json:"full_name"`
+	Locale         string `json:"locale"`
+	ReturnTo       string `json:"return_to"`
+	TurnstileToken string `json:"turnstile_token"`
+}
+
+func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
+	var in registerInput
+	if err := httpx.Decode(w, r, &in); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	if !h.turnstile(r.Context(), in.TurnstileToken, httpx.ClientIP(r.Context())) {
+		httpx.WriteError(w, r, errCaptcha)
+		return
+	}
+	if err := h.svc.Register(r.Context(), RegisterInput{Email: in.Email, FullName: in.FullName, Locale: in.Locale, ReturnTo: in.ReturnTo}); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	httpx.JSON(w, http.StatusAccepted, map[string]bool{"sent": true})
+}
+
+func (h *Handler) customerLogin(w http.ResponseWriter, r *http.Request) {
+	var in adminLoginInput
+	if err := httpx.Decode(w, r, &in); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	if err := h.svc.CustomerLogin(r.Context(), w, r, in.Email, in.Password); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	httpx.NoContent(w)
+}
+
+type tokenInput struct {
+	Token    string `json:"token"`
+	Password string `json:"password"`
+}
+
+func (h *Handler) verifyEmail(w http.ResponseWriter, r *http.Request) {
+	var in tokenInput
+	if err := httpx.Decode(w, r, &in); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	if err := h.svc.VerifyEmail(r.Context(), w, r, in.Token, in.Password); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	httpx.NoContent(w)
+}
+
+type emailInput struct {
+	Email          string `json:"email"`
+	TurnstileToken string `json:"turnstile_token"`
+}
+
+func (h *Handler) forgotPassword(w http.ResponseWriter, r *http.Request) {
+	var in emailInput
+	if err := httpx.Decode(w, r, &in); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	if !h.turnstile(r.Context(), in.TurnstileToken, httpx.ClientIP(r.Context())) {
+		httpx.WriteError(w, r, errCaptcha)
+		return
+	}
+	if err := h.svc.ForgotPassword(r.Context(), in.Email); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	httpx.JSON(w, http.StatusAccepted, map[string]bool{"sent": true})
+}
+
+func (h *Handler) resetPassword(w http.ResponseWriter, r *http.Request) {
+	var in tokenInput
+	if err := httpx.Decode(w, r, &in); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	if err := h.svc.ResetPassword(r.Context(), in.Token, in.Password); err != nil {
+		httpx.WriteError(w, r, err)
+		return
+	}
+	httpx.NoContent(w)
 }

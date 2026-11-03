@@ -12,6 +12,32 @@ import (
 	"github.com/google/uuid"
 )
 
+const consumeEmailToken = `-- name: ConsumeEmailToken :one
+UPDATE email_tokens SET used_at = now()
+WHERE token_hash = $1 AND purpose = $2 AND used_at IS NULL AND expires_at > now()
+RETURNING id, user_id, purpose, token_hash, expires_at, used_at, created_at
+`
+
+type ConsumeEmailTokenParams struct {
+	TokenHash []byte `json:"token_hash"`
+	Purpose   string `json:"purpose"`
+}
+
+func (q *Queries) ConsumeEmailToken(ctx context.Context, arg ConsumeEmailTokenParams) (EmailToken, error) {
+	row := q.db.QueryRow(ctx, consumeEmailToken, arg.TokenHash, arg.Purpose)
+	var i EmailToken
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Purpose,
+		&i.TokenHash,
+		&i.ExpiresAt,
+		&i.UsedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const consumeOAuthState = `-- name: ConsumeOAuthState :one
 DELETE FROM oauth_states WHERE state = $1 AND expires_at > now() RETURNING state, code_verifier, nonce, return_to, expires_at, created_at
 `
@@ -41,6 +67,18 @@ func (q *Queries) CountActiveAdmins(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const deleteExpiredEmailTokens = `-- name: DeleteExpiredEmailTokens :execrows
+DELETE FROM email_tokens WHERE expires_at < now() - interval '7 days'
+`
+
+func (q *Queries) DeleteExpiredEmailTokens(ctx context.Context) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteExpiredEmailTokens)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const deleteExpiredOAuthStates = `-- name: DeleteExpiredOAuthStates :execrows
 DELETE FROM oauth_states WHERE expires_at < now()
 `
@@ -65,8 +103,52 @@ func (q *Queries) DeleteExpiredSessions(ctx context.Context) (int64, error) {
 	return result.RowsAffected(), nil
 }
 
+const dropOpenEmailTokens = `-- name: DropOpenEmailTokens :exec
+DELETE FROM email_tokens WHERE user_id = $1 AND purpose = $2 AND used_at IS NULL
+`
+
+type DropOpenEmailTokensParams struct {
+	UserID  uuid.UUID `json:"user_id"`
+	Purpose string    `json:"purpose"`
+}
+
+func (q *Queries) DropOpenEmailTokens(ctx context.Context, arg DropOpenEmailTokensParams) error {
+	_, err := q.db.Exec(ctx, dropOpenEmailTokens, arg.UserID, arg.Purpose)
+	return err
+}
+
+const getCustomerByEmail = `-- name: GetCustomerByEmail :one
+SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at FROM users WHERE lower(email) = lower($1::text) AND role = 'CUSTOMER' AND status <> 'ANONYMIZED'
+`
+
+func (q *Queries) GetCustomerByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRow(ctx, getCustomerByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Provider,
+		&i.ProviderSubject,
+		&i.Email,
+		&i.FullName,
+		&i.AvatarUrl,
+		&i.Phone,
+		&i.Nationality,
+		&i.PreferredLocale,
+		&i.Role,
+		&i.Status,
+		&i.LastLoginAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
+		&i.EmailVerifiedAt,
+	)
+	return i, err
+}
+
 const getSessionWithUser = `-- name: GetSessionWithUser :one
-SELECT s.id, s.token_hash, s.user_id, s.csrf_token, s.user_agent, s.ip_address, s.expires_at, s.revoked_at, s.last_seen_at, s.created_at, u.id, u.provider, u.provider_subject, u.email, u.full_name, u.avatar_url, u.phone, u.nationality, u.preferred_locale, u.role, u.status, u.last_login_at, u.created_at, u.updated_at, u.password_hash, u.failed_logins, u.locked_until
+SELECT s.id, s.token_hash, s.user_id, s.csrf_token, s.user_agent, s.ip_address, s.expires_at, s.revoked_at, s.last_seen_at, s.created_at, u.id, u.provider, u.provider_subject, u.email, u.full_name, u.avatar_url, u.phone, u.nationality, u.preferred_locale, u.role, u.status, u.last_login_at, u.created_at, u.updated_at, u.password_hash, u.failed_logins, u.locked_until, u.email_verified_at
 FROM sessions s JOIN users u ON u.id = s.user_id
 WHERE s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > now()
 `
@@ -107,12 +189,13 @@ func (q *Queries) GetSessionWithUser(ctx context.Context, tokenHash []byte) (Get
 		&i.User.PasswordHash,
 		&i.User.FailedLogins,
 		&i.User.LockedUntil,
+		&i.User.EmailVerifiedAt,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until FROM users WHERE id = $1
+SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
@@ -136,12 +219,13 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.PasswordHash,
 		&i.FailedLogins,
 		&i.LockedUntil,
+		&i.EmailVerifiedAt,
 	)
 	return i, err
 }
 
 const getUserByProvider = `-- name: GetUserByProvider :one
-SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until FROM users WHERE provider = $1 AND provider_subject = $2
+SELECT id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at FROM users WHERE provider = $1 AND provider_subject = $2
 `
 
 type GetUserByProviderParams struct {
@@ -170,14 +254,15 @@ func (q *Queries) GetUserByProvider(ctx context.Context, arg GetUserByProviderPa
 		&i.PasswordHash,
 		&i.FailedLogins,
 		&i.LockedUntil,
+		&i.EmailVerifiedAt,
 	)
 	return i, err
 }
 
 const insertAdminAccount = `-- name: InsertAdminAccount :one
-INSERT INTO users (provider, provider_subject, email, full_name, role, password_hash, last_login_at)
-VALUES ('password', $1::text, $1::text, $2, 'ADMIN', $3, NULL)
-RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
+INSERT INTO users (provider, provider_subject, email, full_name, role, password_hash, last_login_at, email_verified_at)
+VALUES ('password', $1::text, $1::text, $2, 'ADMIN', $3, NULL, now())
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at
 `
 
 type InsertAdminAccountParams struct {
@@ -207,8 +292,68 @@ func (q *Queries) InsertAdminAccount(ctx context.Context, arg InsertAdminAccount
 		&i.PasswordHash,
 		&i.FailedLogins,
 		&i.LockedUntil,
+		&i.EmailVerifiedAt,
 	)
 	return i, err
+}
+
+const insertEmailCustomer = `-- name: InsertEmailCustomer :one
+INSERT INTO users (provider, provider_subject, email, full_name, role, preferred_locale)
+VALUES ('email', lower($1::text), $1::text, $2, 'CUSTOMER', $3)
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at
+`
+
+type InsertEmailCustomerParams struct {
+	Email           string `json:"email"`
+	FullName        string `json:"full_name"`
+	PreferredLocale string `json:"preferred_locale"`
+}
+
+func (q *Queries) InsertEmailCustomer(ctx context.Context, arg InsertEmailCustomerParams) (User, error) {
+	row := q.db.QueryRow(ctx, insertEmailCustomer, arg.Email, arg.FullName, arg.PreferredLocale)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Provider,
+		&i.ProviderSubject,
+		&i.Email,
+		&i.FullName,
+		&i.AvatarUrl,
+		&i.Phone,
+		&i.Nationality,
+		&i.PreferredLocale,
+		&i.Role,
+		&i.Status,
+		&i.LastLoginAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
+		&i.EmailVerifiedAt,
+	)
+	return i, err
+}
+
+const insertEmailToken = `-- name: InsertEmailToken :exec
+INSERT INTO email_tokens (user_id, purpose, token_hash, expires_at) VALUES ($1, $2, $3, $4)
+`
+
+type InsertEmailTokenParams struct {
+	UserID    uuid.UUID `json:"user_id"`
+	Purpose   string    `json:"purpose"`
+	TokenHash []byte    `json:"token_hash"`
+	ExpiresAt time.Time `json:"expires_at"`
+}
+
+func (q *Queries) InsertEmailToken(ctx context.Context, arg InsertEmailTokenParams) error {
+	_, err := q.db.Exec(ctx, insertEmailToken,
+		arg.UserID,
+		arg.Purpose,
+		arg.TokenHash,
+		arg.ExpiresAt,
+	)
+	return err
 }
 
 const insertOAuthState = `-- name: InsertOAuthState :exec
@@ -275,9 +420,9 @@ func (q *Queries) InsertSession(ctx context.Context, arg InsertSessionParams) (S
 }
 
 const insertUser = `-- name: InsertUser :one
-INSERT INTO users (provider, provider_subject, email, full_name, avatar_url, role, preferred_locale, last_login_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, now())
-RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
+INSERT INTO users (provider, provider_subject, email, full_name, avatar_url, role, preferred_locale, last_login_at, email_verified_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, now(), now())
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at
 `
 
 type InsertUserParams struct {
@@ -319,6 +464,48 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, e
 		&i.PasswordHash,
 		&i.FailedLogins,
 		&i.LockedUntil,
+		&i.EmailVerifiedAt,
+	)
+	return i, err
+}
+
+const linkGoogleIdentity = `-- name: LinkGoogleIdentity :one
+UPDATE users
+SET provider = 'google', provider_subject = $1, avatar_url = $2,
+    email_verified_at = COALESCE(email_verified_at, now()), last_login_at = now(), updated_at = now()
+WHERE id = $3
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at
+`
+
+type LinkGoogleIdentityParams struct {
+	Subject   string    `json:"subject"`
+	AvatarUrl string    `json:"avatar_url"`
+	ID        uuid.UUID `json:"id"`
+}
+
+// Google vouches for the address, so an account still waiting for confirmation counts as confirmed.
+func (q *Queries) LinkGoogleIdentity(ctx context.Context, arg LinkGoogleIdentityParams) (User, error) {
+	row := q.db.QueryRow(ctx, linkGoogleIdentity, arg.Subject, arg.AvatarUrl, arg.ID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Provider,
+		&i.ProviderSubject,
+		&i.Email,
+		&i.FullName,
+		&i.AvatarUrl,
+		&i.Phone,
+		&i.Nationality,
+		&i.PreferredLocale,
+		&i.Role,
+		&i.Status,
+		&i.LastLoginAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.PasswordHash,
+		&i.FailedLogins,
+		&i.LockedUntil,
+		&i.EmailVerifiedAt,
 	)
 	return i, err
 }
@@ -345,6 +532,15 @@ func (q *Queries) LockActiveAdmins(ctx context.Context) ([]uuid.UUID, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const markEmailVerified = `-- name: MarkEmailVerified :exec
+UPDATE users SET email_verified_at = COALESCE(email_verified_at, now()), updated_at = now() WHERE id = $1
+`
+
+func (q *Queries) MarkEmailVerified(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, markEmailVerified, id)
+	return err
 }
 
 const recordFailedLogin = `-- name: RecordFailedLogin :exec
@@ -419,7 +615,7 @@ UPDATE users
 SET email = $2, avatar_url = $3, role = $4, last_login_at = now(), updated_at = now(),
     full_name = CASE WHEN full_name = '' THEN $5::text ELSE full_name END
 WHERE id = $1
-RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until
+RETURNING id, provider, provider_subject, email, full_name, avatar_url, phone, nationality, preferred_locale, role, status, last_login_at, created_at, updated_at, password_hash, failed_logins, locked_until, email_verified_at
 `
 
 type UpdateUserLoginParams struct {
@@ -457,6 +653,7 @@ func (q *Queries) UpdateUserLogin(ctx context.Context, arg UpdateUserLoginParams
 		&i.PasswordHash,
 		&i.FailedLogins,
 		&i.LockedUntil,
+		&i.EmailVerifiedAt,
 	)
 	return i, err
 }

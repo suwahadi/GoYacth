@@ -87,11 +87,19 @@ describe("ReviewsSection", () => {
     expect(container.textContent).toBe("");
   });
 
-  it("steps through reviews", () => {
-    wrap(<ReviewsSection section={{ ...section, data: [review("1", "First review"), review("2", "Second review")] }} />);
-    expect(screen.getByText("First review")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Next review" }));
-    expect(screen.getByText("Second review")).toBeTruthy();
-    expect(screen.queryByText("First review")).toBeNull();
+  // Both carousels are in the markup; CSS shows the phone one below lg and the desktop one above.
+  it("pages one review at a time on phones and three at a time on desktops", () => {
+    wrap(<ReviewsSection section={{ ...section, data: ["1", "2", "3", "4"].map((n) => review(n, `Review ${n}`)) }} />);
+    expect(screen.getAllByText("Review 1")).toHaveLength(2);
+    expect(screen.getAllByText("Review 3")).toHaveLength(1);
+    expect(screen.queryByText("Review 4")).toBeNull();
+
+    const [phoneNext, desktopNext] = screen.getAllByRole("button", { name: "Next review" });
+    fireEvent.click(desktopNext);
+    expect(screen.getByText("Review 4")).toBeTruthy();
+    expect(screen.getAllByText("Review 1")).toHaveLength(1);
+    fireEvent.click(phoneNext);
+    expect(screen.queryByText("Review 1")).toBeNull();
+    expect(screen.getAllByText("Review 2")).toHaveLength(1);
   });
 });

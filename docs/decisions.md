@@ -56,8 +56,15 @@ Clarifications agreed with the product owner on 2026-11-01. They amend or resolv
 
 ## Admin access
 
-- **Admin login** is email and password at `/admin/login`, decided by the owner on 2026-11-02. This replaces Google login and the admin allowlist from PRD 12.2 for admins only; customers keep Google.
+- **Admin login** is email and password at `/admin/login`, decided by the owner on 2026-11-02. This replaces Google login and the admin allowlist from PRD 12.2 for admins only.
 - Admins are created by other admins under Customers, or with `cli admin create` for the first one. A forgotten password is reset with `cli admin password`.
+
+## Customer sign-in
+
+- **Customers may use email and password as well as Google**, decided by the owner on 2026-11-03. The header opens a sign-in popup (email and password, Google below), and `/login` stays as a page because checkout sends signed-out visitors there.
+- **One account per email.** A Google sign-in with the address of an existing customer joins that account, so bookings stay in one history.
+- **A confirmed email is required before booking**, because tickets and invoices go to that address. Sign-up asks only for a name and an email; the password is chosen on the page the emailed link opens, which also confirms the address. The booking API refuses an unconfirmed account as a second check.
+- Nobody can get into an account by signing up with someone else's address: the stranger never sets the password, the inbox owner does. Sign-up answers the same way for new and known addresses, and a known, confirmed address gets an "account exists" email with a link to set a password.
 
 ## Static page URLs
 

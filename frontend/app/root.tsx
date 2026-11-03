@@ -18,6 +18,7 @@ export interface RootData {
   settings: PublicSettings;
   origin: string;
   isAdminPath: boolean;
+  turnstileSiteKey: string;
 }
 
 const THEMES: ThemePref[] = ["light", "dark", "system"];
@@ -38,7 +39,15 @@ export async function loader({ request }: Route.LoaderArgs) {
     apiData<PublicSettings>("/settings/public", { request }).catch(() => ({}) as PublicSettings),
   ]);
   const origin = process.env.PUBLIC_APP_URL ?? url.origin;
-  const body: RootData = { locale, theme, user, settings, origin, isAdminPath: url.pathname === "/admin" || url.pathname.startsWith("/admin/") };
+  const body: RootData = {
+    locale,
+    theme,
+    user,
+    settings,
+    origin,
+    isAdminPath: url.pathname === "/admin" || url.pathname.startsWith("/admin/"),
+    turnstileSiteKey: process.env.TURNSTILE_SITE_KEY ?? "",
+  };
   return data(body, { headers: { "Cache-Control": user ? "private, no-store" : "public, max-age=60" } });
 }
 

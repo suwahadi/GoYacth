@@ -19,6 +19,8 @@ function localized(locale: string) {
     route("faq", "routes/public/faq.tsx", { id: id("faq") }),
     route(":slug", "routes/public/page.tsx", { id: id("page") }),
     route("login", "routes/public/login.tsx", { id: id("login") }),
+    route("verify-email", "routes/public/verify-email.tsx", { id: id("verify-email") }),
+    route("reset-password", "routes/public/reset-password.tsx", { id: id("reset-password") }),
     route("track", "routes/booking/track.tsx", { id: id("track") }),
     route("verify/:token", "routes/booking/verify.tsx", { id: id("verify") }),
     route("orders/:id", "routes/booking/order.tsx", { id: id("order") }),

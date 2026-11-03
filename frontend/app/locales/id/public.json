@@ -116,7 +116,6 @@
     "day_count": "{{count}} hari",
     "fixed_duration": "Lama trip: {{duration}}",
     "pax": "Tamu",
-    "pax_hint": "Maksimal {{count}} tamu di kapal ini.",
     "busy_title": "Sudah dipesan pada hari ini",
     "busy_hint": "Trip Anda tidak boleh bertabrakan dengan jam berikut, termasuk waktu persiapan.",
     "busy_none": "Belum ada pemesanan pada hari ini.",

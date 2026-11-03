@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"goyacht/internal/integrations/google"
+	"goyacht/internal/integrations/turnstile"
 	"goyacht/internal/modules/auth"
 	"goyacht/internal/modules/media"
 	"goyacht/internal/platform/httpx"
@@ -31,7 +32,7 @@ func NewModules(d *Deps, s *Services) *Modules {
 	g := google.New(cfg.GoogleClientID, cfg.GoogleClientSecret, cfg.APIURL.JoinPath("/api/v1/auth/google/callback").String())
 	authSvc := auth.NewService(d.Pool, g, sessions, d.Enqueuer())
 	m := &Modules{
-		Auth:     auth.NewHandler(authSvc, cfg.AppURL),
+		Auth:     auth.NewHandler(authSvc, cfg.AppURL, turnstile.New(cfg.TurnstileSecret).Verify),
 		Sessions: sessions,
 		Media:    media.NewHandler(s.Media, d.Pool, d.Store),
 	}

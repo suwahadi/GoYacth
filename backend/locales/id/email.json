@@ -65,5 +65,20 @@
   "admin_exception": {
     "subject": "Exception pembayaran untuk {{number}}",
     "body": "Pembayaran {{amount}} masuk untuk booking berstatus {{status}}. Tinjau di antrean exception."
+  },
+  "verify_email": {
+    "subject": "Selesaikan pendaftaran GoYacht",
+    "body": "Gunakan tautan di bawah untuk membuat kata sandi dan menyelesaikan akun GoYacht Anda. Tautan berlaku 48 jam. Jika Anda tidak mendaftar, abaikan email ini dan tidak ada akun yang dibuat untuk Anda.",
+    "action": "Buat kata sandi"
+  },
+  "password_reset": {
+    "subject": "Atur ulang kata sandi GoYacht",
+    "body": "Gunakan tautan di bawah untuk membuat kata sandi baru. Tautan berlaku satu jam. Jika Anda tidak memintanya, abaikan email ini dan kata sandi Anda tidak berubah.",
+    "action": "Buat kata sandi baru"
+  },
+  "account_exists": {
+    "subject": "Anda sudah punya akun GoYacht",
+    "body": "Seseorang mencoba membuat akun GoYacht dengan alamat ini, padahal alamat ini sudah punya akun. Masuk dengan Google, atau gunakan tautan di bawah untuk membuat kata sandi. Tautan berlaku satu jam. Jika itu bukan Anda, abaikan email ini dan tidak ada yang berubah.",
+    "action": "Buat kata sandi"
   }
 }

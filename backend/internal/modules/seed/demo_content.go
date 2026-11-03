@@ -202,7 +202,7 @@ func (s *seeder) homepage() {
 	s.section("REGIONS", 6, cms.SectionConfig{}, "place-wayag",
 		cms.SectionContent{Title: "Paradise Awaits", Subtitle: "Explore Destinations", Body: "Sail to breathtaking destinations from Bali to Labuan Bajo and beyond.", CTALabel: "Explore Destinations", CTAURL: "/destinations"},
 		cms.SectionContent{Title: "Surga Menanti", Subtitle: "Jelajahi Destinasi", Body: "Berlayar ke destinasi memukau, dari Bali hingga Labuan Bajo dan sekitarnya.", CTALabel: "Jelajahi Destinasi", CTAURL: "/destinations"})
-	s.section("HIGHLIGHTS", 7, cms.SectionConfig{}, "moment-couple",
+	s.section("HIGHLIGHTS", 7, cms.SectionConfig{}, "moment-bow",
 		cms.SectionContent{Title: "Unforgettable Moments", Subtitle: "Why Choose Us", Body: "More than a journey, a memorable experience.", Items: []cms.SectionItem{{Title: "World-Class Fleet", Icon: "globe"}, {Title: "Safe & Reliable", Icon: "shield"}, {Title: "Dedicated Support", Icon: "headset"}, {Title: "Tailored Packages", Icon: "star"}}},
 		cms.SectionContent{Title: "Momen Tak Terlupakan", Subtitle: "Mengapa Memilih Kami", Body: "Lebih dari sekadar perjalanan, ini pengalaman yang berkesan.", Items: []cms.SectionItem{{Title: "Armada Kelas Dunia", Icon: "globe"}, {Title: "Aman & Andal", Icon: "shield"}, {Title: "Dukungan Khusus", Icon: "headset"}, {Title: "Paket Sesuai Keinginan", Icon: "star"}}})
 	s.section("REVIEWS", 8, cms.SectionConfig{Limit: int32(len(demoReviews))}, "",
