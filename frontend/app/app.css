@@ -129,6 +129,32 @@
   --animate-fade-in: fade-in 200ms ease-out;
 }
 
+/* Every control shows the hand cursor, on the public site and in the admin panel alike. Tailwind's
+   preflight leaves buttons on the default arrow. Disabled controls keep the not-allowed cursor. */
+@layer base {
+  a[href],
+  button,
+  summary,
+  select,
+  label[for],
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  input[type="date"],
+  input[type="submit"],
+  input[type="button"] {
+    cursor: pointer;
+  }
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
