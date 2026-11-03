@@ -167,7 +167,7 @@ export function Dropdown({ label, children, align = "right", triggerClassName }:
 }
 
 export function DropdownItem({ children, onClick, href }: { children: ReactNode; onClick?: () => void; href?: string }) {
-  const cls = "block w-full px-3 py-2 text-left text-sm hover:bg-surface-2";
+  const cls = "block w-full px-3 py-3 text-left text-sm hover:bg-surface-2 lg:py-2";
   if (href) {
     return (
       <a role="menuitem" href={href} className={cls}>

@@ -236,15 +236,15 @@ export function MediaPicker({ label, value, onChange, multiple, slug, error }: {
               <div className="flex flex-wrap gap-1">
                 {multiple && (
                   <>
-                    <Button size="sm" variant="ghost" disabled={i === 0} onClick={() => move(i, -1)} aria-label={adminT("catalog.common.move_up")}>
+                    <Button size="sm" variant="secondary" disabled={i === 0} onClick={() => move(i, -1)} aria-label={adminT("catalog.common.move_up")}>
                       ↑
                     </Button>
-                    <Button size="sm" variant="ghost" disabled={i === value.length - 1} onClick={() => move(i, 1)} aria-label={adminT("catalog.common.move_down")}>
+                    <Button size="sm" variant="secondary" disabled={i === value.length - 1} onClick={() => move(i, 1)} aria-label={adminT("catalog.common.move_down")}>
                       ↓
                     </Button>
                   </>
                 )}
-                <Button size="sm" variant="ghost" onClick={() => onChange(value.filter((x) => x.id !== img.id))}>
+                <Button size="sm" variant="secondary" onClick={() => onChange(value.filter((x) => x.id !== img.id))}>
                   {adminT("catalog.common.remove")}
                 </Button>
               </div>

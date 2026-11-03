@@ -211,7 +211,7 @@ function CancellationPolicyDialog({ policy, onClose, onSaved }: { policy: Cancel
             <li key={t.key} className="grid items-end gap-3 sm:grid-cols-3">
               <NumberField label={adminT("catalog.policies.min_days_before")} value={t.min_days_before} onChange={(v) => setTier(i, { min_days_before: v })} error={s.field(`tiers.${i}.min_days_before`)} />
               <PercentField label={adminT("catalog.policies.refund_percent")} value={t.refund_percent} onChange={(v) => setTier(i, { refund_percent: v })} error={s.field(`tiers.${i}.refund_percent`)} />
-              <Button variant="ghost" disabled={form.tiers.length <= 1} onClick={() => set({ tiers: form.tiers.filter((_, j) => j !== i) })}>
+              <Button variant="secondary" disabled={form.tiers.length <= 1} onClick={() => set({ tiers: form.tiers.filter((_, j) => j !== i) })}>
                 {adminT("catalog.common.remove")}
               </Button>
             </li>

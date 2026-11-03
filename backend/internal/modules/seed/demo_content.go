@@ -185,14 +185,14 @@ func (s *seeder) section(kind string, sort int, cfg cms.SectionConfig, photo str
 
 func (s *seeder) homepage() {
 	s.section("HERO", 1, cms.SectionConfig{}, "yacht-dusk",
-		cms.SectionContent{Title: "Discover the\nBeauty of Indonesia", Subtitle: "Premium Yacht Charter", Body: "Charter a luxury yacht or join our curated departures for an unforgettable journey across Indonesia's most stunning destinations.", CTALabel: "Explore Our Fleet", CTAURL: "/boats"},
-		cms.SectionContent{Title: "Temukan Keindahan Indonesia", Subtitle: "Sewa Yacht Premium", Body: "Sewa yacht mewah atau ikut jadwal keberangkatan pilihan kami untuk perjalanan tak terlupakan ke destinasi terindah di Indonesia.", CTALabel: "Lihat Armada Kami", CTAURL: "/boats"})
+		cms.SectionContent{Title: "Discover the\nBeauty of Indonesia", Subtitle: "Premium Yacht Charter", Body: "Charter a luxury yacht or join our curated departures for an unforgettable journey across Indonesia's most stunning destinations.", CTALabel: "Explore Fleet", CTAURL: "/boats"},
+		cms.SectionContent{Title: "Temukan Keindahan Indonesia", Subtitle: "Sewa Yacht Premium", Body: "Sewa yacht mewah atau ikut jadwal keberangkatan pilihan kami untuk perjalanan tak terlupakan ke destinasi terindah di Indonesia.", CTALabel: "Lihat Armada", CTAURL: "/boats"})
 	s.section("HERO", 2, cms.SectionConfig{}, "place-piaynemo",
 		cms.SectionContent{Title: "Sail Between Indonesia's Islands", Subtitle: "Destinations", Body: "Bali, Lombok, Labuan Bajo and Raja Ampat, each with departures from its own home port.", CTALabel: "View Destinations", CTAURL: "/destinations"},
 		cms.SectionContent{Title: "Berlayar di Antara Pulau-Pulau Indonesia", Subtitle: "Destinasi", Body: "Bali, Lombok, Labuan Bajo, dan Raja Ampat, masing-masing berangkat dari pelabuhannya sendiri.", CTALabel: "Lihat Destinasi", CTAURL: "/destinations"})
 	s.section("HERO", 3, cms.SectionConfig{}, "catamaran-sunset",
-		cms.SectionContent{Title: "Sunset Hours on Your Own Deck", Subtitle: "Private Charter", Body: "Book the whole boat for your group, then choose your route, date and time on the water.", CTALabel: "Plan a Private Charter", CTAURL: "/boats"},
-		cms.SectionContent{Title: "Senja di Dek Kapal Anda Sendiri", Subtitle: "Private Charter", Body: "Sewa seluruh kapal untuk rombongan Anda, lalu pilih rute, tanggal, dan waktu berlayar.", CTALabel: "Rencanakan Private Charter", CTAURL: "/boats"})
+		cms.SectionContent{Title: "Sunset Hours on Your Own Deck", Subtitle: "Private Charter", Body: "Book the whole boat for your group, then choose your route, date and time on the water.", CTALabel: "Private Charter", CTAURL: "/boats"},
+		cms.SectionContent{Title: "Senja di Dek Kapal Anda Sendiri", Subtitle: "Private Charter", Body: "Sewa seluruh kapal untuk rombongan Anda, lalu pilih rute, tanggal, dan waktu berlayar.", CTALabel: "Private Charter", CTAURL: "/boats"})
 	s.section("HIGHLIGHTS", 4, cms.SectionConfig{}, "",
 		cms.SectionContent{Items: []cms.SectionItem{{Title: "Luxury Fleet", Text: "Premium Selection", Icon: "diamond"}, {Title: "Trusted & Safe", Text: "Your Safety First", Icon: "shield"}, {Title: "24/7 Support", Text: "Always Here", Icon: "headset"}, {Title: "Unforgettable Experience", Text: "Beyond Expectations", Icon: "star"}}},
 		cms.SectionContent{Items: []cms.SectionItem{{Title: "Armada Mewah", Text: "Pilihan Premium", Icon: "diamond"}, {Title: "Tepercaya & Aman", Text: "Keselamatan Anda yang Utama", Icon: "shield"}, {Title: "Dukungan 24/7", Text: "Selalu Siap Membantu", Icon: "headset"}, {Title: "Pengalaman Tak Terlupakan", Text: "Melebihi Harapan", Icon: "star"}}})

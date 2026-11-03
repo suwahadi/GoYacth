@@ -11,7 +11,7 @@ const variants: Record<Variant, string> = {
   primary: "bg-primary text-primary-fg hover:bg-primary-hover border border-transparent",
   accent: "bg-accent text-accent-fg hover:bg-accent-hover border border-transparent",
   photo: "bg-ink/25 text-ink-fg border border-ink-fg/70 hover:bg-ink/60",
-  secondary: "bg-surface text-fg border border-border hover:bg-surface-2",
+  secondary: "bg-surface text-fg border border-control hover:bg-surface-2",
   ghost: "bg-transparent text-fg border border-transparent hover:bg-surface-2",
   danger: "bg-danger text-primary-fg border border-transparent hover:opacity-90",
 };

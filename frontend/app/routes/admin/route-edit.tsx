@@ -186,13 +186,13 @@ function RouteEditor({ route, refs }: { route: AdminRoute | null; refs: Pick<Ref
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="text-sm font-medium">{adminT("catalog.routes.stop_n", { n: i + 1 })}</span>
                         <div className="flex gap-1">
-                          <Button size="sm" variant="ghost" disabled={i === 0} onClick={() => moveStop(i, -1)} aria-label={adminT("catalog.common.move_up")}>
+                          <Button size="sm" variant="secondary" disabled={i === 0} onClick={() => moveStop(i, -1)} aria-label={adminT("catalog.common.move_up")}>
                             ↑
                           </Button>
-                          <Button size="sm" variant="ghost" disabled={i === form.stops.length - 1} onClick={() => moveStop(i, 1)} aria-label={adminT("catalog.common.move_down")}>
+                          <Button size="sm" variant="secondary" disabled={i === form.stops.length - 1} onClick={() => moveStop(i, 1)} aria-label={adminT("catalog.common.move_down")}>
                             ↓
                           </Button>
-                          <Button size="sm" variant="ghost" onClick={() => set({ stops: form.stops.filter((_, j) => j !== i) })}>
+                          <Button size="sm" variant="secondary" onClick={() => set({ stops: form.stops.filter((_, j) => j !== i) })}>
                             {adminT("catalog.common.remove")}
                           </Button>
                         </div>

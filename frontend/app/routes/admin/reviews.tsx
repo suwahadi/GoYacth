@@ -135,7 +135,7 @@ function ReviewCard({ review }: { review: AdminReview }) {
             </Button>
           )}
           {review.status !== "PENDING" && (
-            <Button size="sm" variant="ghost" pending={s.pending} onClick={() => void moderate("PENDING", false)}>
+            <Button size="sm" variant="secondary" pending={s.pending} onClick={() => void moderate("PENDING", false)}>
               {adminT("catalog.reviews.back_to_pending")}
             </Button>
           )}

@@ -91,14 +91,14 @@ export function Pagination({ page }: { page: Page }) {
       <span className="text-muted">{t("common.pagination.page_of", { page: page.page, total: totalPages })}</span>
       <div className="grid grid-cols-2 gap-2">
         {page.page > 1 ? (
-          <Link className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 py-1.5 hover:bg-surface-2 lg:min-h-0" to={href(page.page - 1)} rel="prev">
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-md border border-control bg-surface px-3 py-1.5 hover:bg-surface-2 lg:min-h-0" to={href(page.page - 1)} rel="prev">
             {t("common.actions.previous")}
           </Link>
         ) : (
           <span className="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-3 py-1.5 opacity-50 lg:min-h-0">{t("common.actions.previous")}</span>
         )}
         {page.page < totalPages ? (
-          <Link className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 py-1.5 hover:bg-surface-2 lg:min-h-0" to={href(page.page + 1)} rel="next">
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-md border border-control bg-surface px-3 py-1.5 hover:bg-surface-2 lg:min-h-0" to={href(page.page + 1)} rel="next">
             {t("common.actions.next")}
           </Link>
         ) : (

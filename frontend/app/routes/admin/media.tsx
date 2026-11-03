@@ -84,7 +84,7 @@ function MediaTile({ image, onEdit }: { image: Img; onEdit: (img: Img) => void }
       <MediaThumb image={current} />
       <div className="flex flex-wrap items-center justify-between gap-1">
         <StatusPill status={current.status} />
-        <Button size="sm" variant="ghost" onClick={() => onEdit(current)}>
+        <Button size="sm" variant="secondary" onClick={() => onEdit(current)}>
           {adminT("catalog.media.edit_alt")}
         </Button>
       </div>

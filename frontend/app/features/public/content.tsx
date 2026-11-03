@@ -1,16 +1,16 @@
 import { Link } from "react-router";
 
-import { ArrowRightIcon, Card, PHONE_IMAGE, ResponsiveImage, buttonClass } from "~/components/ui";
+import { ArrowRightIcon, Card, PHONE_IMAGE, ResponsiveImage, buttonClass, cn } from "~/components/ui";
 import { localePath } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
 import type { Faq, HomeSection, PackageCard, PageBlock } from "~/lib/types";
 
 import { CardGrid, FaqList, PackageCardItem, Section, localizeHref } from "./components";
 
-export function CtaLink({ label, url, variant = "primary", pill, arrow }: { label: string; url: string; variant?: "primary" | "secondary" | "accent"; pill?: boolean; arrow?: boolean }) {
+export function CtaLink({ label, url, variant = "primary", pill, arrow, full, className }: { label: string; url: string; variant?: "primary" | "secondary" | "accent"; pill?: boolean; arrow?: boolean; full?: boolean; className?: string }) {
   const locale = useLocale();
   const href = localizeHref(locale, url);
-  const cls = buttonClass(variant, "lg", false, pill);
+  const cls = cn(buttonClass(variant, "lg", full, pill), className);
   const body = (
     <>
       {label}

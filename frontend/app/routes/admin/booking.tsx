@@ -284,7 +284,7 @@ export default function BookingPage({ loaderData }: Route.ComponentProps) {
       </Section>
 
       <Section title={adminT("ops.booking.documents")}>
-        <ul className="flex flex-wrap gap-x-4 gap-y-2">
+        <ul className="flex flex-wrap gap-2">
           <li>
             <DocLink href={docs(`/bookings/${b.id}/ticket.pdf`)}>{adminT("ops.booking.ticket_pdf")}</DocLink>
           </li>

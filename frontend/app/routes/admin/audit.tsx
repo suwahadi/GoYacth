@@ -96,7 +96,7 @@ export default function AuditPage({ loaderData }: Route.ComponentProps) {
                           {e.ip_address && ` · ${e.ip_address}`}
                         </p>
                       </div>
-                      <Button size="sm" variant="ghost" aria-expanded={open === e.id} onClick={() => setOpen(open === e.id ? null : e.id)}>
+                      <Button size="sm" variant="secondary" aria-expanded={open === e.id} onClick={() => setOpen(open === e.id ? null : e.id)}>
                         {adminT(open === e.id ? "ops.audit.hide" : "ops.audit.show")}
                       </Button>
                     </div>

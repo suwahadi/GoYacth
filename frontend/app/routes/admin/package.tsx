@@ -219,7 +219,7 @@ function PackageEditor({ pkg, refs, departures }: { pkg: AdminPackage | null; re
                     error={s.field(`offerings.${i}.price`)}
                     hint={charter ? adminT("catalog.packages.price_per_trip") : adminT("catalog.packages.price_per_slot")}
                   />
-                  <Button variant="ghost" onClick={() => set({ offerings: form.offerings.filter((_, j) => j !== i) })}>
+                  <Button variant="secondary" onClick={() => set({ offerings: form.offerings.filter((_, j) => j !== i) })}>
                     {adminT("catalog.common.remove")}
                   </Button>
                 </li>

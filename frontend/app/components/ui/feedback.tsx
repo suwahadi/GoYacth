@@ -46,7 +46,7 @@ export function ErrorState({ message, onRetry }: { message?: string; onRetry?: (
       <p className="font-medium text-danger">{t("common.states.error_title")}</p>
       <p className="mt-1 text-sm">{message ?? t("validation.errors.UNKNOWN")}</p>
       {onRetry && (
-        <button type="button" onClick={onRetry} className="mt-4 rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium hover:bg-surface-2">
+        <button type="button" onClick={onRetry} className="mt-4 rounded-md border border-control bg-surface px-3 py-1.5 text-sm font-medium hover:bg-surface-2">
           {t("common.actions.retry")}
         </button>
       )}

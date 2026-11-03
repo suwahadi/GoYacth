@@ -168,7 +168,7 @@ export default function DeparturePage({ loaderData }: Route.ComponentProps) {
         )}
       </Section>
       <Section title={adminT("ops.manifest.title")}>
-        <ul className="flex flex-wrap gap-x-4 gap-y-2">
+        <ul className="flex flex-wrap gap-2">
           <li>
             <DocLink href={manifest({ format: "pdf" })}>{adminT("ops.manifest.pdf")}</DocLink>
           </li>

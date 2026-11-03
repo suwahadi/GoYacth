@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, redirect, useLocation } from "react-router";
 
 import type { Route } from "./+types/layout";
-import { Drawer, ToastProvider, cn } from "~/components/ui";
+import { ChevronDownIcon, Drawer, Dropdown, DropdownItem, MenuIcon, ToastProvider, buttonClass, cn } from "~/components/ui";
 import { ApiError, apiData, readCookie } from "~/lib/api";
 import { adminT, type AdminKey } from "~/lib/i18n";
 import type { Me } from "~/lib/types";
@@ -67,6 +67,42 @@ function Nav() {
   );
 }
 
+// The avatar holds the account actions. Sign out sits below a rule, away from the links, so it is
+// not tapped by mistake.
+function AccountMenu({ me }: { me: Me }) {
+  const initial = (me.full_name || me.email).trim().charAt(0).toUpperCase();
+  return (
+    <Dropdown
+      triggerClassName="flex h-11 cursor-pointer items-center gap-1 rounded-full border border-control bg-surface pl-1 pr-2 hover:bg-surface-2"
+      label={
+        <>
+          <span className="grid size-9 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-fg" aria-hidden="true">
+            {initial}
+          </span>
+          <span className="sr-only">{adminT("nav.account_menu")}</span>
+          <ChevronDownIcon className="size-4" />
+        </>
+      }
+    >
+      <div className="border-b border-border px-3 py-2 text-sm">
+        {me.full_name && <p className="font-medium">{me.full_name}</p>}
+        <p className="text-muted">{me.email}</p>
+      </div>
+      <DropdownItem href="/admin/account">{adminT("nav.account")}</DropdownItem>
+      <DropdownItem href="/">{adminT("nav.view_site")}</DropdownItem>
+      <div role="separator" className="my-1 border-t border-border" />
+      <DropdownItem
+        onClick={async () => {
+          await fetch("/api/v1/auth/logout", { method: "POST", headers: { "X-CSRF-Token": readCookie("gy_csrf") ?? "" }, credentials: "same-origin" });
+          window.location.href = "/";
+        }}
+      >
+        {adminT("nav.sign_out")}
+      </DropdownItem>
+    </Dropdown>
+  );
+}
+
 export default function AdminLayout({ loaderData }: Route.ComponentProps) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -74,32 +110,20 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
   return (
     <ToastProvider>
       <div data-theme="light" className="min-h-screen bg-bg text-fg">
-        <header className="sticky top-0 z-30 flex h-12 items-center gap-3 border-b border-border bg-surface px-4">
-          <button type="button" className="min-h-11 rounded border border-border px-3 text-sm lg:hidden" onClick={() => setOpen(true)}>
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-surface px-4">
+          <button type="button" className={cn(buttonClass("secondary", "sm"), "lg:hidden")} onClick={() => setOpen(true)}>
+            <MenuIcon className="size-5" />
             {adminT("nav.menu")}
           </button>
-          <a href="/admin" className="font-bold text-primary">
+          <a href="/admin" className="truncate font-bold text-primary">
             GoYacht {adminT("nav.admin")}
           </a>
-          <div className="ml-auto flex items-center gap-3 text-sm">
-            <a href="/" className="inline-flex min-h-11 items-center text-muted hover:text-fg lg:min-h-0">
-              {adminT("nav.view_site")}
-            </a>
-            <span className="hidden text-muted sm:inline">{loaderData.me.email}</span>
-            <button
-              type="button"
-              className="min-h-11 rounded border border-border px-3 hover:bg-surface-2 lg:min-h-0 lg:px-2 lg:py-1"
-              onClick={async () => {
-                await fetch("/api/v1/auth/logout", { method: "POST", headers: { "X-CSRF-Token": readCookie("gy_csrf") ?? "" }, credentials: "same-origin" });
-                window.location.href = "/";
-              }}
-            >
-              {adminT("nav.sign_out")}
-            </button>
+          <div className="ml-auto">
+            <AccountMenu me={loaderData.me} />
           </div>
         </header>
         <div className="flex">
-          <aside className="sticky top-12 hidden h-[calc(100vh-3rem)] w-56 shrink-0 overflow-y-auto border-r border-border bg-surface p-3 lg:block">
+          <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-border bg-surface p-3 lg:block">
             <Nav />
           </aside>
           <Drawer open={open} onClose={() => setOpen(false)} title={adminT("nav.menu")}>

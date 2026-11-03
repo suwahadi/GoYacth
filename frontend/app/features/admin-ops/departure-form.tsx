@@ -130,7 +130,7 @@ export function CreateDepartureDialog({ open, onClose, boats, routes, ports }: {
             <div key={s.key} className="space-y-2 rounded-md border border-border p-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-sm font-medium">{adminT("ops.departures.slot_n", { n: i + 1 })}</span>
-                <Button size="sm" variant="ghost" onClick={() => setSlots(slots.filter((x) => x.key !== s.key))}>
+                <Button size="sm" variant="secondary" onClick={() => setSlots(slots.filter((x) => x.key !== s.key))}>
                   {adminT("ops.common.remove")}
                 </Button>
               </div>

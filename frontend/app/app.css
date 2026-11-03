@@ -10,6 +10,9 @@
   --fg: #061c3a;
   --muted: #4a5a76;
   --border: #d7deea;
+  /* Edge of outlined buttons: at least 3:1 against surface and surface-2, so a light button on a
+     light page still reads as a control. */
+  --control-border: #7d8ba3;
   --primary: #04203c;
   --primary-hover: #0c3560;
   --primary-fg: #ffffff;
@@ -39,6 +42,7 @@
   --fg: #e8eef6;
   --muted: #a6b5c8;
   --border: #27405e;
+  --control-border: #6b85a8;
   --primary: #9cc5ee;
   --primary-hover: #b6d5f4;
   --primary-fg: #04203c;
@@ -69,6 +73,7 @@
     --fg: #e8eef6;
     --muted: #a6b5c8;
     --border: #27405e;
+    --control-border: #6b85a8;
     --primary: #9cc5ee;
     --primary-hover: #b6d5f4;
     --primary-fg: #04203c;
@@ -99,6 +104,7 @@
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-control: var(--control-border);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-fg: var(--primary-fg);

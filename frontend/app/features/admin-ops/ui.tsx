@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigation, useRevalidator } from "react-router";
 
-import { Badge, ErrorState, Field, Input, SkeletonList, useApiErrorText } from "~/components/ui";
+import { Badge, ErrorState, Field, FileCsvIcon, FilePdfIcon, FileXlsIcon, Input, SkeletonList, buttonClass, useApiErrorText } from "~/components/ui";
 import { ApiError } from "~/lib/api";
 import { formatDateTime, formatIDR, formatPlainDate } from "~/lib/format";
 import { adminT, type AdminKey } from "~/lib/i18n";
@@ -144,9 +144,21 @@ export function apiHref(path: string, query?: Record<string, string | undefined>
   return `/api/v1${path}${s ? `?${s}` : ""}`;
 }
 
+// docFormat reads the file type from a download URL: a ?format= parameter wins over the extension.
+export function docFormat(href: string): "pdf" | "csv" | "xlsx" {
+  const u = new URL(href, "http://self.invalid");
+  const f = u.searchParams.get("format") ?? u.pathname.split(".").pop();
+  return f === "csv" ? "csv" : f === "xlsx" ? "xlsx" : "pdf";
+}
+
+const docIcons = { pdf: FilePdfIcon, csv: FileCsvIcon, xlsx: FileXlsIcon };
+
+// DocLink is a download, so it looks like a button and its icon names the file type.
 export function DocLink({ href, children }: { href: string; children: ReactNode }) {
+  const Icon = docIcons[docFormat(href)];
   return (
-    <a href={href} target="_blank" rel="noopener" className="text-sm text-primary underline-offset-2 hover:underline">
+    <a href={href} target="_blank" rel="noopener" className={buttonClass("secondary", "sm")}>
+      <Icon className="size-4 shrink-0 text-primary" />
       {children}
     </a>
   );

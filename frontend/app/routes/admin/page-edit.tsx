@@ -148,13 +148,13 @@ function PageEditor({ page }: { page: AdminPage | null }) {
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-medium">{enumLabel("block", b.type)}</span>
                     <div className="flex gap-1">
-                      <Button size="sm" variant="ghost" disabled={i === 0} onClick={() => dispatch({ type: "move", key: b.key, delta: -1 })} aria-label={adminT("catalog.common.move_up")}>
+                      <Button size="sm" variant="secondary" disabled={i === 0} onClick={() => dispatch({ type: "move", key: b.key, delta: -1 })} aria-label={adminT("catalog.common.move_up")}>
                         ↑
                       </Button>
-                      <Button size="sm" variant="ghost" disabled={i === tr.blocks.length - 1} onClick={() => dispatch({ type: "move", key: b.key, delta: 1 })} aria-label={adminT("catalog.common.move_down")}>
+                      <Button size="sm" variant="secondary" disabled={i === tr.blocks.length - 1} onClick={() => dispatch({ type: "move", key: b.key, delta: 1 })} aria-label={adminT("catalog.common.move_down")}>
                         ↓
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => dispatch({ type: "remove", key: b.key })}>
+                      <Button size="sm" variant="secondary" onClick={() => dispatch({ type: "remove", key: b.key })}>
                         {adminT("catalog.common.remove")}
                       </Button>
                     </div>
@@ -217,7 +217,7 @@ function BlockFields({ block, error, onChange }: { block: EditorBlock; error?: s
                 value={it}
                 onChange={(v) => onChange({ items: block.items.map((x, j) => (j === i ? v : x)) })}
               />
-              <Button size="sm" variant="ghost" onClick={() => onChange({ items: block.items.filter((_, j) => j !== i) })}>
+              <Button size="sm" variant="secondary" onClick={() => onChange({ items: block.items.filter((_, j) => j !== i) })}>
                 {adminT("catalog.common.remove")}
               </Button>
             </div>

@@ -259,7 +259,7 @@ function SectionDialog({ section, boats, packages, regions, onClose, onSaved }: 
               <TextField label={adminT("catalog.content.item_title")} value={it.title} onChange={(v) => setItem(i, { title: v })} />
               <TextField className="sm:col-span-2" label={adminT("catalog.content.item_text")} value={it.text} onChange={(v) => setItem(i, { text: v })} />
               <TextField label={adminT("catalog.fleet.icon")} value={it.icon ?? ""} onChange={(v) => setItem(i, { icon: v })} />
-              <Button size="sm" variant="ghost" onClick={() => setTr({ items: tr.items.filter((_, j) => j !== i) })}>
+              <Button size="sm" variant="secondary" onClick={() => setTr({ items: tr.items.filter((_, j) => j !== i) })}>
                 {adminT("catalog.common.remove")}
               </Button>
             </div>

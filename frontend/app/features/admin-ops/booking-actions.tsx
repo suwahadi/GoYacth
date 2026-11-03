@@ -175,7 +175,7 @@ export function RevealIdentity({ booking }: { booking: AdminBookingDetail }) {
         {opsCode("id_type", booking.lead.id_type)} {revealed ? <code>{revealed.id_number}</code> : `•••• ${booking.lead.id_last4}`}
       </span>
       {revealed ? (
-        <Button size="sm" variant="ghost" onClick={() => setRevealed(null)}>
+        <Button size="sm" variant="secondary" onClick={() => setRevealed(null)}>
           {adminT("ops.identity.hide")}
         </Button>
       ) : (

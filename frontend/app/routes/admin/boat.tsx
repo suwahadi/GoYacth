@@ -216,7 +216,7 @@ function BoatEditor({ boat, refs }: { boat: AdminBoat | null; refs: BoatRefs }) 
                 <MoneyField label={adminT("catalog.fields.price")} required value={r.price} onChange={(v) => setRate(i, { price: v })} error={f(`rates.${i}.price`)} />
                 <NumberField label={adminT("catalog.boats.min_units")} value={r.min_units} onChange={(v) => setRate(i, { min_units: v })} error={f(`rates.${i}.min_units`)} hint={enumLabel("rate_unit_hint", r.rate_unit)} />
                 <NumberField label={adminT("catalog.boats.max_units")} value={r.max_units} onChange={(v) => setRate(i, { max_units: v })} error={f(`rates.${i}.max_units`)} />
-                <Button variant="ghost" onClick={() => set({ rates: form.rates.filter((_, j) => j !== i) })}>
+                <Button variant="secondary" onClick={() => set({ rates: form.rates.filter((_, j) => j !== i) })}>
                   {adminT("catalog.common.remove")}
                 </Button>
               </li>
@@ -243,7 +243,7 @@ function BoatEditor({ boat, refs }: { boat: AdminBoat | null; refs: BoatRefs }) 
                 <SelectField label={adminT("catalog.fields.route")} required value={r.route_id} onChange={(v) => setRoute(i, { route_id: v })} options={routeOpts} placeholder="" error={f(`routes.${i}.route_id`)} />
                 <MoneyField label={adminT("catalog.boats.fixed_price")} value={r.fixed_price} onChange={(v) => setRoute(i, { fixed_price: v })} error={f(`routes.${i}.fixed_price`)} hint={adminT("catalog.common.optional")} />
                 <NumberField label={adminT("catalog.boats.min_duration")} value={r.min_duration_minutes} onChange={(v) => setRoute(i, { min_duration_minutes: v })} error={f(`routes.${i}.min_duration_minutes`)} hint={adminT("catalog.common.minutes_optional")} />
-                <Button variant="ghost" onClick={() => set({ routes: form.routes.filter((_, j) => j !== i) })}>
+                <Button variant="secondary" onClick={() => set({ routes: form.routes.filter((_, j) => j !== i) })}>
                   {adminT("catalog.common.remove")}
                 </Button>
               </li>

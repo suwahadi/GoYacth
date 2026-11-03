@@ -1,4 +1,4 @@
-import { ArrowRightIcon, ButtonLink, CarouselArrow, CarouselDots, DisplayHeading, Eyebrow, PHONE_IMAGE, ResponsiveImage, cn, useCarousel } from "~/components/ui";
+import { ButtonLink, CarouselArrow, CarouselDots, DisplayHeading, Eyebrow, PHONE_IMAGE, ResponsiveImage, cn, useCarousel } from "~/components/ui";
 import { CtaLink } from "~/features/public/content";
 import { localePath } from "~/lib/config";
 import { useLocale, useT } from "~/lib/i18n";
@@ -28,11 +28,11 @@ function HeroSlide({ section, active, first }: { section: HomeSection; active: b
             <span className="text-accent">{accent}</span>
           </DisplayHeading>
           {c.body && <p className="mt-5 max-w-[36em] text-lg leading-relaxed text-ink-fg xl:text-xl">{c.body}</p>}
-          <div className="mt-7 flex flex-wrap gap-3">
-            {c.cta_label && c.cta_url && <CtaLink label={c.cta_label} url={c.cta_url} variant="accent" pill arrow />}
-            <ButtonLink to={localePath(locale, "/departures")} variant="photo" size="lg" pill>
+          {/* Two equal halves on every screen; labels stay short so they fit one line on a phone. */}
+          <div className="mt-7 grid max-w-md grid-cols-2 gap-3">
+            {c.cta_label && c.cta_url && <CtaLink label={c.cta_label} url={c.cta_url} variant="accent" pill full className={heroButton} />}
+            <ButtonLink to={localePath(locale, "/departures")} variant="photo" size="lg" pill full className={heroButton}>
               {t("public.home.see_departures")}
-              <ArrowRightIcon className="size-4" />
             </ButtonLink>
           </div>
         </div>
@@ -40,6 +40,9 @@ function HeroSlide({ section, active, first }: { section: HomeSection; active: b
     </div>
   );
 }
+
+
+const heroButton = "whitespace-nowrap max-sm:!px-3 max-sm:!text-sm";
 
 export function HeroCarousel({ slides }: { slides: HomeSection[] }) {
   const t = useT();

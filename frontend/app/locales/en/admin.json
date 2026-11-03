@@ -2,6 +2,7 @@
   "nav": {
     "menu": "Menu",
     "admin": "Admin",
+    "account_menu": "Account menu",
     "view_site": "View site",
     "sign_out": "Sign out",
     "overview": "Overview",
