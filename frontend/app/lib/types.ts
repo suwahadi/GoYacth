@@ -1,7 +1,7 @@
 // Response shapes of the Go API (see backend/internal/modules/*/dto.go and handlers). Money is
 // whole rupiah; timestamps are ISO 8601 UTC strings.
 
-export type ThemePref = "light" | "dark" | "system";
+export type ThemePref = "light" | "dark";
 
 export interface Me {
   id: string;

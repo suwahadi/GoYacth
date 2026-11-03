@@ -21,7 +21,7 @@ export interface RootData {
   turnstileSiteKey: string;
 }
 
-const THEMES: ThemePref[] = ["light", "dark", "system"];
+const THEMES: ThemePref[] = ["light", "dark"];
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);

@@ -2,8 +2,7 @@
 
 /* Design tokens. Components use only these semantic colors; nothing is hard-coded. The admin,
    emails and PDFs are always light, so the admin shell sets data-theme="light". */
-[data-theme="light"],
-[data-theme="system"] {
+[data-theme="light"] {
   --bg: #ffffff;
   --surface: #ffffff;
   --surface-2: #eef3f8;
@@ -63,38 +62,6 @@
   --focus: #9cc5ee;
   --overlay: rgb(0 0 0 / 0.65);
   color-scheme: dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  [data-theme="system"] {
-    --bg: #071527;
-    --surface: #0d2038;
-    --surface-2: #14304e;
-    --fg: #e8eef6;
-    --muted: #a6b5c8;
-    --border: #27405e;
-    --control-border: #6b85a8;
-    --primary: #9cc5ee;
-    --primary-hover: #b6d5f4;
-    --primary-fg: #04203c;
-    --accent: #e0b46c;
-    --accent-hover: #ebc68a;
-    --accent-fg: #04203c;
-    --accent-text: #e8c58c;
-    --accent-icon: #e0b46c;
-    --ink: #0b2a4d;
-    --ink-fg: #ffffff;
-    --danger: #f97066;
-    --danger-bg: #3a1714;
-    --success: #47cd89;
-    --success-bg: #0f2c1f;
-    --warning: #fdb022;
-    --warning-bg: #33230b;
-    --info-bg: #13303d;
-    --focus: #9cc5ee;
-    --overlay: rgb(0 0 0 / 0.65);
-    color-scheme: dark;
-  }
 }
 
 @theme inline {

@@ -53,10 +53,8 @@
     "link_missing": "This link is incomplete. Open it again from the email, or request a new one."
   },
   "theme": {
-    "label": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
+    "to_dark": "Switch to dark mode",
+    "to_light": "Switch to light mode"
   },
   "language": {
     "label": "Language",

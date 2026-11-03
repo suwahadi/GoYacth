@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useMatches } from "react-router";
 
-import { ArrowRightIcon, Button, ButtonLink, ChevronDownIcon, Drawer, Dropdown, DropdownItem, GlobeIcon, MailIcon, MenuIcon, PhoneIcon, SunIcon, UserIcon, WhatsAppIcon, YachtMark, cn } from "~/components/ui";
+import { ArrowRightIcon, Button, ButtonLink, ChevronDownIcon, Drawer, Dropdown, DropdownItem, GlobeIcon, MailIcon, MenuIcon, PhoneIcon, LightbulbIcon, MoonIcon, UserIcon, WhatsAppIcon, YachtMark, cn } from "~/components/ui";
 import { SignInDialog } from "~/features/account/sign-in";
 import { loadAnalytics } from "~/lib/analytics";
 import { readCookie } from "~/lib/api";
@@ -29,12 +29,32 @@ function useAlternatePaths(): Partial<Record<Locale, string>> | undefined {
 
 const menuTrigger = "flex h-11 cursor-pointer items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-sm font-medium hover:bg-surface-2";
 
-function LanguageMenu() {
+// The drawer shows both languages as a pair of buttons: a dropdown there opened past the drawer's
+// left edge and was cut off.
+function LanguageMenu({ inline }: { inline?: boolean }) {
   const t = useT();
   const locale = useLocale();
   const location = useLocation();
   const alternates = useAlternatePaths();
   const { path } = splitLocale(location.pathname);
+  const href = (l: Locale) => localePath(l, alternates?.[l] ?? path) + location.search;
+  if (inline) {
+    return (
+      <div role="group" aria-label={t("common.language.label")} className="flex overflow-hidden rounded-full border border-control">
+        {LOCALES.map((l) => (
+          <a
+            key={l}
+            href={href(l)}
+            aria-label={t(`common.language.${l}`)}
+            aria-current={l === locale ? "true" : undefined}
+            className={cn("flex h-11 min-w-14 items-center justify-center px-4 text-sm font-medium uppercase", l === locale ? "bg-primary text-primary-fg" : "hover:bg-surface-2")}
+          >
+            {l}
+          </a>
+        ))}
+      </div>
+    );
+  }
   return (
     <Dropdown
       triggerClassName={menuTrigger}
@@ -48,7 +68,7 @@ function LanguageMenu() {
       }
     >
       {LOCALES.map((l) => (
-        <DropdownItem key={l} href={localePath(l, alternates?.[l] ?? path) + location.search}>
+        <DropdownItem key={l} href={href(l)}>
           {t(`common.language.${l}`)}
         </DropdownItem>
       ))}
@@ -56,26 +76,29 @@ function LanguageMenu() {
   );
 }
 
-function ThemeMenu() {
+// One tap switches between light and dark. The icon shows the mode a tap leads to: a moon in light
+// mode, a bulb in dark mode. A copy mounted later (the drawer) reads the live theme from the page.
+function ThemeToggle() {
   const t = useT();
-  const select = (theme: ThemePref) => {
-    document.cookie = `gy_theme=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
-    document.documentElement.dataset.theme = theme;
-  };
+  const root = useRootData();
+  const [theme, setTheme] = useState<ThemePref>(() => (typeof document === "undefined" ? root.theme : document.documentElement.dataset.theme === "dark" ? "dark" : "light"));
+  const next: ThemePref = theme === "dark" ? "light" : "dark";
+  const label = t(next === "dark" ? "common.theme.to_dark" : "common.theme.to_light");
+  const Icon = theme === "dark" ? LightbulbIcon : MoonIcon;
   return (
-    <Dropdown
-      triggerClassName={menuTrigger}
-      label={
-        <>
-          <SunIcon className="size-5 text-primary" />
-          <span className="sr-only">{t("common.theme.label")}</span>
-        </>
-      }
+    <button
+      type="button"
+      className={menuTrigger}
+      aria-label={label}
+      title={label}
+      onClick={() => {
+        document.cookie = `gy_theme=${next}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        document.documentElement.dataset.theme = next;
+        setTheme(next);
+      }}
     >
-      <DropdownItem onClick={() => select("light")}>{t("common.theme.light")}</DropdownItem>
-      <DropdownItem onClick={() => select("dark")}>{t("common.theme.dark")}</DropdownItem>
-      <DropdownItem onClick={() => select("system")}>{t("common.theme.system")}</DropdownItem>
-    </Dropdown>
+      <Icon key={theme} className="size-5 text-primary motion-safe:animate-fade-in" />
+    </button>
   );
 }
 
@@ -172,7 +195,7 @@ export function SiteHeader() {
           </nav>
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
             <LanguageMenu />
-            <ThemeMenu />
+            <ThemeToggle />
             <UserMenu />
             <div className="hidden 2xl:block">
               <ButtonLink to={link("/boats")} variant="accent" pill className="h-11">
@@ -199,8 +222,8 @@ export function SiteHeader() {
           </NavLink>
         </nav>
         <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
-          <LanguageMenu />
-          <ThemeMenu />
+          <LanguageMenu inline />
+          <ThemeToggle />
           <UserMenu />
         </div>
       </Drawer>

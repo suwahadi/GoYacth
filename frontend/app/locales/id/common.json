@@ -53,10 +53,8 @@
     "link_missing": "Tautan ini tidak lengkap. Buka lagi dari email, atau minta tautan baru."
   },
   "theme": {
-    "label": "Tema",
-    "light": "Terang",
-    "dark": "Gelap",
-    "system": "Sistem"
+    "to_dark": "Ganti ke mode gelap",
+    "to_light": "Ganti ke mode terang"
   },
   "language": {
     "label": "Bahasa",

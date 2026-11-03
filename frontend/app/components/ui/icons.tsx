@@ -143,6 +143,12 @@ export const SunIcon = (p: IconProps) => (
     <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4" />
   </Stroke>
 );
+export const LightbulbIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M9.5 17.5h5M10.5 21h3" />
+    <path d="M12 3a6 6 0 0 0-3.7 10.7c.7.6 1.2 1.4 1.2 2.3v.5h5v-.5c0-.9.5-1.7 1.2-2.3A6 6 0 0 0 12 3z" />
+  </Stroke>
+);
 export const MenuIcon = (p: IconProps) => (
   <Stroke {...p}>
     <path d="M4 7h16M4 12h16M4 17h16" />
