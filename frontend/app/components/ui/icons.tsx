@@ -83,6 +83,43 @@ export const CalendarIcon = (p: IconProps) => (
     <path d="M3.5 10h17M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01" />
   </Stroke>
 );
+export const CalendarWeekIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+    <path d="M3.5 10h17M8 3v4M16 3v4M7 14.5h10" />
+  </Stroke>
+);
+export const BanknoteIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <rect x="2.5" y="6" width="19" height="12" rx="2" />
+    <circle cx="12" cy="12" r="2.5" />
+    <path d="M6 12h.01M18 12h.01" />
+  </Stroke>
+);
+export const HourglassIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M7 3h10M7 21h10" />
+    <path d="M8 3v2.5a4 4 0 0 0 1.7 3.3l2.3 1.7 2.3-1.7A4 4 0 0 0 16 5.5V3M8 21v-2.5a4 4 0 0 1 1.7-3.3l2.3-1.7 2.3 1.7a4 4 0 0 1 1.7 3.3V21" />
+  </Stroke>
+);
+export const AlertIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M10.3 4.2 2.6 17.5a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z" />
+    <path d="M12 9.5v4M12 17h.01" />
+  </Stroke>
+);
+export const InboxIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M3.5 13.5V18A1.5 1.5 0 0 0 5 19.5h14a1.5 1.5 0 0 0 1.5-1.5v-4.5l-2.6-7.8a1.5 1.5 0 0 0-1.4-1.2h-9a1.5 1.5 0 0 0-1.4 1.2z" />
+    <path d="M3.5 13.5h5l1.2 2.5h4.6l1.2-2.5h5" />
+  </Stroke>
+);
+export const RefundIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M9 14 4 9l5-5" />
+    <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+  </Stroke>
+);
 export const MapPinIcon = (p: IconProps) => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...p}>
     <path fillRule="evenodd" d="M12 2a7.5 7.5 0 0 0-7.5 7.5c0 5.1 5.4 10.6 6.9 12.1a.9.9 0 0 0 1.2 0c1.5-1.5 6.9-7 6.9-12.1A7.5 7.5 0 0 0 12 2zm0 10.2a2.8 2.8 0 1 1 0-5.6 2.8 2.8 0 0 1 0 5.6z" />
@@ -133,7 +170,7 @@ const HeadsetIcon = (p: IconProps) => (
     <path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14a2 2 0 0 1 2-2h.5A1.5 1.5 0 0 1 8 13.5v3A1.5 1.5 0 0 1 6.5 18H6a2 2 0 0 1-2-2zM20 14a2 2 0 0 0-2-2h-.5a1.5 1.5 0 0 0-1.5 1.5v3a1.5 1.5 0 0 0 1.5 1.5h.5a2 2 0 0 0 2-2zM18 18c0 1.8-1.5 3-3.5 3H12" />
   </Stroke>
 );
-const StarIcon = (p: IconProps) => (
+export const StarIcon = (p: IconProps) => (
   <Stroke {...p}>
     <path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3-5.6-3-5.6 3 1.1-6.3L3 9.7l6.2-.9z" />
   </Stroke>

@@ -9,15 +9,18 @@ import { homeWidth } from "./sections";
 
 const GUEST_OPTIONS = [2, 4, 6, 8, 10, 15, 20, 30, 50];
 
-const controlClass = "h-11 max-w-full lg:h-7 cursor-pointer appearance-none bg-transparent pr-6 text-[clamp(0.9375rem,0.8rem+0.25vw,1.0625rem)] font-semibold text-fg field-sizing-content";
+// The field cell shows focus, so the control itself drops the ring that boxed in each value.
+const controlClass = "h-11 max-w-full lg:h-7 cursor-pointer appearance-none bg-transparent focus-visible:outline-none! pr-6 text-[clamp(0.9375rem,0.8rem+0.25vw,1.0625rem)] font-semibold text-fg field-sizing-content";
 
 // The native picker stays usable: its indicator stretches invisibly over the field, under our chevron.
-const dateClass = "relative focus:outline-2 focus:outline-offset-2 focus:outline-focus [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:size-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0";
+const dateClass = "relative [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:size-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0";
 
+// The whole cell tints while one of its controls has focus; keyboard users on a desktop also get
+// the focus ring around the cell.
 function Field({ icon, label, children }: { icon: ReactNode; label: string; children: (id: string) => ReactNode }) {
   const id = useId();
   return (
-    <div className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2 lg:border-l lg:border-border lg:px-5 lg:first:border-l-0">
+    <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 py-2 transition-colors focus-within:bg-surface-2 lg:border-l lg:border-border lg:px-5 lg:first:border-l-0 lg:has-[:focus-visible]:outline-2 lg:has-[:focus-visible]:-outline-offset-2 lg:has-[:focus-visible]:outline-focus">
       <span className="shrink-0 text-primary">{icon}</span>
       <div className="min-w-0 flex-1">
         <label htmlFor={id} className="block text-[0.8125rem] leading-4 text-muted">
@@ -47,7 +50,7 @@ export function SearchBar({ regions, overlapsHero = true }: { regions: RegionCar
         aria-label={t("public.home.search.label")}
         method="get"
         action={localePath(locale, charter ? "/boats" : "/departures")}
-        className="grid grid-cols-1 gap-1 rounded-2xl bg-surface p-3 shadow-lg shadow-ink/15 sm:grid-cols-2 lg:flex lg:items-center lg:gap-0"
+        className="grid grid-cols-1 gap-1 rounded-2xl border border-border bg-surface p-3 shadow-lg shadow-ink/15 sm:grid-cols-2 lg:flex lg:items-center lg:gap-0"
       >
         <Field icon={<YachtMark className="h-5 w-9" />} label={t("public.home.search.mode")}>
           {(id) => (

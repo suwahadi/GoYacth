@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import { CarouselArrow, CarouselDots, Eyebrow, cn, useCarousel } from "~/components/ui";
 import { Stars, initials } from "~/features/public/components";
 import { countryName } from "~/lib/format";
@@ -14,7 +16,7 @@ function pagesOf(reviews: Review[], size: number): Review[][] {
   return pages;
 }
 
-// Phones page through one review at a time; desktops show three side by side. Both carousels are
+// Phones swipe through one review at a time; desktops page through three side by side. Both are
 // rendered and CSS shows the right one, so the server and the browser agree on the markup.
 export function ReviewsSection({ section }: { section: HomeSection }) {
   const t = useT();
@@ -26,7 +28,7 @@ export function ReviewsSection({ section }: { section: HomeSection }) {
         {section.content.title || t("public.home.reviews_title")}
       </Eyebrow>
       <div className="lg:hidden">
-        <ReviewCarousel pages={pagesOf(reviews, 1)} />
+        <SwipeReviews reviews={reviews} />
       </div>
       <div className="hidden lg:block">
         <ReviewCarousel pages={pagesOf(reviews, PER_DESKTOP_PAGE)} />
@@ -67,10 +69,63 @@ function ReviewCarousel({ pages }: { pages: Review[][] }) {
   );
 }
 
-function ReviewCard({ review }: { review: Review }) {
+// slideStep is the distance between neighbouring slides, gap included, so the index follows the scroll position.
+function slideStep(track: HTMLElement): number {
+  const [a, b] = Array.from(track.children) as HTMLElement[];
+  return a && b ? b.offsetLeft - a.offsetLeft : track.clientWidth;
+}
+
+// The track scrolls natively, so a card follows the finger and snaps one review at a time. Arrows
+// and dots stay as visible controls for people who do not swipe.
+function SwipeReviews({ reviews }: { reviews: Review[] }) {
+  const t = useT();
+  const track = useRef<HTMLUListElement>(null);
+  const [index, setIndex] = useState(0);
+  const many = reviews.length > 1;
+  const go = (i: number) => {
+    const el = track.current;
+    if (!el) return;
+    const n = (i + reviews.length) % reviews.length;
+    const smooth = !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo?.({ left: n * slideStep(el), behavior: smooth ? "smooth" : "auto" });
+    setIndex(n);
+  };
+  return (
+    <>
+      <div className="mt-5 flex items-center justify-center gap-4">
+        {many && (
+          <div className="hidden sm:block">
+            <CarouselArrow direction="prev" label={t("public.home.prev_review")} onClick={() => go(index - 1)} />
+          </div>
+        )}
+        <ul
+          ref={track}
+          onScroll={(e) => setIndex(Math.round(e.currentTarget.scrollLeft / slideStep(e.currentTarget)))}
+          className="relative flex w-full max-w-[46rem] snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {reviews.map((r) => (
+            <ReviewCard key={r.id} review={r} className="w-full shrink-0 snap-center" />
+          ))}
+        </ul>
+        {many && (
+          <div className="hidden sm:block">
+            <CarouselArrow direction="next" label={t("public.home.next_review")} onClick={() => go(index + 1)} />
+          </div>
+        )}
+      </div>
+      {many && (
+        <div className="flex items-center justify-center">
+          <CarouselDots count={reviews.length} index={index} onSelect={go} label={(n) => t("public.home.go_to_review", { n })} />
+        </div>
+      )}
+    </>
+  );
+}
+
+function ReviewCard({ review, className }: { review: Review; className?: string }) {
   const locale = useLocale();
   return (
-    <li className="flex">
+    <li className={cn("flex", className)}>
       <figure lang={review.locale} className="flex w-full flex-col rounded-2xl border border-border bg-surface p-5 lg:p-6">
         <p className="leading-none">
           <Stars rating={review.rating_overall} className="text-lg" />

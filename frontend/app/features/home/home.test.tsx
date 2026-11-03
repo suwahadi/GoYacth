@@ -87,19 +87,20 @@ describe("ReviewsSection", () => {
     expect(container.textContent).toBe("");
   });
 
-  // Both carousels are in the markup; CSS shows the phone one below lg and the desktop one above.
-  it("pages one review at a time on phones and three at a time on desktops", () => {
-    wrap(<ReviewsSection section={{ ...section, data: ["1", "2", "3", "4"].map((n) => review(n, `Review ${n}`)) }} />);
+  // Both carousels are in the markup; CSS shows the swipe track below lg and the paged grid above.
+  it("lets phones swipe through every review and pages three at a time on desktops", () => {
+    const { container } = wrap(<ReviewsSection section={{ ...section, data: ["1", "2", "3", "4"].map((n) => review(n, `Review ${n}`)) }} />);
+    const track = container.querySelector("ul.snap-x");
+    expect(track?.children).toHaveLength(4);
     expect(screen.getAllByText("Review 1")).toHaveLength(2);
-    expect(screen.getAllByText("Review 3")).toHaveLength(1);
-    expect(screen.queryByText("Review 4")).toBeNull();
+    expect(screen.getAllByText("Review 4")).toHaveLength(1);
 
     const [phoneNext, desktopNext] = screen.getAllByRole("button", { name: "Next review" });
     fireEvent.click(desktopNext);
-    expect(screen.getByText("Review 4")).toBeTruthy();
+    expect(screen.getAllByText("Review 4")).toHaveLength(2);
     expect(screen.getAllByText("Review 1")).toHaveLength(1);
+
     fireEvent.click(phoneNext);
-    expect(screen.queryByText("Review 1")).toBeNull();
-    expect(screen.getAllByText("Review 2")).toHaveLength(1);
+    expect(screen.getAllByRole("button", { name: "Go to review 2" })[0].getAttribute("aria-current")).toBe("true");
   });
 });

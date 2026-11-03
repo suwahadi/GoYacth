@@ -153,6 +153,12 @@
   [aria-disabled="true"] {
     cursor: not-allowed;
   }
+  /* Options take their own colours, so an open list never shows light text on the light popup a
+     transparent select leaves behind in dark mode. */
+  option {
+    background-color: var(--surface);
+    color: var(--fg);
+  }
 }
 
 @keyframes fade-in {
