@@ -20,7 +20,7 @@ export function Gallery({ images, fallback }: { images: Img[]; fallback?: Img | 
   const label = (n: number) => t("public.gallery.open", { n, total: list.length });
   return (
     <section aria-label={t("public.boat.gallery")} className="space-y-2">
-      <button type="button" className="block w-full cursor-zoom-in overflow-hidden rounded-lg" onClick={() => setOpen(0)} aria-label={label(1)}>
+      <button type="button" className="block w-full cursor-pointer overflow-hidden rounded-lg" onClick={() => setOpen(0)} aria-label={label(1)}>
         <ResponsiveImage
           image={first}
           sizes={`(min-width: 1152px) 1120px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`}
@@ -34,7 +34,7 @@ export function Gallery({ images, fallback }: { images: Img[]; fallback?: Img | 
             const more = hidden > 0 && i === shown.length - 1;
             return (
               <li key={img.id}>
-                <button type="button" className="relative block w-full cursor-zoom-in overflow-hidden rounded" onClick={() => setOpen(i + 1)} aria-label={label(i + 2)}>
+                <button type="button" className="relative block w-full cursor-pointer overflow-hidden rounded" onClick={() => setOpen(i + 1)} aria-label={label(i + 2)}>
                   <ResponsiveImage
                     image={img}
                     sizes="(min-width: 640px) 25vw, 25vw"
