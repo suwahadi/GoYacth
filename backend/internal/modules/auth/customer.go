@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
 
@@ -74,30 +75,33 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) error {
 		case u.Status != "ACTIVE":
 			return nil
 		case u.EmailVerifiedAt != nil:
-			return s.sendToken(ctx, tx, q, u, TemplateAccountExists, "")
+			return s.sendLink(ctx, tx, u, TemplateAccountExists, "")
 		}
-		return s.sendToken(ctx, tx, q, u, TemplateVerify, SafeReturnPath(in.ReturnTo))
+		return s.sendLink(ctx, tx, u, TemplateVerify, SafeReturnPath(in.ReturnTo))
 	})
 }
 
-// sendToken stores only the token's hash and mails the raw value. A new link replaces the open one
-// of the same kind.
-func (s *Service) sendToken(ctx context.Context, tx pgx.Tx, q *dbq.Queries, u dbq.User, template, returnTo string) error {
+// sendLink queues the email; the worker makes the link with MintEmailToken when it sends.
+func (s *Service) sendLink(ctx context.Context, tx pgx.Tx, u dbq.User, template, returnTo string) error {
+	if s.enqueue == nil {
+		return nil
+	}
+	return s.enqueue.EnqueueTx(ctx, tx, jobs.SendAuthEmail{UserID: u.ID, Template: template, ReturnTo: returnTo})
+}
+
+// MintEmailToken makes the token for one emailed link and stores only its hash. It replaces any
+// open link of the same kind, so only the newest email works.
+func MintEmailToken(ctx context.Context, q *dbq.Queries, userID uuid.UUID, template string) (string, error) {
 	purpose, ttl := PurposeVerify, verifyTokenTTL
 	if template != TemplateVerify {
 		purpose, ttl = PurposeReset, resetTokenTTL
 	}
-	if err := q.DropOpenEmailTokens(ctx, dbq.DropOpenEmailTokensParams{UserID: u.ID, Purpose: purpose}); err != nil {
-		return err
+	if err := q.DropOpenEmailTokens(ctx, dbq.DropOpenEmailTokensParams{UserID: userID, Purpose: purpose}); err != nil {
+		return "", err
 	}
 	token := secure.RandomToken(32)
-	if err := q.InsertEmailToken(ctx, dbq.InsertEmailTokenParams{UserID: u.ID, Purpose: purpose, TokenHash: secure.HashToken(token), ExpiresAt: time.Now().Add(ttl)}); err != nil {
-		return err
-	}
-	if s.enqueue == nil {
-		return nil
-	}
-	return s.enqueue.EnqueueTx(ctx, tx, jobs.SendAuthEmail{UserID: u.ID, Template: template, Token: token, ReturnTo: returnTo})
+	err := q.InsertEmailToken(ctx, dbq.InsertEmailTokenParams{UserID: userID, Purpose: purpose, TokenHash: secure.HashToken(token), ExpiresAt: time.Now().Add(ttl)})
+	return token, err
 }
 
 // CustomerLogin mirrors AdminLogin: one answer for every failure and one bcrypt comparison per try.
@@ -199,7 +203,7 @@ func (s *Service) ForgotPassword(ctx context.Context, email string) error {
 		if u.Status != "ACTIVE" {
 			return nil
 		}
-		return s.sendToken(ctx, tx, q, u, TemplateReset, "")
+		return s.sendLink(ctx, tx, u, TemplateReset, "")
 	})
 }
 

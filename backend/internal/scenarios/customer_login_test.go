@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -35,8 +36,11 @@ func customerLogin(t *testing.T, c *testutil.Client, email, password string) tes
 	return c.Post(t, "/api/v1/auth/login", map[string]string{"email": email, "password": password})
 }
 
-// lastAuthEmail returns the newest queued auth email of one template, raw token included.
-func lastAuthEmail(t *testing.T, env *testutil.Env, template string) jobs.SendAuthEmail {
+var linkToken = regexp.MustCompile(`token=([A-Za-z0-9_-]+)`)
+
+// authToken runs the newest queued auth email of one template through the worker and returns the
+// token from the link it mailed.
+func authToken(t *testing.T, env *testutil.Env, template string) string {
 	t.Helper()
 	var raw []byte
 	if err := env.Pool.QueryRow(context.Background(), `SELECT args FROM river_job WHERE kind = 'send_auth_email' AND args->>'template' = $1 ORDER BY id DESC LIMIT 1`, template).Scan(&raw); err != nil {
@@ -46,7 +50,17 @@ func lastAuthEmail(t *testing.T, env *testutil.Env, template string) jobs.SendAu
 	if err := json.Unmarshal(raw, &a); err != nil {
 		t.Fatal(err)
 	}
-	return a
+	if strings.Contains(string(raw), "token") {
+		t.Fatalf("job args carry a token: %s", raw)
+	}
+	if err := env.Services.Notifications.SendAuthEmail(context.Background(), a); err != nil {
+		t.Fatal(err)
+	}
+	m := linkToken.FindStringSubmatch(env.Sender.Sent[len(env.Sender.Sent)-1].Text)
+	if m == nil {
+		t.Fatalf("no link in the %s email", template)
+	}
+	return m[1]
 }
 
 func countAuthEmails(t *testing.T, env *testutil.Env) int {
@@ -102,19 +116,16 @@ func TestCustomerRegistersConfirmsAndSignsIn(t *testing.T) {
 		t.Fatalf("login before confirming: %s", code)
 	}
 
-	mail := lastAuthEmail(t, env, auth.TemplateVerify)
-	if err := env.Services.Notifications.SendAuthEmail(context.Background(), mail); err != nil {
-		t.Fatal(err)
-	}
+	token := authToken(t, env, auth.TemplateVerify)
 	sent := env.Sender.Sent[len(env.Sender.Sent)-1]
-	if !strings.Contains(sent.Subject, "pendaftaran") || !strings.Contains(sent.Text, "http://app.test/id/verify-email?") || !strings.Contains(sent.Text, "token="+mail.Token) {
+	if !strings.Contains(sent.Subject, "pendaftaran") || !strings.Contains(sent.Text, "http://app.test/id/verify-email?") || !strings.Contains(sent.Text, "return_to=%2Fcheckout%3Fboat%3Docean") {
 		t.Fatalf("confirmation email: %q\n%s", sent.Subject, sent.Text)
 	}
 
-	if code := confirm(t, c, mail.Token, "short").ErrorCode(t); code != "VALIDATION_FAILED" {
+	if code := confirm(t, c, token, "short").ErrorCode(t); code != "VALIDATION_FAILED" {
 		t.Fatalf("short password: %s", code)
 	}
-	if r := confirm(t, c, mail.Token, customerPassword); r.Status != http.StatusNoContent {
+	if r := confirm(t, c, token, customerPassword); r.Status != http.StatusNoContent {
 		t.Fatalf("confirm after a rejected password must still work: %d %s", r.Status, r.Body)
 	}
 	var me struct {
@@ -127,7 +138,7 @@ func TestCustomerRegistersConfirmsAndSignsIn(t *testing.T) {
 	if me.Email != customerEmail || me.Role != auth.RoleCustomer || me.Locale != "id" || !me.EmailVerified {
 		t.Fatalf("me after confirming: %+v", me)
 	}
-	if code := confirm(t, c, mail.Token, "another-pass-1").ErrorCode(t); code != "TOKEN_INVALID" {
+	if code := confirm(t, c, token, "another-pass-1").ErrorCode(t); code != "TOKEN_INVALID" {
 		t.Fatalf("second use of the link: %s", code)
 	}
 	if r := customerLogin(t, env.Anonymous(), customerEmail, customerPassword); r.Status != http.StatusNoContent {
@@ -142,7 +153,7 @@ func TestSigningUpWithSomeoneElsesAddressGivesNoAccess(t *testing.T) {
 	stranger := env.Anonymous()
 	register(t, stranger, customerEmail)
 	owner := env.Anonymous()
-	if r := confirm(t, owner, lastAuthEmail(t, env, auth.TemplateVerify).Token, "owner-chosen-pass"); r.Status != http.StatusNoContent {
+	if r := confirm(t, owner, authToken(t, env, auth.TemplateVerify), "owner-chosen-pass"); r.Status != http.StatusNoContent {
 		t.Fatalf("owner confirms: %d %s", r.Status, r.Body)
 	}
 	if r := stranger.Get(t, "/api/v1/auth/me"); r.Status != http.StatusUnauthorized {
@@ -169,8 +180,8 @@ func TestRegisteringAKnownAddressChangesNothing(t *testing.T) {
 	}
 
 	// The owner is told about the attempt and sets a password through their inbox.
-	mail := lastAuthEmail(t, env, auth.TemplateAccountExists)
-	if r := c.Post(t, "/api/v1/auth/password/reset", map[string]string{"token": mail.Token, "password": "owner-chosen-pass"}); r.Status != http.StatusNoContent {
+	token := authToken(t, env, auth.TemplateAccountExists)
+	if r := c.Post(t, "/api/v1/auth/password/reset", map[string]string{"token": token, "password": "owner-chosen-pass"}); r.Status != http.StatusNoContent {
 		t.Fatalf("reset: %d %s", r.Status, r.Body)
 	}
 	if r := customerLogin(t, c, customerEmail, "owner-chosen-pass"); r.Status != http.StatusNoContent {
@@ -189,7 +200,7 @@ func TestGoogleSignInJoinsTheEmailAccount(t *testing.T) {
 	env := testutil.NewEnv(t)
 	c := env.Anonymous()
 	register(t, c, customerEmail)
-	confirm(t, c, lastAuthEmail(t, env, auth.TemplateVerify).Token, customerPassword)
+	confirm(t, c, authToken(t, env, auth.TemplateVerify), customerPassword)
 	owner := customerID(t, env, customerEmail)[0]
 
 	res := googleSignIn(t, env, "sub-guest", customerEmail)
@@ -224,7 +235,7 @@ func TestPasswordResetEndsSessionsAndIsSilentAboutUnknownAddresses(t *testing.T)
 	if r := c.Post(t, "/api/v1/auth/password/forgot", map[string]string{"email": customerEmail}); r.Status != http.StatusAccepted {
 		t.Fatalf("known address: %d", r.Status)
 	}
-	token := lastAuthEmail(t, env, auth.TemplateReset).Token
+	token := authToken(t, env, auth.TemplateReset)
 	if code := c.Post(t, "/api/v1/auth/password/reset", map[string]string{"token": token, "password": "short"}).ErrorCode(t); code != "VALIDATION_FAILED" {
 		t.Fatalf("short password: %s", code)
 	}

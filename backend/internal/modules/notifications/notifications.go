@@ -12,10 +12,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/riverqueue/river"
 
 	"goyacht/internal/integrations/smtp"
+	"goyacht/internal/modules/auth"
 	"goyacht/internal/modules/bookings"
 	"goyacht/internal/modules/catalog"
 	"goyacht/internal/platform/db"
@@ -324,11 +326,21 @@ func (s *Service) SendAuthEmail(ctx context.Context, a jobs.SendAuthEmail) error
 	if err != nil {
 		return river.JobCancel(err)
 	}
+	if u.Status != "ACTIVE" {
+		return nil
+	}
 	kind, path := a.Template, "/reset-password"
-	if kind == "verify_email" {
+	if kind == auth.TemplateVerify {
 		path = "/verify-email"
 	}
-	key := kind + ":" + secure.HexSHA256([]byte(a.Token))[:24]
+	var token string
+	if err := db.InTx(ctx, s.pool, func(tx pgx.Tx) error {
+		token, err = auth.MintEmailToken(ctx, dbq.New(tx), u.ID, kind)
+		return err
+	}); err != nil {
+		return err
+	}
+	key := kind + ":" + secure.HexSHA256([]byte(token))[:24]
 	log, err := q.ClaimNotification(ctx, dbq.ClaimNotificationParams{Kind: kind, DedupeKey: key, UserID: &u.ID, Recipient: u.Email, Locale: u.PreferredLocale})
 	if db.IsNoRows(err) {
 		return nil
@@ -340,7 +352,7 @@ func (s *Service) SendAuthEmail(ctx context.Context, a jobs.SendAuthEmail) error
 	if u.PreferredLocale != i18n.Default {
 		prefix = "/" + u.PreferredLocale
 	}
-	link := url.Values{"token": {a.Token}}
+	link := url.Values{"token": {token}}
 	if a.ReturnTo != "" && a.ReturnTo != "/" {
 		link.Set("return_to", a.ReturnTo)
 	}
