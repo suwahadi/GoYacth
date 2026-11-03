@@ -45,11 +45,11 @@ export function BoatReviews({ boatId, stats, initial }: { boatId: string; stats:
   return (
     <>
       <ReviewSummary stats={stats} onOpen={() => setOpen(true)} />
-      <Dialog open={open} onClose={() => setOpen(false)} title={t("public.boat.reviews")} size="lg">
-        <ReviewList reviews={reviews} columns={1} />
-        {failed && <p className="mt-6 text-sm text-danger">{t("public.boat.section_error")}</p>}
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("public.boat.reviews")} size="lg" fullOnPhone>
+        <ReviewList reviews={reviews} />
+        {failed && <p className="mt-4 text-sm text-danger">{t("public.boat.section_error")}</p>}
         {!done && (
-          <div className="mt-8 text-center">
+          <div className="mt-4 text-center">
             <Button variant="secondary" onClick={more} pending={loading}>
               {t("common.actions.load_more")}
             </Button>

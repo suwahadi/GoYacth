@@ -29,7 +29,7 @@ export default function Regions({ loaderData }: Route.ComponentProps) {
   const t = useT();
   return (
     <>
-      <PageHero title={t("public.regions.title")} intro={t("public.regions.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.regions.title") }]} />
+      <PageHero title={t("public.regions.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.regions.title") }]} />
       <Container className="pb-8 pt-6">
         {loaderData.regions.length === 0 ? (
           <EmptyState title={t("public.regions.empty_title")} />

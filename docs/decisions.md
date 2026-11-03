@@ -51,7 +51,7 @@ Clarifications agreed with the product owner on 2026-11-01. They amend or resolv
 - **Light luxury**, decided by the owner on 2026-11-02: navy text and fine gold line icons on white, with photos carrying the visual weight. Solid navy stays only under text on photos. This replaces the navy CTA band, footer and tinted destinations panel from the UI reference.
 - `--accent-icon` is the gold for stars and icons because it reaches 3:1 on white. The lighter `--accent` is for button fills.
 - Icons are drawn for this site in `components/ui/icons.tsx`. A facility's `icon` value selects one; an unknown value shows the anchor.
-- **Page header**, decided by the owner on 2026-11-02: every page except home opens with a slim band holding the breadcrumbs and the title on a photo under a navy gradient. Detail pages use their own cover photo; other pages use the sea photo in `frontend/public/home/`.
+- **Page header**, decided by the owner on 2026-11-02: every page except home opens with a fixed-height band holding only the breadcrumbs and the title on a photo under a navy gradient. Boat and package details may add their info line and summary inside that height. Detail pages use their own cover photo; other pages use the sea photo in `frontend/public/home/`.
 - **Payment logos** in `frontend/public/payments/` are the bank and QRIS SVGs from zonalogo.com, chosen by the owner on 2026-11-02. They sit on a white tile in both themes. Card payments use a line icon because no single card brand applies.
 
 ## Admin access

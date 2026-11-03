@@ -211,11 +211,12 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
   const { settings } = useRootData();
   const site = settings.site;
   const hasContact = site?.email || site?.phone || site?.whatsapp;
+  const whatsapp = site?.whatsapp?.startsWith("+") ? site.whatsapp : `+${site?.whatsapp}`;
   return (
     <footer className={cn("text-fg", !flush && "mt-16 border-t border-border")}>
       <div className="px-5 pt-10 lg:px-[3.9vw]">
-        <div className="grid gap-8 sm:grid-cols-2 lg:flex lg:gap-[clamp(2.5rem,1rem+4vw,6rem)]">
-          <div className="sm:col-span-2 lg:mr-auto">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4 lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))_minmax(0,1.3fr)] lg:gap-x-10">
+          <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <Link to={link("/")} className="inline-flex min-h-11 items-center text-primary">
               <Logo className="text-[clamp(1.75rem,1rem+1.2vw,2.5rem)]" />
             </Link>
@@ -281,7 +282,7 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
             </ul>
           </div>
           {hasContact && (
-            <div>
+            <div className="col-span-2 md:col-span-1">
               <p className="font-semibold">{t("common.footer.contact")}</p>
               <ul className="mt-2 text-sm">
                 {site?.email && (
@@ -302,26 +303,15 @@ export function SiteFooter({ flush }: { flush?: boolean }) {
                 )}
                 {site?.whatsapp && (
                   <li>
-                    <a className={footerContact} href={`https://wa.me/${site.whatsapp.replace(/[^0-9]/g, "")}`} rel="noopener">
+                    <a className={footerContact} href={`https://wa.me/${site.whatsapp.replace(/[^0-9]/g, "")}`} rel="noopener" aria-label={`WhatsApp ${whatsapp}`}>
                       <WhatsAppIcon className="size-4 shrink-0 text-accent-icon" />
-                      WhatsApp
+                      {whatsapp}
                     </a>
                   </li>
                 )}
               </ul>
             </div>
           )}
-          <div className="lg:w-[22rem] lg:border-l lg:border-border lg:pl-[clamp(1.5rem,0.5rem+2vw,3rem)]">
-            <p className="font-semibold">{t("common.footer.subscribe_title")}</p>
-            {/* shortcut: no newsletter endpoint exists yet, so the field stays disabled and labelled until the PRD adds one. */}
-            <div className="mt-3 flex h-12 items-stretch overflow-hidden rounded-xl border border-border text-sm">
-              <input disabled aria-label={t("common.footer.subscribe_placeholder")} placeholder={t("common.footer.subscribe_placeholder")} className="min-w-0 flex-1 cursor-not-allowed bg-transparent px-4 text-fg placeholder:text-muted" />
-              <span className="grid w-14 place-items-center bg-accent/60 text-accent-fg" aria-hidden="true">
-                <ArrowRightIcon className="size-5" />
-              </span>
-            </div>
-            <p className="mt-2 text-sm text-muted">{t("common.footer.coming_soon")}</p>
-          </div>
         </div>
         <div className="mt-8 flex flex-col gap-2 border-t border-border py-5 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>{t("common.footer.rights", { year: new Date().getFullYear() })}</p>

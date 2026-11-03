@@ -138,7 +138,7 @@ export default function Boat({ loaderData }: Route.ComponentProps) {
             </a>
           )}
         </p>
-        {boat.summary && <p className="mt-1 max-w-2xl text-ink-fg/85">{boat.summary}</p>}
+        {boat.summary && <p className="mt-1 line-clamp-2 max-w-2xl text-sm text-ink-fg/85 sm:line-clamp-1 sm:text-base">{boat.summary}</p>}
       </PageHero>
       <Container className="pb-8 pt-6">
         <Gallery images={boat.gallery} fallback={boat.thumbnail} />

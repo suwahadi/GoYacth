@@ -69,13 +69,12 @@ export default function ContentPage({ loaderData }: Route.ComponentProps) {
   const { page } = loaderData;
   return (
     <>
-      <PageHero title={page.title} width="max-w-3xl" crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: page.title }]}>
-        <p className="mt-1 text-sm text-ink-fg/85">{t("public.page.updated", { date: formatPlainDate(page.updated_at.slice(0, 10), locale) })}</p>
-      </PageHero>
+      <PageHero title={page.title} width="max-w-3xl" crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: page.title }]} />
       <Container className="max-w-3xl pb-8 pt-6">
         <article>
           {page.featured_image && <ResponsiveImage image={page.featured_image} sizes={`(min-width: 768px) 720px, (min-width: 640px) 100vw, ${PHONE_IMAGE}`} priority className="mb-4 h-auto w-full rounded-lg" />}
           <Blocks blocks={page.blocks} />
+          <p className="mt-8 text-sm text-muted">{t("public.page.updated", { date: formatPlainDate(page.updated_at.slice(0, 10), locale) })}</p>
         </article>
       </Container>
     </>

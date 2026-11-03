@@ -43,9 +43,9 @@ export function Breadcrumbs({ items, tone = "page" }: { items: { name: string; p
   const locale = useLocale();
   return (
     <nav aria-label={t("public.breadcrumb.label")} className={cn("py-3 text-sm", tone === "photo" ? "text-ink-fg/85" : "text-muted")}>
-      <ol className="flex flex-wrap gap-1">
+      <ol className="flex gap-1 whitespace-nowrap">
         {items.map((it, i) => (
-          <li key={i} className="flex min-w-0 gap-1">
+          <li key={i} className={cn("flex gap-1", it.path ? "shrink-0" : "min-w-0")}>
             {i > 0 && <span aria-hidden="true">/</span>}
             {it.path ? (
               <Link to={localePath(locale, it.path)} className={tapLink}>
@@ -67,21 +67,21 @@ export type Crumb = { name: string; path?: string };
 
 const SEA = "/home/region-islands";
 
-// PageHero is the slim band at the top of every page except home: breadcrumbs and the title on
-// a photo under a navy overlay. Detail pages pass their own cover; the rest show the sea.
-export function PageHero({ title, crumbs, intro, image, children, width }: { title: string; crumbs: Crumb[]; intro?: string; image?: Img | null; children?: ReactNode; width?: string }) {
+// PageHero is the band at the top of every page except home: breadcrumbs and the title on a photo
+// under a navy overlay. The height is fixed so every page lines up, which is why breadcrumbs stay
+// on one line and the title is clamped. Only boat and package details pass children.
+export function PageHero({ title, crumbs, image, children, width }: { title: string; crumbs: Crumb[]; image?: Img | null; children?: ReactNode; width?: string }) {
   return (
-    <header className="relative isolate overflow-hidden bg-ink text-ink-fg">
+    <header className="relative isolate h-48 overflow-hidden bg-ink text-ink-fg lg:h-52">
       {image && image.sources.length > 0 ? (
         <ResponsiveImage image={{ ...image, alt: "" }} sizes="100vw" priority className="absolute inset-0 -z-20 size-full" />
       ) : (
         <img src={`${SEA}-1600.webp`} srcSet={`${SEA}-800.webp 800w, ${SEA}-1600.webp 1600w`} sizes="100vw" alt="" className="absolute inset-0 -z-20 size-full object-cover" />
       )}
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/70 to-ink/40" aria-hidden="true" />
-      <Container className={cn("pb-6 pt-1 sm:pb-8", width)}>
+      <Container className={cn("flex h-full flex-col justify-center", width)}>
         <Breadcrumbs items={crumbs.map((c, i) => (i === crumbs.length - 1 ? { name: c.name } : c))} tone="photo" />
-        <h1 className="font-display text-[clamp(1.75rem,1.4rem+1.3vw,2.75rem)] font-normal leading-tight">{title}</h1>
-        {intro && <p className="mt-1 max-w-2xl text-ink-fg/85">{intro}</p>}
+        <h1 className="line-clamp-2 font-display text-[clamp(1.75rem,1.4rem+1.3vw,2.75rem)] font-normal leading-tight">{title}</h1>
         {children}
       </Container>
     </header>
@@ -303,22 +303,37 @@ export function ReviewSummary({ stats, onOpen }: { stats: ReviewStats; onOpen?: 
   );
 }
 
-export function ReviewList({ reviews, columns = 2 }: { reviews: Review[]; columns?: 1 | 2 }) {
+export function ReviewList({ reviews }: { reviews: Review[] }) {
   const t = useT();
   const locale = useLocale();
   if (reviews.length === 0) return <p className="text-muted">{t("public.reviews.empty")}</p>;
   return (
-    <ul className={cn("grid gap-x-10 gap-y-8", columns === 2 ? "md:grid-cols-2" : "divide-y divide-border [&>li:not(:first-child)]:pt-8")}>
+    <ul className="divide-y divide-border">
       {reviews.map((r) => (
-        <li key={r.id}>
+        <li key={r.id} className="py-4 first:pt-0 last:pb-0 sm:py-5">
           <article lang={r.locale}>
-            <p>
-              <Stars rating={r.rating_overall} />
-            </p>
-            <h3 className="mt-2 font-display text-xl leading-snug">{r.title}</h3>
-            <p className="mt-2 whitespace-pre-line leading-relaxed text-muted">{r.body}</p>
+            <div className="flex items-start gap-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full border border-accent font-display text-sm text-accent-text" aria-hidden="true">
+                {initials(r.author_name)}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{r.author_country ? t("public.reviews.from", { name: r.author_name, country: countryName(r.author_country, locale) }) : r.author_name}</p>
+                <p className="flex flex-wrap items-center gap-x-2 text-xs text-muted">
+                  <time dateTime={r.created_at}>{formatPlainDate(r.created_at.slice(0, 10), locale)}</time>
+                  {r.verified_booking && (
+                    <span className="inline-flex items-center gap-1 text-accent-text">
+                      <SealCheckIcon className="size-3.5" />
+                      {t("public.reviews.verified")}
+                    </span>
+                  )}
+                </p>
+              </div>
+              <Stars rating={r.rating_overall} className="shrink-0 text-sm" />
+            </div>
+            <h3 className="mt-2 font-display text-lg leading-snug">{r.title}</h3>
+            <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-muted">{r.body}</p>
             {r.photos.length > 0 && (
-              <ul className="mt-3 flex gap-2">
+              <ul className="mt-2 flex gap-2">
                 {r.photos.slice(0, 3).map((p) => (
                   <li key={p.id} className="w-20">
                     <ResponsiveImage image={p} sizes="80px" className="aspect-square h-auto w-full rounded" />
@@ -326,23 +341,6 @@ export function ReviewList({ reviews, columns = 2 }: { reviews: Review[]; column
                 ))}
               </ul>
             )}
-            <div className="mt-4 flex items-center gap-3 text-sm">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full border border-accent font-display text-accent-text" aria-hidden="true">
-                {initials(r.author_name)}
-              </span>
-              <span className="min-w-0">
-                <span className="block font-medium">{r.author_country ? t("public.reviews.from", { name: r.author_name, country: countryName(r.author_country, locale) }) : r.author_name}</span>
-                <time dateTime={r.created_at} className="block text-muted">
-                  {formatPlainDate(r.created_at.slice(0, 10), locale)}
-                </time>
-              </span>
-              {r.verified_booking && (
-                <span className="ml-auto inline-flex shrink-0 items-center gap-1 text-accent-text">
-                  <SealCheckIcon className="size-4" />
-                  {t("public.reviews.verified")}
-                </span>
-              )}
-            </div>
           </article>
         </li>
       ))}

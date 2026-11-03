@@ -83,7 +83,7 @@ export default function PackagePage({ loaderData }: Route.ComponentProps) {
     <>
       <PageHero title={pkg.name} image={pkg.thumbnail ?? pkg.gallery[0]} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.packages.title"), path: "/packages" }, { name: pkg.name }]}>
         <p className="mt-2 text-sm text-accent">{t(pkg.mode === "DEPARTURE" ? "public.packages.mode_DEPARTURE" : "public.packages.mode_PRIVATE_CHARTER")}</p>
-        {pkg.summary && <p className="mt-1 max-w-2xl text-ink-fg/85">{pkg.summary}</p>}
+        {pkg.summary && <p className="mt-1 line-clamp-2 max-w-2xl text-sm text-ink-fg/85 sm:line-clamp-1 sm:text-base">{pkg.summary}</p>}
       </PageHero>
       <Container className="pb-8 pt-6">
         <Gallery images={pkg.gallery} fallback={pkg.thumbnail} />

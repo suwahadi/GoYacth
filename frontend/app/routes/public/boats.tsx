@@ -76,7 +76,7 @@ export default function Boats({ loaderData }: Route.ComponentProps) {
   );
   return (
     <>
-      <PageHero title={t("public.boats.title")} intro={t("public.boats.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.boats.title") }]} />
+      <PageHero title={t("public.boats.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.boats.title") }]} />
       <Container className="pb-8 pt-6">
         <FilterBar activeCount={active} onClear={() => setParams(new URLSearchParams(), { preventScrollReset: true })}>
           {select("region_id", t("public.boats.filter_region"), regions.map((r) => ({ value: r.id, label: r.name })))}

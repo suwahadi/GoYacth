@@ -60,7 +60,7 @@ export default function Departures({ loaderData }: Route.ComponentProps) {
   };
   return (
     <>
-      <PageHero title={t("public.departures.title")} intro={t("public.departures.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.departures.title") }]} />
+      <PageHero title={t("public.departures.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.departures.title") }]} />
       <Container className="pb-8 pt-6">
         <FilterBar activeCount={active} onClear={() => setParams(new URLSearchParams(), { preventScrollReset: true })}>
           <Field label={t("public.departures.filter_route")} className="md:w-56">

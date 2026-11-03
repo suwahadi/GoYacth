@@ -61,8 +61,9 @@ export default function Track({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <PageHero title={t("booking.track.title")} intro={t("booking.track.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.track.title") }]} width="max-w-xl" />
+      <PageHero title={t("booking.track.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("booking.track.title") }]} width="max-w-xl" />
       <Container className="max-w-xl pb-8 pt-6">
+        <p className="text-muted">{t("booking.track.intro")}</p>
         <Card className="mt-4">
           <form onSubmit={submit} className="space-y-4">
             <Field label={t("booking.track.number_label")} required error={fe["booking_number"]} hint={t("booking.track.number_hint")}>

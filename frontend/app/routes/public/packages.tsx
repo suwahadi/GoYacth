@@ -31,7 +31,7 @@ export default function Packages({ loaderData }: Route.ComponentProps) {
   const locale = useLocale();
   return (
     <>
-      <PageHero title={t("public.packages.title")} intro={t("public.packages.intro")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.packages.title") }]} />
+      <PageHero title={t("public.packages.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("public.packages.title") }]} />
       <Container className="pb-8 pt-6">
         {loaderData.packages.length === 0 ? (
           <EmptyState

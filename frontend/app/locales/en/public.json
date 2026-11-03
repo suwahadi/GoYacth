@@ -34,7 +34,6 @@
   "boats": {
     "title": "Boats and yachts",
     "description": "Compare boats for private charter by destination, type, class and group size.",
-    "intro": "Choose a boat, then pick your route, date and time.",
     "filter_region": "Destination",
     "filter_category": "Boat type",
     "filter_class": "Class",
@@ -154,7 +153,6 @@
   "departures": {
     "title": "Scheduled departures",
     "description": "Join a shared trip or book a private area on a scheduled departure.",
-    "intro": "Book seats or a private area on a scheduled trip.",
     "filter_route": "Route",
     "filter_boat": "Boat",
     "any": "Any",
@@ -177,7 +175,6 @@
   "packages": {
     "title": "Packages",
     "description": "All-inclusive boat trips and special events with one clear price.",
-    "intro": "All-inclusive trips with a fixed price per boat.",
     "empty_title": "No packages available right now",
     "empty_body": "Browse our boats for a private charter instead.",
     "mode_PRIVATE_CHARTER": "Private charter",
@@ -202,7 +199,6 @@
   "regions": {
     "title": "Destinations",
     "description": "Explore the regions where our boats sail, from Bali to Labuan Bajo.",
-    "intro": "Where our boats sail.",
     "empty_title": "No destinations yet",
     "boats": "Boats in {{name}}",
     "routes": "Routes in {{name}}",

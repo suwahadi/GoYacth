@@ -27,7 +27,7 @@ function useDialog(open: boolean, onClose: () => void) {
 }
 
 // Dialog uses the native <dialog> element for focus trapping and Escape handling.
-export function Dialog({ open, onClose, title, children, footer, size = "md" }: { open: boolean; onClose: () => void; title: string; children: ReactNode; footer?: ReactNode; size?: "sm" | "md" | "lg" }) {
+export function Dialog({ open, onClose, title, children, footer, size = "md", fullOnPhone }: { open: boolean; onClose: () => void; title: string; children: ReactNode; footer?: ReactNode; fullOnPhone?: boolean; size?: "sm" | "md" | "lg" }) {
   const ref = useDialog(open, onClose);
   const titleId = useId();
   const t = useT();
@@ -38,22 +38,23 @@ export function Dialog({ open, onClose, title, children, footer, size = "md" }: 
       className={cn(
         "m-auto w-[calc(100%-2rem)] rounded-lg border border-border bg-surface p-0 text-fg shadow-xl backdrop:bg-overlay",
         size === "sm" ? "max-w-sm" : size === "lg" ? "max-w-3xl" : "max-w-lg",
+        fullOnPhone && "max-sm:m-0 max-sm:h-dvh max-sm:max-h-none max-sm:w-full max-sm:max-w-none max-sm:rounded-none max-sm:border-0",
       )}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       {open && (
-        <div className="flex max-h-[85vh] flex-col">
-          <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4">
+        <div className={cn("flex max-h-[85vh] flex-col", fullOnPhone && "max-sm:h-dvh max-sm:max-h-none")}>
+          <div className="flex items-center justify-between gap-4 border-b border-border py-2 pl-5 pr-2">
             <h2 id={titleId} className="text-lg font-semibold">
               {title}
             </h2>
-            <button type="button" onClick={onClose} className="rounded p-1 text-muted hover:bg-surface-2" aria-label={t("common.actions.close")}>
+            <button type="button" onClick={onClose} className="grid size-11 place-items-center rounded text-muted hover:bg-surface-2" aria-label={t("common.actions.close")}>
               ✕
             </button>
           </div>
-          <div className="overflow-y-auto px-5 py-4">{children}</div>
+          <div className={cn("overflow-y-auto px-5 py-4", fullOnPhone && "max-sm:flex-1 max-sm:px-4 max-sm:py-3")}>{children}</div>
           {footer && <div className="border-t border-border px-5 py-4">{footer}</div>}
         </div>
       )}

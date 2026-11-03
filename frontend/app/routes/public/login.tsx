@@ -29,8 +29,9 @@ export default function Login() {
   }
   return (
     <>
-      <PageHero title={t("common.auth.login_title")} intro={t("common.auth.login_subtitle")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("common.auth.login_title") }]} width="max-w-md" />
+      <PageHero title={t("common.auth.login_title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("common.auth.login_title") }]} width="max-w-md" />
       <Container className="max-w-md pb-8 pt-6">
+        <p className="text-muted">{t("common.auth.login_subtitle")}</p>
         {error && (
           <Alert tone="danger" className="mt-6">
             {tc("validation.errors", error)}

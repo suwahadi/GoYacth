@@ -34,7 +34,6 @@
   "boats": {
     "title": "Kapal dan yacht",
     "description": "Bandingkan kapal untuk sewa privat berdasarkan destinasi, jenis, kelas, dan jumlah tamu.",
-    "intro": "Pilih kapal, lalu tentukan rute, tanggal, dan jam.",
     "filter_region": "Destinasi",
     "filter_category": "Jenis kapal",
     "filter_class": "Kelas",
@@ -154,7 +153,6 @@
   "departures": {
     "title": "Jadwal keberangkatan",
     "description": "Ikut trip bersama atau pesan area privat pada jadwal keberangkatan.",
-    "intro": "Pesan kursi atau area privat pada trip terjadwal.",
     "filter_route": "Rute",
     "filter_boat": "Kapal",
     "any": "Semua",
@@ -177,7 +175,6 @@
   "packages": {
     "title": "Paket",
     "description": "Trip kapal all-inclusive dan acara spesial dengan satu harga yang jelas.",
-    "intro": "Trip all-inclusive dengan harga tetap per kapal.",
     "empty_title": "Belum ada paket yang tersedia",
     "empty_body": "Lihat kapal kami untuk sewa privat.",
     "mode_PRIVATE_CHARTER": "Sewa privat",
@@ -202,7 +199,6 @@
   "regions": {
     "title": "Destinasi",
     "description": "Jelajahi wilayah pelayaran kapal kami, dari Bali hingga Labuan Bajo.",
-    "intro": "Tempat kapal kami berlayar.",
     "empty_title": "Belum ada destinasi",
     "boats": "Kapal di {{name}}",
     "routes": "Rute di {{name}}",

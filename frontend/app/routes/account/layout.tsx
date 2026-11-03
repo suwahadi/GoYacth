@@ -33,8 +33,9 @@ export default function AccountLayout({ loaderData }: Route.ComponentProps) {
   ];
   return (
     <>
-      <PageHero title={t("account.title")} intro={t("account.signed_in_as", { email: loaderData.me.email })} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("account.title"), path: "/account" }, { name: onProfile ? t("account.tabs.profile") : t("account.tabs.bookings") }]} />
+      <PageHero title={t("account.title")} crumbs={[{ name: t("public.breadcrumb.home"), path: "/" }, { name: t("account.title"), path: "/account" }, { name: onProfile ? t("account.tabs.profile") : t("account.tabs.bookings") }]} />
       <Container className="pb-8 pt-6">
+        <p className="mb-4 text-sm text-muted">{t("account.signed_in_as", { email: loaderData.me.email })}</p>
         <nav aria-label={t("account.tabs.label")} className="flex gap-1 border-b border-border">
           {tabs.map((tab) => (
             <NavLink
